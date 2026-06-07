@@ -7,12 +7,10 @@ workflows:
       java: 21
     scripts:
       - name: Install dependencies
-        script: |
-          npm install
+        script: npm install
 
       - name: Build web app
-        script: |
-          npm run build
+        script: npm run build
 
       - name: Install Capacitor & setup Android
         script: |
@@ -34,15 +32,27 @@ workflows:
           </network-security-config>
           EOF
 
-      - name: Build Android APK
+      - name: Build Android APK signed
         script: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease
+          keytool -genkey -v \
+            -keystore atlasquest.keystore \
+            -alias atlasquest \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass atlasquest2024 \
+            -keypass atlasquest2024 \
+            -dname "CN=AtlasQuest, OU=Mobile, O=AtlasQuest, L=Algiers, S=Algiers, C=DZ"
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=$(pwd)/atlasquest.keystore \
+            -Pandroid.injected.signing.store.password=atlasquest2024 \
+            -Pandroid.injected.signing.key.alias=atlasquest \
+            -Pandroid.injected.signing.key.password=atlasquest2024
 
     artifacts:
       - android/app/build/outputs/apk/release/*.apk
-      - android/app/build/outputs/bundle/release/*.aab
 
     publishing:
       email:
