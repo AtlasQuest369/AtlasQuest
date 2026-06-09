@@ -1,12 +1,916 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AtlasQuest</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AtlasQuest</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'DM Sans',sans-serif;background:radial-gradient(#1a1a2e,#0f0f1a);color:#fff;margin:0;min-height:100vh}
+    .flag-emoji{font-size:5rem;line-height:1}
+    @keyframes pulse-green{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 12px rgba(34,197,94,0)}}
+    @keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
+    @keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-3px)}20%,40%,60%,80%{transform:translateX(3px)}}
+    @keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+    .correct-pulse{animation:pulse-green .6s ease,bounce .4s ease}
+    .wrong-pulse{animation:pulse-red .6s ease,shake .4s ease}
+    .timer-bar{transition:width linear}
+    .fade-in{animation:fadeIn .3s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    @keyframes confetti-fall{to{transform:translateY(100vh) rotateZ(360deg);opacity:0}}
+    .confetti{position:fixed;pointer-events:none;animation:confetti-fall 2.5s ease-out forwards}
+    @keyframes spin-wheel{from{transform:rotate(0deg)}to{transform:rotate(3600deg)}}
+    .wheel-spinning{animation:spin-wheel 3s cubic-bezier(.25,.46,.45,.94) forwards}
+    .tab-btn{transition:all .2s}
+    .tab-btn.active{color:#a78bfa}
+    .tab-btn:not(.active){color:rgba(255,255,255,.4)}
+    .cat-card{transition:transform .2s,box-shadow .2s}
+    .cat-card:hover{transform:scale(1.03);box-shadow:0 4px 12px rgba(139,92,246,.3)}
+    .lang-btn{transition:all .15s}
+    .lang-btn.active{transform:scale(1.15);opacity:1}
+    .lang-btn:not(.active){opacity:.5}
+    .diff-btn{transition:all .2s}
+    .diff-btn.active{transform:scale(1.05);box-shadow:0 0 0 2px rgba(139,92,246,.8)}
+    .view{display:none}
+    .view.active{display:flex}
+    .badge-item{transition:transform .2s}
+    .badge-item:hover{transform:scale(1.1)}
+    .level-bar{transition:width .5s ease}
+    .onboard-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .2s}
+    .onboard-dot.active{background:#a78bfa;transform:scale(1.3)}
+    .fact-card{animation:fadeIn .3s ease}
+    .shop-card{transition:transform .2s}
+    .shop-card:hover{transform:scale(1.02)}
+  </style>
+</head>
+<body data-template-id="__page-root" class="w-full min-h-screen flex flex-col" style="background: radial-gradient(rgb(26, 26, 46), rgb(15, 15, 26));">
+  <div id="lang-bar" class="fixed top-3 right-3 flex gap-2 z-50">
+    <button class="lang-btn active text-xl" onclick="setLang('fr')">🇫🇷</button>
+    <button class="lang-btn text-xl" onclick="setLang('en')">🇬🇧</button>
+    <button class="lang-btn text-xl" onclick="setLang('ar')">🇩🇿</button>
+  </div>
+  <a href="javascript:window.open('https://www.canva.com','_blank')" class="fixed top-3 left-3 z-50 bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 rounded-lg p-2 transition-all" title="Revenir à Canva">
+    <i data-lucide="arrow-left" style="width:18px;height:18px;color:white"></i>
+  </a>
+  <div class="flex-1 overflow-y-auto p-4 pb-24">
+    <!-- ONBOARDING -->
+    <section id="view-onboarding" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in">
+      <div id="onboard-slides" class="w-full relative" style="min-height:400px">
+        <div class="onboard-slide flex flex-col items-center gap-4 text-center p-4">
+          <img data-template-id="onboard-img-1" class="canva-image w-48 h-48 rounded-2xl object-cover shadow-xl mt-10" loading="lazy" src="https://images.pexels.com/photos/3769138/pexels-photo-3769138.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Top view of crop anonymous person holding toy airplane on colorful world map drawn on chalkboard">
+          <h2 class="font-bold mt-4 text-2xl" id="onboard-t1">Bienvenue sur AtlasQuest !</h2>
+          <p class="text-sm opacity-70 max-w-xs" id="onboard-d1">Teste tes connaissances en géographie avec des quiz fun et interactifs.</p>
+        </div>
+        <div class="onboard-slide hidden flex flex-col items-center gap-4 text-center p-4">
+          <img data-template-id="onboard-img-2" class="canva-image w-48 h-48 rounded-2xl object-cover shadow-xl mt-10" loading="lazy" src="https://images.pexels.com/photos/5428253/pexels-photo-5428253.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Kids explore a globe in a classroom, highlighting educational practices and curiosity.">
+          <h2 class="font-bold mt-4 text-2xl" id="onboard-t2">Apprends en jouant</h2>
+          <p class="text-sm opacity-70 max-w-xs" id="onboard-d2">6 catégories, 3 niveaux de difficulté et un mode entraînement.</p>
+        </div>
+        <div class="onboard-slide hidden flex flex-col items-center gap-4 text-center p-4">
+          <img data-template-id="onboard-img-3" class="canva-image w-48 h-48 rounded-2xl object-cover shadow-xl mt-10" loading="lazy" src="https://images.pexels.com/photos/6250969/pexels-photo-6250969.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Close-up of a hand holding a gold trophy against a bold red background.">
+          <h2 class="font-bold mt-4 text-2xl" id="onboard-t3">Gagne des badges</h2>
+          <p class="text-sm opacity-70 max-w-xs" id="onboard-d3">Monte en niveau, débloque des récompenses et défie le monde !</p>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <span class="onboard-dot active"></span>
+        <span class="onboard-dot"></span>
+        <span class="onboard-dot"></span>
+      </div>
+      <button id="onboard-btn" class="px-8 py-3 rounded-xl font-bold shadow-lg mt-4 bg-gradient-to-r from-indigo-500 to-purple-500" onclick="nextOnboard()">Suivant</button>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in">
+      <div class="flex items-center gap-3 w-full mt-6">
+        <img data-template-id="logo-earth" class="canva-image w-14 h-14 rounded-full object-cover shadow-lg" loading="lazy" src="https://images.pexels.com/photos/87651/earth-blue-planet-globe-planet-87651.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Stunning view of Earth from space showing North America and surrounding waters.">
+        <div>
+          <h1 class="font-black tracking-tight text-3xl">AtlasQuest</h1>
+          <p class="text-sm opacity-70" id="subtitle-text">Explore le monde en jouant 🌍</p>
+        </div>
+      </div>
+      <div class="w-full mt-2">
+        <div class="flex justify-between text-white text-xs mb-1">
+          <span id="level-label" class="font-bold">Niveau 1</span>
+          <span id="level-xp" class="opacity-60">0 / 50 XP</span>
+        </div>
+        <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden">
+          <div id="level-bar" class="level-bar h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-2 w-full mt-2">
+        <div class="bg-white/10 rounded-xl p-3 text-center">
+          <div id="dash-xp" class="text-lg font-bold">0</div>
+          <div class="text-[10px] opacity-50">XP</div>
+        </div>
+        <div class="bg-white/10 rounded-xl p-3 text-center">
+          <div id="dash-streak" class="text-lg font-bold">🔥 0</div>
+          <div class="text-[10px] opacity-50" id="dash-streak-label">Série</div>
+        </div>
+        <div class="bg-white/10 rounded-xl p-3 text-center">
+          <div id="dash-games" class="text-lg font-bold">0</div>
+          <div class="text-[10px] opacity-50" id="dash-games-label">Parties</div>
+        </div>
+      </div>
+      <button onclick="startDaily()" id="daily-btn" class="w-full mt-3 relative overflow-hidden rounded-2xl">
+        <img data-template-id="daily-bg-image" class="canva-image w-full h-32 object-cover" loading="lazy" src="https://images.pexels.com/photos/592753/pexels-photo-592753.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="A detailed vintage map showcasing global geography with an old paper texture.">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+          <div class="text-left">
+            <p class="text-xs font-bold uppercase tracking-wider opacity-80 text-purple-400" id="daily-label-text">DÉFI DU JOUR</p>
+            <p class="font-bold" id="daily-title-text">15 questions • Mode Expert</p>
+          </div>
+        </div>
+        <div id="daily-done-overlay" class="hidden absolute inset-0 bg-black/60 flex items-center justify-center">
+          <span class="text-white font-bold text-lg">✓</span>
+        </div>
+      </button>
+      <div id="wheel-section" class="w-full mt-4">
+        <h2 class="font-bold w-full mt-4 text-2xl" id="cat-heading-text">Catégories</h2>
+        <div class="grid grid-cols-2 gap-2 w-full">
+          <button onclick="selectCategory('flags')" class="cat-card rounded-xl overflow-hidden relative aspect-[4/3]">
+            <img data-template-id="cat-img-flags" class="canva-image w-full h-full object-cover" loading="lazy" src="https://images.pexels.com/photos/20063688/pexels-photo-20063688.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="A display of various national flags on flagpoles set against a mountain backdrop, symbolizing global unity.">
+            <div class="absolute inset-0 bg-black/40 flex items-end p-2">
+              <span class="text-xs font-bold" id="cat-flags-text">Drapeaux</span>
+            </div>
+          </button>
+          <button onclick="selectCategory('capitals')" class="cat-card rounded-xl overflow-hidden relative aspect-[4/3]">
+            <img data-template-id="cat-img-capitals" class="canva-image w-full h-full object-cover" loading="lazy" src="https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Stunning view of the Eiffel Tower with a backdrop of fluffy clouds and blue sky in Paris.">
+            <div class="absolute inset-0 bg-black/40 flex items-end p-2">
+              <span class="text-xs font-bold" id="cat-capitals-text">Capitales</span>
+            </div>
+          </button>
+          <button onclick="selectCategory('monuments')" class="cat-card rounded-xl overflow-hidden relative aspect-[4/3]">
+            <img data-template-id="cat-img-monuments" class="canva-image w-full h-full object-cover" loading="lazy" src="https://images.pexels.com/photos/17440745/pexels-photo-17440745.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Stunning photo of the iconic Taj Mahal with its reflection at twilight, showcasing Mughal architecture.">
+            <div class="absolute inset-0 bg-black/40 flex items-end p-2">
+              <span class="text-xs font-bold" id="cat-monuments-text">Monuments</span>
+            </div>
+          </button>
+          <button onclick="selectCategory('history')" class="cat-card rounded-xl overflow-hidden relative aspect-[4/3]">
+            <img data-template-id="cat-img-history" class="canva-image w-full h-full object-cover" loading="lazy" src="https://images.pexels.com/photos/36521394/pexels-photo-36521394.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Scenic view of the iconic Colosseum in Rome, Italy, capturing its ancient architecture.">
+            <div class="absolute inset-0 bg-black/40 flex items-end p-2">
+              <span class="text-xs font-bold" id="cat-history-text">Histoire</span>
+            </div>
+          </button>
+          <button onclick="selectCategory('continents')" class="cat-card rounded-xl overflow-hidden relative aspect-[4/3]">
+            <img data-template-id="cat-img-continents" class="canva-image w-full h-full object-cover" loading="lazy" src="https://images.pexels.com/photos/269633/pexels-photo-269633.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="High-resolution close-up of North America on a vintage globe, showcasing detailed geographical features.">
+            <div class="absolute inset-0 bg-black/40 flex items-end p-2">
+              <span class="text-xs font-bold" id="cat-continents-text">Continents</span>
+            </div>
+          </button>
+          <button onclick="selectCategory('culture')" class="cat-card rounded-xl overflow-hidden relative aspect-[4/3]">
+            <img data-template-id="cat-img-culture" class="canva-image w-full h-full object-cover" loading="lazy" src="https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Vibrant collection of books on shelves for reading, research, and education.">
+            <div class="absolute inset-0 bg-black/40 flex items-end p-2">
+              <span class="text-xs font-bold" id="cat-culture-text">Culture G.</span>
+            </div>
+          </button>
+          <button onclick="startDuelSetup()" class="cat-card rounded-xl overflow-hidden relative aspect-[4/3] bg-gradient-to-br from-red-600/40 to-orange-600/40">
+            <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+              <span class="text-2xl">⚔️</span>
+              <span class="text-xs font-bold text-center" id="cat-duel-text">Mode Duel</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- DUEL SETUP -->
+    <section id="view-duel-setup" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in">
+      <h2 class="font-bold mt-8 text-2xl" id="duel-setup-title-text">Mode Duel : 2 Joueurs</h2>
+      <div class="w-full space-y-3 mt-4">
+        <div>
+          <label class="block text-sm font-medium mb-1" for="duel-p1-input" id="duel-p1-lbl">Nom Joueur 1</label>
+          <input id="duel-p1-input" type="text" placeholder="Joueur 1" class="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-purple-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1" for="duel-p2-input" id="duel-p2-lbl">Nom Joueur 2</label>
+          <input id="duel-p2-input" type="text" placeholder="Joueur 2" class="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-purple-500">
+        </div>
+      </div>
+      <div id="diff-buttons-duel" class="flex gap-2 mt-3">
+        <button class="diff-btn active px-4 py-2 rounded-lg text-xs font-bold bg-white/10 border border-white/20" data-diff="easy" onclick="setDiffDuel('easy',this)">Facile</button>
+        <button class="diff-btn px-4 py-2 rounded-lg text-xs font-bold bg-white/10 border border-white/20" data-diff="normal" onclick="setDiffDuel('normal',this)">Normal</button>
+        <button class="diff-btn px-4 py-2 rounded-lg text-xs font-bold bg-white/10 border border-white/20" data-diff="expert" onclick="setDiffDuel('expert',this)">Expert</button>
+      </div>
+      <button class="px-8 py-3 rounded-xl font-bold text-lg shadow-lg hover:scale-105 transition-transform mt-4 bg-gradient-to-r from-red-500 to-orange-500" onclick="startDuel()" id="duel-start-btn-text">Commencer</button>
+      <button class="text-white/50 text-sm underline mt-2" onclick="switchView('view-dashboard')">← Annuler</button>
+    </section>
+
+    <!-- CATEGORY SELECT -->
+    <section id="view-categories" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in">
+      <h2 class="font-bold mt-8 text-2xl" id="cat-select-title-text">Choisir une catégorie</h2>
+      <p class="text-sm opacity-70 text-center" id="cat-select-desc-text">Sélectionne un mode et une difficulté</p>
+      <div id="diff-buttons" class="flex gap-2 mt-3">
+        <button class="diff-btn active px-4 py-2 rounded-lg text-xs font-bold bg-white/10 border border-white/20" data-diff="easy" onclick="setDiff('easy',this)">Facile</button>
+        <button class="diff-btn px-4 py-2 rounded-lg text-xs font-bold bg-white/10 border border-white/20" data-diff="normal" onclick="setDiff('normal',this)">Normal</button>
+        <button class="diff-btn px-4 py-2 rounded-lg text-xs font-bold bg-white/10 border border-white/20" data-diff="expert" onclick="setDiff('expert',this)">Expert</button>
+      </div>
+      <label class="flex items-center gap-3 mt-3 cursor-pointer">
+        <input type="checkbox" id="training-toggle" class="w-5 h-5 rounded accent-purple-500">
+        <span class="text-sm font-medium" id="training-label">Mode Entraînement</span>
+      </label>
+      <button class="px-8 py-3 rounded-xl font-bold text-lg shadow-lg hover:scale-105 transition-transform mt-4 bg-gradient-to-r from-indigo-500 to-purple-500" onclick="startQuiz()" id="play-btn-text">Jouer</button>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="view-quiz" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in">
+      <div class="flex justify-between w-full items-center mt-6">
+        <span id="q-counter" class="text-sm font-medium opacity-70">1/10</span>
+        <span id="q-xp" class="text-sm font-bold">0 XP</span>
+        <span id="q-streak" class="text-sm">🔥 0</span>
+      </div>
+      <div id="timer-container" class="w-full h-2 rounded-full overflow-hidden bg-white/20">
+        <div id="timer-bar" class="timer-bar h-full rounded-full bg-emerald-400" style="width:100%"></div>
+      </div>
+      <div id="question-display" class="my-4 text-center">
+        <div id="flag-display" class="flag-emoji select-none"></div>
+        <p id="text-question" class="font-medium text-lg hidden mt-2"></p>
+      </div>
+      <div id="options" class="grid grid-cols-2 gap-3 w-full"></div>
+      <div id="fact-card" class="hidden fact-card w-full bg-white/10 rounded-xl p-4 mt-2 text-sm">
+        <p id="fact-content" class="opacity-80"></p>
+        <button class="mt-3 px-4 py-2 bg-purple-600 rounded-lg text-xs font-bold" onclick="nextAfterFact()" id="fact-next-btn">Suivant →</button>
+      </div>
+    </section>
+
+    <!-- DUEL QUIZ -->
+    <section id="view-duel-quiz" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in">
+      <div class="flex justify-between w-full items-center mt-6">
+        <div class="flex-1">
+          <span id="duel-p1-name" class="text-sm font-bold"></span>
+          <div id="duel-p1-xp" class="text-xs opacity-70">0 XP</div>
+        </div>
+        <span id="duel-q-counter" class="text-sm font-medium opacity-70">1/10</span>
+        <div class="flex-1 text-right">
+          <span id="duel-p2-name" class="text-sm font-bold"></span>
+          <div id="duel-p2-xp" class="text-xs opacity-70">0 XP</div>
+        </div>
+      </div>
+      <div class="w-full h-2 rounded-full overflow-hidden bg-white/20">
+        <div id="duel-timer-bar" class="timer-bar h-full rounded-full bg-emerald-400" style="width:100%"></div>
+      </div>
+      <div class="my-4 text-center">
+        <div id="duel-flag-display" class="flag-emoji select-none"></div>
+        <p id="duel-text-question" class="font-medium text-lg hidden mt-2"></p>
+      </div>
+      <div class="text-center mb-2">
+        <p class="text-white/60 text-xs font-medium">Tour de <span id="duel-turn-name" class="font-bold"></span></p>
+      </div>
+      <div id="duel-options" class="grid grid-cols-2 gap-3 w-full"></div>
+    </section>
+
+    <!-- DUEL RESULTS -->
+    <section id="view-duel-results" class="view flex-col items-center gap-5 max-w-md mx-auto w-full text-center fade-in">
+      <h2 class="font-bold mt-8 text-2xl" id="duel-result-title-text">Résultats du Duel</h2>
+      <div id="duel-winner" class="text-3xl font-bold text-purple-400 mb-2"></div>
+      <div id="duel-result-cards" class="w-full grid grid-cols-2 gap-3"></div>
+      <button class="px-8 py-3 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform bg-gradient-to-r from-indigo-500 to-purple-500" onclick="switchView('view-dashboard')">Retour au menu</button>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="view-results" class="view flex-col items-center gap-5 max-w-md mx-auto w-full text-center fade-in">
+      <h2 class="font-bold mt-8 text-2xl" id="result-title-text">Résultats</h2>
+      <div id="result-stats" class="grid grid-cols-2 gap-3 w-full"></div>
+      <div id="badges-unlocked" class="hidden w-full mt-2">
+        <p class="text-white/60 text-xs mb-2" id="badges-unlocked-label">🏆 Badges débloqués</p>
+        <div id="badges-unlocked-list" class="flex gap-2 justify-center flex-wrap"></div>
+      </div>
+      <button class="px-8 py-3 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform bg-gradient-to-r from-indigo-500 to-purple-500" onclick="startQuiz()" id="replay-btn-text">Rejouer</button>
+      <button class="text-white/50 text-sm underline mt-1" onclick="switchView('view-dashboard')" id="back-home-btn">← Accueil</button>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section id="view-leaderboard" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in">
+      <h2 class="font-bold mt-8 text-2xl" id="lb-title-text">Classement Mondial</h2>
+      <div id="leaderboard-list" class="w-full flex flex-col gap-2"></div>
+    </section>
+
+    <!-- SHOP -->
+    <section id="view-shop" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in">
+      <h2 class="font-bold mt-8 text-2xl">AtlasQuest Premium</h2>
+      <p class="text-sm opacity-70 text-center" id="shop-desc-text">Débloquez l'expérience complète</p>
+      <div class="w-full flex flex-col gap-3 mt-2">
+        <div class="shop-card rounded-xl p-4 border border-white/10 bg-white/5">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="font-bold text-sm" id="shop-w-name">Hebdomadaire</p>
+              <p class="text-xs opacity-60" id="shop-w-price">1,99 €/sem</p>
+            </div>
+            <button class="px-4 py-2 rounded-lg bg-white/10 text-xs font-bold border border-white/20" onclick="showShopMsg()">→</button>
+          </div>
+        </div>
+        <div class="shop-card rounded-xl p-4 border border-purple-500/40 bg-purple-600/10">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="font-bold text-sm" id="shop-m-name">Mensuel</p>
+              <p class="text-xs opacity-60" id="shop-m-price">4,99 €/mois</p>
+            </div>
+            <span class="text-[10px] bg-purple-600 px-2 py-0.5 rounded-full font-bold" id="shop-popular-tag">Populaire</span>
+            <button class="px-4 py-2 rounded-lg bg-purple-600 text-xs font-bold" onclick="showShopMsg()">→</button>
+          </div>
+        </div>
+        <div class="shop-card rounded-xl p-4 border border-yellow-500/40 bg-yellow-500/10">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="font-bold text-sm" id="shop-y-name">Annuel</p>
+              <p class="text-xs opacity-60" id="shop-y-price">24,99 €/an</p>
+            </div>
+            <span class="text-[10px] bg-yellow-500 text-black px-2 py-0.5 rounded-full font-bold">-50%</span>
+            <button class="px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-500 text-black text-xs font-bold" onclick="showShopMsg()">→</button>
+          </div>
+        </div>
+      </div>
+      <p id="shop-demo-msg" class="hidden text-xs text-emerald-400 mt-2 font-medium"></p>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="view-profile" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in">
+      <h2 class="font-bold mt-8 text-2xl" id="profile-title-text">Mon Profil</h2>
+      <div class="w-full grid grid-cols-2 gap-3" id="profile-stats"></div>
+      <h3 class="font-bold w-full mt-4 text-sm" id="cat-stats-title">📊 Statistiques par catégorie</h3>
+      <div id="category-stats-grid" class="w-full grid grid-cols-2 gap-2"></div>
+      <h3 class="font-bold w-full mt-4" id="badges-title">🏆 Badges</h3>
+      <div id="badges-grid" class="grid grid-cols-4 gap-3 w-full"></div>
+    </section>
+
+    <!-- LEGAL -->
+    <section id="view-legal" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-in overflow-y-auto pb-24">
+      <div id="legal-content" class="w-full text-sm leading-relaxed"></div>
+      <button class="text-white/50 text-sm underline mt-6" onclick="switchView('view-dashboard')">← Retour</button>
+    </section>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-[#1a1a2e]/95 backdrop-blur border-t border-white/10 z-40">
+    <div class="max-w-md mx-auto flex justify-around py-2">
+      <button class="tab-btn active flex flex-col items-center gap-0.5 px-2 py-1" onclick="switchView('view-dashboard')" data-tab="view-dashboard">
+        <i data-lucide="home" style="width:18px;height:18px"></i>
+        <span class="text-[9px]" id="tab-home-label">Accueil</span>
+      </button>
+      <button class="tab-btn flex flex-col items-center gap-0.5 px-2 py-1" onclick="switchView('view-categories')" data-tab="view-categories">
+        <i data-lucide="grid-3x3" style="width:18px;height:18px"></i>
+        <span class="text-[9px]" id="tab-cat-label">Catégories</span>
+      </button>
+      <button class="tab-btn flex flex-col items-center gap-0.5 px-2 py-1" onclick="switchView('view-leaderboard')" data-tab="view-leaderboard">
+        <i data-lucide="trophy" style="width:18px;height:18px"></i>
+        <span class="text-[9px]" id="tab-lb-label">Classement</span>
+      </button>
+      <button class="tab-btn flex flex-col items-center gap-0.5 px-2 py-1" onclick="switchView('view-shop')" data-tab="view-shop">
+        <i data-lucide="crown" style="width:18px;height:18px"></i>
+        <span class="text-[9px]" id="tab-shop-label">Premium</span>
+      </button>
+      <button class="tab-btn flex flex-col items-center gap-0.5 px-2 py-1" onclick="switchView('view-profile')" data-tab="view-profile">
+        <i data-lucide="user" style="width:18px;height:18px"></i>
+        <span class="text-[9px]" id="tab-profile-label">Profil</span>
+      </button>
+    </div>
+  </nav>
+
+  <footer class="fixed bottom-12 left-0 right-0 bg-[#1a1a2e]/95 backdrop-blur border-t border-white/10 py-1 px-4 z-30">
+    <div class="max-w-md mx-auto text-center text-white/40 text-[8px]">
+      <div class="flex justify-around gap-2">
+        <button class="hover:text-white/60 transition" onclick="showLegal('about')">À propos</button>
+        <span>•</span>
+        <button class="hover:text-white/60 transition" onclick="showLegal('privacy')">Confidentialité</button>
+        <span>•</span>
+        <button class="hover:text-white/60 transition" onclick="showLegal('terms')">CGU</button>
+      </div>
+      <p class="mt-1">© 2026 AtlasQuest Studio • v20 Standalone</p>
+    </div>
+  </footer>
+
+  <script>
+    // ===== STORAGE =====
+    const STORAGE_KEY = 'atlasquest_data';
+    function loadData() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || null; } catch (e) { return null; } }
+    function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+
+    // ===== AUDIO =====
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(f, type, dur) {
+      try {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type; o.frequency.value = f; g.gain.value = 0.15;
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.stop(audioCtx.currentTime + dur);
+      } catch (e) { }
+    }
+    function playCorrect() { playTone(880, 'sine', 0.15); setTimeout(() => playTone(1100, 'sine', 0.15), 100); }
+    function playWrong() { playTone(220, 'square', 0.3); }
+
+    // ===== TRANSLATIONS =====
+    const T = {
+      fr: { subtitle: 'Explore le monde en jouant 🌍', play: 'Jouer', replay: 'Rejouer', easy: 'Facile', normal: 'Normal', expert: 'Expert', xpEarned: 'XP gagnés', correct: 'Bonnes réponses', maxStreak: 'Série max', accuracy: 'Précision', games: 'Parties', streak: 'Série', flags: 'Drapeaux', capitals: 'Capitales', monuments: 'Monuments', history: 'Histoire', continents: 'Continents', culture: 'Culture G.', daily: 'DÉFI DU JOUR', dailyTitle: '15 questions • Mode Expert', catTitle: 'Choisir une catégorie', catDesc: 'Sélectionne un mode et une difficulté', home: 'Accueil', categories: 'Catégories', profile: 'Profil', profileTitle: 'Mon Profil', results: 'Résultats', backHome: '← Accueil', totalXp: 'XP Total', totalGames: 'Parties jouées', bestStreak: 'Meilleure série', avgAccuracy: 'Précision moy.', catHeading: 'Catégories', level: 'Niveau', badges: 'Badges', badgesUnlocked: '🏆 Badges débloqués', rank: 'Rang', leaderboard: 'Classement Mondial', shop: 'Premium', shopDesc: 'Débloquez l\'expérience complète', weekly: 'Hebdomadaire', monthly: 'Mensuel', yearly: 'Annuel', weeklyPrice: '1,99 €/sem', monthlyPrice: '4,99 €/mois', yearlyPrice: '24,99 €/an', popular: 'Populaire', training: 'Mode Entraînement', next: 'Suivant →', shopMsg: 'Demo — Bientôt disponible', onboard1: 'Bienvenue sur AtlasQuest !', onboard1d: 'Teste tes connaissances en géographie avec des quiz fun et interactifs.', onboard2: 'Apprends en jouant', onboard2d: '6 catégories, 3 niveaux de difficulté et un mode entraînement.', onboard3: 'Gagne des badges', onboard3d: 'Monte en niveau, débloque des récompenses et défie le monde !', onboardBtn: 'Suivant', onboardStart: 'C\'est parti !', you: 'Toi', duel: 'Mode Duel', duelSetupTitle: 'Mode Duel : 2 Joueurs', duelP1: 'Nom Joueur 1', duelP2: 'Nom Joueur 2', duelStart: 'Commencer', duelResult: 'Résultats du Duel' },
+      en: { subtitle: 'Explore the world by playing 🌍', play: 'Play', replay: 'Play Again', easy: 'Easy', normal: 'Normal', expert: 'Expert', xpEarned: 'XP earned', correct: 'Correct', maxStreak: 'Max streak', accuracy: 'Accuracy', games: 'Games', streak: 'Streak', flags: 'Flags', capitals: 'Capitals', monuments: 'Monuments', history: 'History', continents: 'Continents', culture: 'General', daily: 'DAILY CHALLENGE', dailyTitle: '15 questions • Expert Mode', catTitle: 'Choose a category', catDesc: 'Select a mode and difficulty', home: 'Home', categories: 'Categories', profile: 'Profile', profileTitle: 'My Profile', results: 'Results', backHome: '← Home', totalXp: 'Total XP', totalGames: 'Games played', bestStreak: 'Best streak', avgAccuracy: 'Avg. accuracy', catHeading: 'Categories', level: 'Level', badges: 'Badges', badgesUnlocked: '🏆 Badges unlocked', rank: 'Rank', leaderboard: 'World Leaderboard', shop: 'Premium', shopDesc: 'Unlock the full experience', weekly: 'Weekly', monthly: 'Monthly', yearly: 'Yearly', weeklyPrice: '$1.99/wk', monthlyPrice: '$4.99/mo', yearlyPrice: '$24.99/yr', popular: 'Popular', training: 'Training Mode', next: 'Next →', shopMsg: 'Demo — Coming Soon', onboard1: 'Welcome to AtlasQuest!', onboard1d: 'Test your geography knowledge with fun interactive quizzes.', onboard2: 'Learn by playing', onboard2d: '6 categories, 3 difficulty levels and a training mode.', onboard3: 'Earn badges', onboard3d: 'Level up, unlock rewards and challenge the world!', onboardBtn: 'Next', onboardStart: 'Let\'s go!', you: 'You', duel: 'Duel Mode', duelSetupTitle: 'Duel Mode: 2 Players', duelP1: 'Player 1 Name', duelP2: 'Player 2 Name', duelStart: 'Start', duelResult: 'Duel Results' },
+      ar: { subtitle: 'استكشف العالم باللعب 🌍', play: 'إلعب', replay: 'إعادة', easy: 'سهل', normal: 'عادي', expert: 'خبير', xpEarned: 'نقاط', correct: 'إجابات صحيحة', maxStreak: 'أفضل سلسلة', accuracy: 'الدقة', games: 'ألعاب', streak: 'سلسلة', flags: 'أعلام', capitals: 'عواصم', monuments: 'معالم', history: 'تاريخ', continents: 'قارات', culture: 'ثقافة', daily: 'تحدي اليوم', dailyTitle: '15 سؤال • وضع خبير', catTitle: 'اختر فئة', catDesc: 'حدد الوضع والصعوبة', home: 'الرئيسية', categories: 'الفئات', profile: 'الملف', profileTitle: 'ملفي', results: 'النتائج', backHome: '← الرئيسية', totalXp: 'مجموع النقاط', totalGames: 'ألعاب', bestStreak: 'أفضل سلسلة', avgAccuracy: 'متوسط الدقة', catHeading: 'الفئات', level: 'المستوى', badges: 'الشارات', badgesUnlocked: '🏆 شارات جديدة', rank: 'الرتبة', leaderboard: 'الترتيب', shop: 'بريميوم', shopDesc: 'افتح التجربة الكاملة', weekly: 'أسبوعي', monthly: 'شهري', yearly: 'سنوي', weeklyPrice: '1.99$/أسبوع', monthlyPrice: '4.99$/شهر', yearlyPrice: '24.99$/سنة', popular: 'شائع', training: 'وضع التدريب', next: 'التالي →', shopMsg: 'عرض — قريباً', onboard1: 'مرحباً في AtlasQuest!', onboard1d: 'اختبر معلوماتك الجغرافية بطريقة ممتعة.', onboard2: 'تعلم بالّعب', onboard2d: '6 فئات، 3 مستويات صعوبة ووضع تدريب.', onboard3: 'اربح شارات', onboard3d: 'ارتقِ بمستواك وتحدَّ العالم!', onboardBtn: 'التالي', onboardStart: 'هيا بنا!', you: 'أنت', duel: 'وضع الدويل', duelSetupTitle: 'وضع الدويل: لاعبان', duelP1: 'اسم اللاعب 1', duelP2: 'اسم اللاعب 2', duelStart: 'ابدأ', duelResult: 'نتائج الدويل' }
+    };
+
+    // ===== DATA =====
+    const FLAGS = [
+      { flag: '🇫🇷', fr: 'France', en: 'France', ar: 'فرنسا', capFr: 'Paris', capEn: 'Paris', capAr: 'باريس', continent: 'Europe' },
+      { flag: '🇩🇿', fr: 'Algérie', en: 'Algeria', ar: 'الجزائر', capFr: 'Alger', capEn: 'Algiers', capAr: 'الجزائر العاصمة', continent: 'Africa' },
+      { flag: '🇧🇷', fr: 'Brésil', en: 'Brazil', ar: 'البرازيل', capFr: 'Brasília', capEn: 'Brasília', capAr: 'برازيليا', continent: 'SouthAmerica' },
+      { flag: '🇯🇵', fr: 'Japon', en: 'Japan', ar: 'اليابان', capFr: 'Tokyo', capEn: 'Tokyo', capAr: 'طوكيو', continent: 'Asia' },
+      { flag: '🇩🇪', fr: 'Allemagne', en: 'Germany', ar: 'ألمانيا', capFr: 'Berlin', capEn: 'Berlin', capAr: 'برلين', continent: 'Europe' },
+      { flag: '🇮🇹', fr: 'Italie', en: 'Italy', ar: 'إيطاليا', capFr: 'Rome', capEn: 'Rome', capAr: 'روما', continent: 'Europe' },
+      { flag: '🇪🇸', fr: 'Espagne', en: 'Spain', ar: 'إسبانيا', capFr: 'Madrid', capEn: 'Madrid', capAr: 'مدريد', continent: 'Europe' },
+      { flag: '🇬🇧', fr: 'Royaume-Uni', en: 'United Kingdom', ar: 'المملكة المتحدة', capFr: 'Londres', capEn: 'London', capAr: 'لندن', continent: 'Europe' },
+      { flag: '🇺🇸', fr: 'États-Unis', en: 'United States', ar: 'الولايات المتحدة', capFr: 'Washington', capEn: 'Washington D.C.', capAr: 'واشنطن', continent: 'NorthAmerica' },
+      { flag: '🇨🇦', fr: 'Canada', en: 'Canada', ar: 'كندا', capFr: 'Ottawa', capEn: 'Ottawa', capAr: 'أوتاوا', continent: 'NorthAmerica' },
+      { flag: '🇲🇦', fr: 'Maroc', en: 'Morocco', ar: 'المغرب', capFr: 'Rabat', capEn: 'Rabat', capAr: 'الرباط', continent: 'Africa' },
+      { flag: '🇹🇳', fr: 'Tunisie', en: 'Tunisia', ar: 'تونس', capFr: 'Tunis', capEn: 'Tunis', capAr: 'تونس', continent: 'Africa' },
+      { flag: '🇪🇬', fr: 'Égypte', en: 'Egypt', ar: 'مصر', capFr: 'Le Caire', capEn: 'Cairo', capAr: 'القاهرة', continent: 'Africa' },
+      { flag: '🇹🇷', fr: 'Turquie', en: 'Turkey', ar: 'تركيا', capFr: 'Ankara', capEn: 'Ankara', capAr: 'أنقرة', continent: 'Asia' },
+      { flag: '🇷🇺', fr: 'Russie', en: 'Russia', ar: 'روسيا', capFr: 'Moscou', capEn: 'Moscow', capAr: 'موسكو', continent: 'Asia' },
+      { flag: '🇨🇳', fr: 'Chine', en: 'China', ar: 'الصين', capFr: 'Pékin', capEn: 'Beijing', capAr: 'بكين', continent: 'Asia' },
+      { flag: '🇮🇳', fr: 'Inde', en: 'India', ar: 'الهند', capFr: 'New Delhi', capEn: 'New Delhi', capAr: 'نيودلهي', continent: 'Asia' },
+      { flag: '🇰🇷', fr: 'Corée du Sud', en: 'South Korea', ar: 'كوريا الجنوبية', capFr: 'Séoul', capEn: 'Seoul', capAr: 'سيول', continent: 'Asia' },
+      { flag: '🇲🇽', fr: 'Mexique', en: 'Mexico', ar: 'المكسيك', capFr: 'Mexico', capEn: 'Mexico City', capAr: 'مكسيكو', continent: 'NorthAmerica' },
+      { flag: '🇦🇷', fr: 'Argentine', en: 'Argentina', ar: 'الأرجنتين', capFr: 'Buenos Aires', capEn: 'Buenos Aires', capAr: 'بوينس آيرس', continent: 'SouthAmerica' }
+    ];
+
+    const MONUMENTS = [
+      { fr: 'Tour Eiffel', en: 'Eiffel Tower', ar: 'برج إيفل', answerFr: 'France', answerEn: 'France', answerAr: 'فرنسا' },
+      { fr: 'Colisée', en: 'Colosseum', ar: 'الكولوسيوم', answerFr: 'Italie', answerEn: 'Italy', answerAr: 'إيطاليا' },
+      { fr: 'Taj Mahal', en: 'Taj Mahal', ar: 'تاج محل', answerFr: 'Inde', answerEn: 'India', answerAr: 'الهند' },
+      { fr: 'Grande Muraille', en: 'Great Wall', ar: 'سور الصين', answerFr: 'Chine', answerEn: 'China', answerAr: 'الصين' },
+      { fr: 'Statue de la Liberté', en: 'Statue of Liberty', ar: 'تمثال الحرية', answerFr: 'États-Unis', answerEn: 'United States', answerAr: 'الولايات المتحدة' }
+    ];
+
+    const HISTORY = [
+      { fr: 'Qui a découvert l\'Amérique en 1492 ?', en: 'Who discovered America in 1492?', ar: 'من اكتشف أمريكا عام 1492؟', answer: { fr: 'Christophe Colomb', en: 'Christopher Columbus', ar: 'كريستوف كولومبوس' }, wrong: [{ fr: 'Vasco de Gama', en: 'Vasco da Gama', ar: 'فاسكو دا غاما' }, { fr: 'Marco Polo', en: 'Marco Polo', ar: 'ماركو بولو' }, { fr: 'Magellan', en: 'Magellan', ar: 'ماجلان' }] },
+      { fr: 'En quelle année la Révolution française a-t-elle commencé ?', en: 'What year did the French Revolution begin?', ar: 'في أي عام بدأت الثورة الفرنسية؟', answer: { fr: '1789', en: '1789', ar: '1789' }, wrong: [{ fr: '1776', en: '1776', ar: '1776' }, { fr: '1804', en: '1804', ar: '1804' }, { fr: '1815', en: '1815', ar: '1815' }] },
+      { fr: 'Qui a peint la Joconde ?', en: 'Who painted the Mona Lisa?', ar: 'من رسم الموناليزا؟', answer: { fr: 'Léonard de Vinci', en: 'Leonardo da Vinci', ar: 'ليوناردو دا فينشي' }, wrong: [{ fr: 'Michel-Ange', en: 'Michelangelo', ar: 'مايكل أنجلو' }, { fr: 'Raphaël', en: 'Raphael', ar: 'رافاييل' }, { fr: 'Picasso', en: 'Picasso', ar: 'بيكاسو' }] }
+    ];
+
+    const BADGES_DEF = [
+      { id: 'first_quiz', emoji: '🎮', fr: 'Premier quiz', en: 'First Quiz', ar: 'أول اختبار', check: d => d.quizzes_completed >= 1 },
+      { id: 'streak_5', emoji: '🔥', fr: 'Série de 5', en: '5 Streak', ar: 'سلسلة 5', check: d => d.best_streak >= 5 },
+      { id: 'xp_500', emoji: '⭐', fr: '500 XP', en: '500 XP', ar: '500 نقطة', check: d => d.total_xp >= 500 }
+    ];
+
+    const FAKE_PLAYERS = [{ name: 'GeoMaster42', xp: 12500 }, { name: 'WorldTraveler', xp: 9800 }, { name: 'MapWizard', xp: 8200 }, { name: 'AtlasKing', xp: 7100 }, { name: 'QuizNinja', xp: 6400 }];
+    const DIFF = { easy: { time: 20, count: 5 }, normal: { time: 15, count: 10 }, expert: { time: 10, count: 15 } };
+    const contNameMap = { fr: { Europe: 'Europe', Asia: 'Asie', Africa: 'Afrique', SouthAmerica: 'Amérique du Sud', NorthAmerica: 'Amérique du Nord', Oceania: 'Océanie' }, en: { Europe: 'Europe', Asia: 'Asia', Africa: 'Africa', SouthAmerica: 'South America', NorthAmerica: 'North America', Oceania: 'Oceania' }, ar: { Europe: 'أوروبا', Asia: 'آسيا', Africa: 'أفريقيا', SouthAmerica: 'أمريكا الجنوبية', NorthAmerica: 'أمريكا الشمالية', Oceania: 'أوقيانوسيا' } };
+
+    let lang = 'fr', difficulty = 'easy', category = 'flags';
+    let userData = loadData(), questions = [], current = 0, score = 0, streak = 0, maxStreak = 0, correctCount = 0, timer = null, totalQ = 10;
+    let isDaily = false, isTraining = false, onboardStep = 0;
+    let duelPlayers = { p1: '', p2: '' }, duelScores = { p1: 0, p2: 0 }, duelCurrent = 0;
+
+    function t(k) { return T[lang][k] || T.fr[k]; }
+    function getName(item) { return item[lang] || item.fr; }
+    function getLevel(xp) { return Math.floor(Math.sqrt((xp || 0) / 50)) + 1; }
+    function xpForLevel(lvl) { return (lvl - 1) * (lvl - 1) * 50; }
+    function getRank(xp) { const lvl = getLevel(xp); if (lvl < 3) return { fr: 'Explorateur', en: 'Explorer', ar: 'مستكشف', emoji: '🗺️' }; if (lvl < 7) return { fr: 'Voyageur', en: 'Traveler', ar: 'مسافر', emoji: '✈️' }; if (lvl < 12) return { fr: 'Cartographe', en: 'Cartographer', ar: 'رسام خرائط', emoji: '🧭' }; return { fr: 'Maître du monde', en: 'World Master', ar: 'سيد العالم', emoji: '👑' }; }
+    function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+    function setLang(l) {
+      lang = l;
+      document.documentElement.lang = l;
+      document.body.dir = l === 'ar' ? 'rtl' : 'ltr';
+      document.querySelectorAll('#lang-bar .lang-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#lang-bar .lang-btn')[l === 'fr' ? 0 : l === 'en' ? 1 : 2].classList.add('active');
+      if (userData) { userData.preferred_language = l; saveData(userData); }
+      applyTranslations();
+    }
+
+    function applyTranslations() {
+      const d = document.querySelectorAll('#diff-buttons .diff-btn');
+      if (d[0]) { d[0].textContent = t('easy'); d[1].textContent = t('normal'); d[2].textContent = t('expert'); }
+      const d2 = document.querySelectorAll('#diff-buttons-duel .diff-btn');
+      if (d2[0]) { d2[0].textContent = t('easy'); d2[1].textContent = t('normal'); d2[2].textContent = t('expert'); }
+      document.getElementById('tab-home-label') && (document.getElementById('tab-home-label').textContent = t('home'));
+      document.getElementById('tab-cat-label') && (document.getElementById('tab-cat-label').textContent = t('categories'));
+      document.getElementById('tab-lb-label') && (document.getElementById('tab-lb-label').textContent = t('leaderboard'));
+      document.getElementById('tab-shop-label') && (document.getElementById('tab-shop-label').textContent = t('shop'));
+      document.getElementById('tab-profile-label') && (document.getElementById('tab-profile-label').textContent = t('profile'));
+      document.getElementById('back-home-btn') && (document.getElementById('back-home-btn').textContent = t('backHome'));
+      document.getElementById('dash-streak-label') && (document.getElementById('dash-streak-label').textContent = t('streak'));
+      document.getElementById('dash-games-label') && (document.getElementById('dash-games-label').textContent = t('games'));
+      document.getElementById('training-label') && (document.getElementById('training-label').textContent = t('training'));
+      document.getElementById('fact-next-btn') && (document.getElementById('fact-next-btn').textContent = t('next'));
+      document.getElementById('subtitle-text') && (document.getElementById('subtitle-text').textContent = t('subtitle'));
+      document.getElementById('cat-heading-text') && (document.getElementById('cat-heading-text').textContent = t('catHeading'));
+      document.getElementById('daily-label-text') && (document.getElementById('daily-label-text').textContent = t('daily'));
+      document.getElementById('daily-title-text') && (document.getElementById('daily-title-text').textContent = t('dailyTitle'));
+      document.getElementById('cat-flags-text') && (document.getElementById('cat-flags-text').textContent = t('flags'));
+      document.getElementById('cat-capitals-text') && (document.getElementById('cat-capitals-text').textContent = t('capitals'));
+      document.getElementById('cat-monuments-text') && (document.getElementById('cat-monuments-text').textContent = t('monuments'));
+      document.getElementById('cat-history-text') && (document.getElementById('cat-history-text').textContent = t('history'));
+      document.getElementById('cat-continents-text') && (document.getElementById('cat-continents-text').textContent = t('continents'));
+      document.getElementById('cat-culture-text') && (document.getElementById('cat-culture-text').textContent = t('culture'));
+      document.getElementById('cat-duel-text') && (document.getElementById('cat-duel-text').textContent = t('duel'));
+      document.getElementById('cat-select-title-text') && (document.getElementById('cat-select-title-text').textContent = t('catTitle'));
+      document.getElementById('cat-select-desc-text') && (document.getElementById('cat-select-desc-text').textContent = t('catDesc'));
+      document.getElementById('play-btn-text') && (document.getElementById('play-btn-text').textContent = t('play'));
+      document.getElementById('replay-btn-text') && (document.getElementById('replay-btn-text').textContent = t('replay'));
+      document.getElementById('result-title-text') && (document.getElementById('result-title-text').textContent = t('results'));
+      document.getElementById('lb-title-text') && (document.getElementById('lb-title-text').textContent = t('leaderboard'));
+      document.getElementById('profile-title-text') && (document.getElementById('profile-title-text').textContent = t('profileTitle'));
+      document.getElementById('badges-title') && (document.getElementById('badges-title').innerHTML = '🏆 ' + t('badges'));
+      document.getElementById('badges-unlocked-label') && (document.getElementById('badges-unlocked-label').textContent = t('badgesUnlocked'));
+      document.getElementById('shop-popular-tag') && (document.getElementById('shop-popular-tag').textContent = t('popular'));
+      document.getElementById('shop-desc-text') && (document.getElementById('shop-desc-text').textContent = t('shopDesc'));
+      document.getElementById('shop-w-name') && (document.getElementById('shop-w-name').textContent = t('weekly'));
+      document.getElementById('shop-m-name') && (document.getElementById('shop-m-name').textContent = t('monthly'));
+      document.getElementById('shop-y-name') && (document.getElementById('shop-y-name').textContent = t('yearly'));
+      document.getElementById('shop-w-price') && (document.getElementById('shop-w-price').textContent = t('weeklyPrice'));
+      document.getElementById('shop-m-price') && (document.getElementById('shop-m-price').textContent = t('monthlyPrice'));
+      document.getElementById('shop-y-price') && (document.getElementById('shop-y-price').textContent = t('yearlyPrice'));
+      document.getElementById('onboard-t1') && (document.getElementById('onboard-t1').textContent = t('onboard1'));
+      document.getElementById('onboard-d1') && (document.getElementById('onboard-d1').textContent = t('onboard1d'));
+      document.getElementById('onboard-t2') && (document.getElementById('onboard-t2').textContent = t('onboard2'));
+      document.getElementById('onboard-d2') && (document.getElementById('onboard-d2').textContent = t('onboard2d'));
+      document.getElementById('onboard-t3') && (document.getElementById('onboard-t3').textContent = t('onboard3'));
+      document.getElementById('onboard-d3') && (document.getElementById('onboard-d3').textContent = t('onboard3d'));
+      document.getElementById('onboard-btn') && (document.getElementById('onboard-btn').textContent = onboardStep === 2 ? t('onboardStart') : t('onboardBtn'));
+      document.getElementById('duel-setup-title-text') && (document.getElementById('duel-setup-title-text').textContent = t('duelSetupTitle'));
+      document.getElementById('duel-p1-lbl') && (document.getElementById('duel-p1-lbl').textContent = t('duelP1'));
+      document.getElementById('duel-p2-lbl') && (document.getElementById('duel-p2-lbl').textContent = t('duelP2'));
+      document.getElementById('duel-start-btn-text') && (document.getElementById('duel-start-btn-text').textContent = t('duelStart'));
+      document.getElementById('duel-result-title-text') && (document.getElementById('duel-result-title-text').textContent = t('duelResult'));
+      updateStatsDisplay(); updateProfileView(); updateDailyStatus(); renderLeaderboard();
+    }
+
+    function setDiff(d, btn) { difficulty = d; document.querySelectorAll('#diff-buttons .diff-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+    function setDiffDuel(d, btn) { difficulty = d; document.querySelectorAll('#diff-buttons-duel .diff-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+
+    function switchView(id) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+      if (id === 'view-leaderboard') renderLeaderboard();
+    }
+
+    function selectCategory(cat) { category = cat; switchView('view-categories'); }
+
+    function nextOnboard() {
+      const slides = document.querySelectorAll('.onboard-slide');
+      const dots = document.querySelectorAll('.onboard-dot');
+      slides[onboardStep].classList.add('hidden');
+      dots[onboardStep].classList.remove('active');
+      onboardStep++;
+      if (onboardStep >= 3) { finishOnboard(); return; }
+      slides[onboardStep].classList.remove('hidden');
+      dots[onboardStep].classList.add('active');
+      document.getElementById('onboard-btn').textContent = onboardStep === 2 ? t('onboardStart') : t('onboardBtn');
+    }
+
+    function finishOnboard() {
+      userData = { total_xp: 0, quizzes_completed: 0, correct_answers: 0, total_answers: 0, current_streak: 0, best_streak: 0, last_played: '', preferred_language: lang, badges_earned: '', level: 1, daily_completed_date: '', onboarding_done: true, daily_bonus_date: '', category_stats: '{}', wheel_spins_today: 0, quiz_daily_count: 0 };
+      saveData(userData);
+      switchView('view-dashboard');
+      updateStatsDisplay();
+      updateProfileView();
+    }
+
+    function updateStatsDisplay() {
+      const xp = userData ? userData.total_xp : 0;
+      const s = userData ? userData.best_streak : 0;
+      const g = userData ? userData.quizzes_completed : 0;
+      document.getElementById('dash-xp').textContent = xp;
+      document.getElementById('dash-streak').innerHTML = '🔥 ' + s;
+      document.getElementById('dash-games').textContent = g;
+      const lvl = getLevel(xp);
+      const xpCur = xp - xpForLevel(lvl);
+      const xpNext = xpForLevel(lvl + 1) - xpForLevel(lvl);
+      document.getElementById('level-label').innerHTML = t('level') + ' ' + lvl;
+      document.getElementById('level-xp').textContent = xpCur + ' / ' + xpNext + ' XP';
+      document.getElementById('level-bar').style.width = Math.min(100, Math.round(xpCur * 100 / xpNext)) + '%';
+    }
+
+    function isDailyDone() { return userData && userData.daily_completed_date === new Date().toISOString().slice(0, 10); }
+    function updateDailyStatus() { document.getElementById('daily-done-overlay') && document.getElementById('daily-done-overlay').classList.toggle('hidden', !isDailyDone()); }
+
+    function startDaily() { if (isDailyDone()) return; category = 'flags'; difficulty = 'expert'; startQuiz(true); }
+
+    function showShopMsg() { const msg = document.getElementById('shop-demo-msg'); msg.textContent = t('shopMsg'); msg.classList.remove('hidden'); setTimeout(() => msg.classList.add('hidden'), 3000); }
+
+    function generateQuestions() {
+      totalQ = DIFF[difficulty].count;
+      if (category === 'culture') {
+        let all = []; ['flags', 'capitals', 'monuments', 'history', 'continents'].forEach(c => all.push(...generateForCat(c)));
+        return shuffle(all).slice(0, totalQ);
+      }
+      return generateForCat(category);
+    }
+
+    function generateForCat(cat) {
+      const count = DIFF[difficulty].count;
+      if (cat === 'flags') {
+        return shuffle([...FLAGS]).slice(0, count).map(q => {
+          let opts = [getName(q)];
+          const others = shuffle(FLAGS.filter(f => f !== q));
+          opts.push(getName(others[0]), getName(others[1]), getName(others[2]));
+          return { display: q.flag, type: 'flag', answer: getName(q), options: shuffle(opts), meta: q };
+        });
+      }
+      if (cat === 'capitals') {
+        return shuffle([...FLAGS]).slice(0, count).map(q => {
+          const ck = 'cap' + lang.charAt(0).toUpperCase() + lang.slice(1);
+          const cap = q[ck] || q.capFr;
+          let opts = [cap];
+          const others = shuffle(FLAGS.filter(f => f !== q));
+          opts.push(others[0][ck] || others[0].capFr, others[1][ck] || others[1].capFr, others[2][ck] || others[2].capFr);
+          return { display: getName(q), type: 'text', answer: cap, options: shuffle(opts), meta: q };
+        });
+      }
+      if (cat === 'monuments') {
+        return shuffle([...MONUMENTS]).slice(0, Math.min(count, MONUMENTS.length)).map(q => {
+          const ak = 'answer' + lang.charAt(0).toUpperCase() + lang.slice(1);
+          const ans = q[ak] || q.answerFr;
+          let opts = [ans];
+          const others = shuffle(MONUMENTS.filter(m => m !== q));
+          opts.push(others[0][ak] || others[0].answerFr, others[1][ak] || others[1].answerFr, others[2][ak] || others[2].answerFr);
+          return { display: q[lang] || q.fr, type: 'text', answer: ans, options: shuffle(opts), meta: q };
+        });
+      }
+      if (cat === 'continents') {
+        const locMap = contNameMap[lang] || contNameMap.fr;
+        return shuffle([...FLAGS]).slice(0, count).map(q => {
+          const correct = q.continent;
+          const conts = ['Europe', 'Asia', 'Africa', 'SouthAmerica', 'NorthAmerica', 'Oceania'];
+          const others = shuffle(conts.filter(c => c !== correct));
+          let opts = [correct, ...others.slice(0, 3)];
+          return { display: getName(q), type: 'text', answer: locMap[correct], options: shuffle(opts.map(c => locMap[c])), meta: q };
+        });
+      }
+      return shuffle([...HISTORY]).slice(0, Math.min(count, HISTORY.length)).map(q => {
+        const ans = q.answer[lang] || q.answer.fr;
+        return { display: q[lang] || q.fr, type: 'text', answer: ans, options: shuffle([ans, ...q.wrong.map(w => w[lang] || w.fr)]), meta: q };
+      });
+    }
+
+    function startQuiz(daily = false) {
+      isDaily = daily;
+      isTraining = document.getElementById('training-toggle') ? document.getElementById('training-toggle').checked && !daily : false;
+      questions = generateQuestions();
+      current = 0; score = 0; streak = 0; maxStreak = 0; correctCount = 0;
+      document.getElementById('fact-card').classList.add('hidden');
+      const timerContainer = document.getElementById('timer-container');
+      if (timerContainer) timerContainer.classList.toggle('hidden', isTraining);
+      switchView('view-quiz');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      document.getElementById('fact-card').classList.add('hidden');
+      const q = questions[current];
+      const flagEl = document.getElementById('flag-display');
+      const textEl = document.getElementById('text-question');
+      if (q.type === 'flag') {
+        flagEl.textContent = q.display; flagEl.classList.remove('hidden'); textEl.classList.add('hidden');
+      } else {
+        flagEl.classList.add('hidden'); textEl.classList.remove('hidden'); textEl.textContent = q.display;
+      }
+      document.getElementById('q-counter').textContent = (current + 1) + '/' + totalQ;
+      document.getElementById('q-xp').textContent = score + ' XP';
+      document.getElementById('q-streak').innerHTML = '🔥 ' + streak;
+      const opts = document.getElementById('options');
+      opts.innerHTML = '';
+      q.options.forEach(o => {
+        const btn = document.createElement('button');
+        btn.textContent = o;
+        btn.className = 'py-3 px-4 rounded-xl font-medium text-sm bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all';
+        btn.onclick = () => selectAnswer(o, btn);
+        opts.appendChild(btn);
+      });
+      if (!isTraining) startTimer();
+    }
+
+    function startTimer() {
+      const time = DIFF[difficulty].time;
+      let left = time;
+      const bar = document.getElementById('timer-bar');
+      bar.style.width = '100%';
+      bar.style.transitionDuration = '0s';
+      requestAnimationFrame(() => { bar.style.transitionDuration = time + 's'; bar.style.width = '0%'; });
+      clearInterval(timer);
+      timer = setInterval(() => {
+        left--;
+        if (left <= 0) { clearInterval(timer); selectAnswer(null, null); }
+      }, 1000);
+    }
+
+    function selectAnswer(answer, btn) {
+      clearInterval(timer);
+      const q = questions[current];
+      document.getElementById('options').querySelectorAll('button').forEach(b => {
+        b.disabled = true;
+        if (b.textContent === q.answer) b.classList.add('!bg-emerald-500/40', 'correct-pulse');
+      });
+      if (answer === q.answer) {
+        score += 10; streak++; correctCount++; playCorrect();
+        if (btn) btn.classList.add('!bg-emerald-500/40', 'correct-pulse');
+        if (streak >= 5) triggerConfetti();
+      } else {
+        if (streak > maxStreak) maxStreak = streak;
+        streak = 0; playWrong();
+        if (btn) btn.classList.add('!bg-red-500/40', 'wrong-pulse');
+      }
+      if (isTraining) { showFact(q); return; }
+      setTimeout(() => { current++; current < totalQ ? showQuestion() : endQuiz(); }, 800);
+    }
+
+    function showFact(q) {
+      const card = document.getElementById('fact-card');
+      const content = document.getElementById('fact-content');
+      let fact = '';
+      if (q.meta && q.meta.flag) {
+        const ck = 'cap' + lang.charAt(0).toUpperCase() + lang.slice(1);
+        const locMap = contNameMap[lang] || contNameMap.fr;
+        fact = q.meta.flag + ' ' + getName(q.meta) + ' — ' + (lang === 'fr' ? 'Capitale' : lang === 'en' ? 'Capital' : 'العاصمة') + ': ' + (q.meta[ck] || q.meta.capFr) + ' | ' + locMap[q.meta.continent];
+      } else { fact = '✓ ' + q.answer; }
+      content.textContent = fact;
+      card.classList.remove('hidden');
+    }
+
+    function nextAfterFact() {
+      document.getElementById('fact-card').classList.add('hidden');
+      current++;
+      current < totalQ ? showQuestion() : endQuiz();
+    }
+
+    function endQuiz() {
+      if (streak > maxStreak) maxStreak = streak;
+      switchView('view-results');
+      const pct = Math.round(correctCount * 100 / totalQ);
+      document.getElementById('result-stats').innerHTML = `<div class="bg-white/10 rounded-xl p-4"><div class="text-2xl font-bold">${score}</div><div class="text-xs opacity-60">${t('xpEarned')}</div></div><div class="bg-white/10 rounded-xl p-4"><div class="text-2xl font-bold">${correctCount}/${totalQ}</div><div class="text-xs opacity-60">${t('correct')}</div></div><div class="bg-white/10 rounded-xl p-4"><div class="text-2xl font-bold">🔥 ${maxStreak}</div><div class="text-xs opacity-60">${t('maxStreak')}</div></div><div class="bg-white/10 rounded-xl p-4"><div class="text-2xl font-bold">${pct}%</div><div class="text-xs opacity-60">${t('accuracy')}</div></div>`;
+      if (!userData) userData = { total_xp: 0, quizzes_completed: 0, correct_answers: 0, total_answers: 0, current_streak: 0, best_streak: 0, last_played: '', preferred_language: lang, badges_earned: '', level: 1, daily_completed_date: '', onboarding_done: true, daily_bonus_date: '', category_stats: '{}', wheel_spins_today: 0, quiz_daily_count: 0 };
+      userData.total_xp += Math.min(score, 200);
+      userData.quizzes_completed++;
+      userData.correct_answers += correctCount;
+      userData.total_answers += totalQ;
+      userData.best_streak = Math.max(userData.best_streak, maxStreak);
+      userData.last_played = new Date().toISOString();
+      userData.level = getLevel(userData.total_xp);
+      if (isDaily) userData.daily_completed_date = new Date().toISOString().slice(0, 10);
+      const stats = JSON.parse(userData.category_stats || '{}');
+      if (!stats[category]) stats[category] = { q: 0, c: 0 };
+      stats[category].q += totalQ;
+      stats[category].c += correctCount;
+      userData.category_stats = JSON.stringify(stats);
+      const earned = userData.badges_earned ? userData.badges_earned.split(',').filter(Boolean) : [];
+      const newB = [];
+      BADGES_DEF.forEach(b => { if (!earned.includes(b.id) && b.check(userData, pct)) { earned.push(b.id); newB.push(b); } });
+      userData.badges_earned = earned.join(',');
+      saveData(userData);
+      const bs = document.getElementById('badges-unlocked');
+      const bl = document.getElementById('badges-unlocked-list');
+      if (newB.length) { bs.classList.remove('hidden'); bl.innerHTML = newB.map(b => '<span class="text-3xl badge-item">' + b.emoji + '</span>').join(''); }
+      else { bs.classList.add('hidden'); }
+      isDaily = false;
+      updateStatsDisplay();
+      updateDailyStatus();
+    }
+
+    // DUEL functions
+    function startDuelSetup() { switchView('view-duel-setup'); document.getElementById('duel-p1-input').value = ''; document.getElementById('duel-p2-input').value = ''; }
+    function startDuel() {
+      const p1 = document.getElementById('duel-p1-input').value.trim() || 'Joueur 1';
+      const p2 = document.getElementById('duel-p2-input').value.trim() || 'Joueur 2';
+      duelPlayers = { p1, p2 };
+      duelScores = { p1: 0, p2: 0 };
+      duelCurrent = 0;
+      questions = generateQuestions();
+      current = 0;
+      switchView('view-duel-quiz');
+      showDuelQuestion();
+    }
+    function showDuelQuestion() {
+      const q = questions[current];
+      document.getElementById('duel-p1-name').textContent = duelPlayers.p1;
+      document.getElementById('duel-p2-name').textContent = duelPlayers.p2;
+      document.getElementById('duel-p1-xp').textContent = duelScores.p1 + ' XP';
+      document.getElementById('duel-p2-xp').textContent = duelScores.p2 + ' XP';
+      document.getElementById('duel-turn-name').textContent = duelCurrent === 0 ? duelPlayers.p1 : duelPlayers.p2;
+      document.getElementById('duel-q-counter').textContent = (current + 1) + '/' + totalQ;
+      const fEl = document.getElementById('duel-flag-display');
+      const tEl = document.getElementById('duel-text-question');
+      if (q.type === 'flag') { fEl.textContent = q.display; fEl.classList.remove('hidden'); tEl.classList.add('hidden'); }
+      else { fEl.classList.add('hidden'); tEl.classList.remove('hidden'); tEl.textContent = q.display; }
+      const opts = document.getElementById('duel-options');
+      opts.innerHTML = '';
+      q.options.forEach(o => {
+        const btn = document.createElement('button');
+        btn.textContent = o;
+        btn.className = 'py-3 px-4 rounded-xl font-medium text-sm bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all';
+        btn.onclick = () => selectDuelAnswer(o, btn);
+        opts.appendChild(btn);
+      });
+      startDuelTimer();
+    }
+    function startDuelTimer() {
+      const time = DIFF[difficulty].time;
+      let left = time;
+      const bar = document.getElementById('duel-timer-bar');
+      bar.style.width = '100%';
+      bar.style.transitionDuration = '0s';
+      requestAnimationFrame(() => { bar.style.transitionDuration = time + 's'; bar.style.width = '0%'; });
+      clearInterval(timer);
+      timer = setInterval(() => {
+        left--;
+        if (left <= 0) { clearInterval(timer); selectDuelAnswer(null, null); }
+      }, 1000);
+    }
+    function selectDuelAnswer(answer, btn) {
+      clearInterval(timer);
+      const q = questions[current];
+      document.getElementById('duel-options').querySelectorAll('button').forEach(b => {
+        b.disabled = true;
+        if (b.textContent === q.answer) b.classList.add('!bg-emerald-500/40', 'correct-pulse');
+      });
+      if (answer === q.answer) {
+        duelScores[duelCurrent === 0 ? 'p1' : 'p2'] += 10;
+        playCorrect();
+        if (btn) btn.classList.add('!bg-emerald-500/40', 'correct-pulse');
+      } else {
+        playWrong();
+        if (btn) btn.classList.add('!bg-red-500/40', 'wrong-pulse');
+      }
+      setTimeout(() => {
+        current++;
+        if (current < totalQ) { duelCurrent = 1 - duelCurrent; showDuelQuestion(); }
+        else { endDuel(); }
+      }, 800);
+    }
+    function endDuel() {
+      switchView('view-duel-results');
+      const winner = duelScores.p1 > duelScores.p2 ? duelPlayers.p1 : duelScores.p1 < duelScores.p2 ? duelPlayers.p2 : 'Égalité';
+      document.getElementById('duel-winner').textContent = winner === 'Égalité' ? '🤝 Égalité' : winner + ' 🏆';
+      document.getElementById('duel-result-cards').innerHTML = `<div class="bg-white/10 rounded-xl p-4 text-center"><div class="text-lg font-bold">${duelPlayers.p1}</div><div class="text-3xl font-bold text-purple-400">${duelScores.p1} XP</div></div><div class="bg-white/10 rounded-xl p-4 text-center"><div class="text-lg font-bold">${duelPlayers.p2}</div><div class="text-3xl font-bold text-purple-400">${duelScores.p2} XP</div></div>`;
+    }
+
+    function updateProfileView() {
+      const c = document.getElementById('profile-stats');
+      if (!c || !userData) return;
+      const xp = userData.total_xp;
+      const g = userData.quizzes_completed;
+      const bs = userData.best_streak;
+      const acc = userData.total_answers ? Math.round(userData.correct_answers * 100 / userData.total_answers) : 0;
+      const rank = getRank(xp);
+      c.innerHTML = `<div class="bg-white/10 rounded-xl p-4 text-center"><div class="text-2xl font-bold">${rank.emoji} ${rank[lang] || rank.fr}</div><div class="text-xs opacity-50">${t('rank')}</div></div><div class="bg-white/10 rounded-xl p-4 text-center"><div class="text-2xl font-bold">${xp}</div><div class="text-xs opacity-50">${t('totalXp')}</div></div><div class="bg-white/10 rounded-xl p-4 text-center"><div class="text-2xl font-bold">${g}</div><div class="text-xs opacity-50">${t('totalGames')}</div></div><div class="bg-white/10 rounded-xl p-4 text-center"><div class="text-2xl font-bold">🔥 ${bs}</div><div class="text-xs opacity-50">${t('bestStreak')}</div></div><div class="bg-white/10 rounded-xl p-4 text-center col-span-2"><div class="text-2xl font-bold">${acc}%</div><div class="text-xs opacity-50">${t('avgAccuracy')}</div></div>`;
+      renderCategoryStats();
+      renderBadges();
+    }
+
+    function renderCategoryStats() {
+      const grid = document.getElementById('category-stats-grid');
+      if (!grid || !userData) return;
+      const cats = [{ id: 'flags', emoji: '🚩' }, { id: 'capitals', emoji: '🏛️' }, { id: 'monuments', emoji: '🏰' }, { id: 'history', emoji: '📜' }, { id: 'continents', emoji: '🌍' }, { id: 'culture', emoji: '📚' }];
+      const stats = JSON.parse(userData.category_stats || '{}');
+      grid.innerHTML = cats.map(c => { const s = stats[c.id] || { q: 0, c: 0 }; const pct = s.q > 0 ? Math.round(s.c * 100 / s.q) : 0; return `<div class="bg-white/10 rounded-lg p-3 text-center"><div class="text-lg font-bold">${c.emoji}</div><div class="text-xs opacity-70">${t(c.id)}</div><div class="text-sm font-bold">${s.q} • ${pct}%</div></div>`; }).join('');
+    }
+
+    function renderBadges() {
+      const grid = document.getElementById('badges-grid');
+      if (!grid || !userData) return;
+      const earned = userData.badges_earned ? userData.badges_earned.split(',') : [];
+      grid.innerHTML = BADGES_DEF.map(b => `<div class="badge-item flex flex-col items-center gap-1 p-2 rounded-xl ${earned.includes(b.id) ? 'bg-white/10' : 'bg-white/5 opacity-40'}"><span class="text-2xl">${b.emoji}</span><span class="text-[9px] text-center leading-tight">${b[lang] || b.fr}</span></div>`).join('');
+    }
+
+    function renderLeaderboard() {
+      const list = document.getElementById('leaderboard-list');
+      const myXp = userData ? userData.total_xp : 0;
+      let players = [...FAKE_PLAYERS, { name: t('you'), xp: myXp, isMe: true }];
+      players.sort((a, b) => b.xp - a.xp);
+      list.innerHTML = players.map((p, i) => `<div class="flex items-center gap-3 p-3 rounded-xl ${p.isMe ? 'bg-purple-600/30 border border-purple-500/50' : 'bg-white/5'}"><span class="font-bold text-sm w-6 text-center">${i + 1}</span><span class="text-lg">${i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🏅'}</span><span class="text-sm font-medium flex-1">${p.name}${p.isMe ? ' ⭐' : ''}</span><span class="text-white/60 text-xs font-bold">${p.xp} XP</span></div>`).join('');
+    }
+
+    function triggerConfetti() {
+      const colors = ['🎉', '✨', '🌟', '💫', '🎊'];
+      for (let i = 0; i < 20; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.textContent = colors[Math.floor(Math.random() * colors.length)];
+        c.style.left = Math.random() * 100 + '%';
+        c.style.top = '-10px';
+        c.style.fontSize = Math.random() * 20 + 16 + 'px';
+        c.style.animationDelay = Math.random() * 0.5 + 's';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 2500);
+      }
+    }
+
+    const LEGAL = { fr: { about: '<h2 class="font-bold text-lg mb-4 mt-8">À propos d\'AtlasQuest</h2><p class="mb-4">Jeu de quiz géographique interactif. © 2026 AtlasQuest Studio</p>', privacy: '<h2 class="font-bold text-lg mb-4 mt-8">Confidentialité</h2><p class="mb-4">Données stockées localement sur votre appareil uniquement (localStorage). Aucune donnée envoyée à un serveur.</p>', terms: '<h2 class="font-bold text-lg mb-4 mt-8">CGU</h2><p class="mb-4">Jeu éducatif gratuit. Usage personnel uniquement.</p>' }, en: { about: '<h2 class="font-bold text-lg mb-4 mt-8">About</h2><p>Interactive geography quiz. © 2026 AtlasQuest Studio</p>', privacy: '<h2 class="font-bold text-lg mb-4 mt-8">Privacy</h2><p>Data stored locally only (localStorage).</p>', terms: '<h2 class="font-bold text-lg mb-4 mt-8">Terms</h2><p>Free educational game.</p>' }, ar: { about: '<h2 class="font-bold text-lg mb-4 mt-8">عن التطبيق</h2><p>لعبة جغرافيا تفاعلية. © 2026</p>', privacy: '<h2 class="font-bold text-lg mb-4 mt-8">الخصوصية</h2><p>البيانات مخزنة محلياً فقط.</p>', terms: '<h2 class="font-bold text-lg mb-4 mt-8">الشروط</h2><p>لعبة تعليمية مجانية.</p>' } };
+    function showLegal(page) { document.getElementById('legal-content').innerHTML = LEGAL[lang][page]; switchView('view-legal'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); }
+
+    function init() {
+      if (userData && userData.preferred_language) lang = userData.preferred_language;
+      document.documentElement.lang = lang;
+      document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.querySelectorAll('#lang-bar .lang-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#lang-bar .lang-btn')[lang === 'fr' ? 0 : lang === 'en' ? 1 : 2].classList.add('active');
+      if (!userData || !userData.onboarding_done) { switchView('view-onboarding'); }
+      else { switchView('view-dashboard'); }
+      applyTranslations();
+      lucide.createIcons();
+    }
+    init();
+  </script>
+</body>
 </html>
+```
