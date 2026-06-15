@@ -577,7 +577,7 @@ const T={
 // ===== QUIZ DATA =====
 const FLAGS=[
   {flag:'🇫🇷',fr:'France',en:'France',ar:'فرنسا',capFr:'Paris',capEn:'Paris',capAr:'باريس',continent:'Europe'},
-  {flag:'🇩🇿',fr:'Algérie',en:'Algeria',ar:'الجزائر',capFr:'Alger',capEn:'Algiers',capAr:'الجزائر العاصمة',continent:'Africa'},
+  {flag:'🇩🇿',fr:'Algérie',en:'Algeria',ar:'الجزائر',capFr:'Alger',capEn:'Algiers',capAr:'الجزائر',continent:'Africa'},
   {flag:'🇧🇷',fr:'Brésil',en:'Brazil',ar:'البرازيل',capFr:'Brasília',capEn:'Brasília',capAr:'برازيليا',continent:'SouthAmerica'},
   {flag:'🇯🇵',fr:'Japon',en:'Japan',ar:'اليابان',capFr:'Tokyo',capEn:'Tokyo',capAr:'طوكيو',continent:'Asia'},
   {flag:'🇩🇪',fr:'Allemagne',en:'Germany',ar:'ألمانيا',capFr:'Berlin',capEn:'Berlin',capAr:'برلين',continent:'Europe'},
@@ -590,22 +590,18 @@ const FLAGS=[
   {flag:'🇹🇳',fr:'Tunisie',en:'Tunisia',ar:'تونس',capFr:'Tunis',capEn:'Tunis',capAr:'تونس',continent:'Africa'},
   {flag:'🇪🇬',fr:'Égypte',en:'Egypt',ar:'مصر',capFr:'Le Caire',capEn:'Cairo',capAr:'القاهرة',continent:'Africa'},
   {flag:'🇹🇷',fr:'Turquie',en:'Turkey',ar:'تركيا',capFr:'Ankara',capEn:'Ankara',capAr:'أنقرة',continent:'Asia'},
-  {flag:'🇷🇺',fr:'Russie',en:'Russia',ar:'روسيا',capFr:'Moscou',capEn:'Moscow',capAr:'موسكو',continent:'Asia'},
+  {flag:'🇷🇺',fr:'Russie',en:'Russia',ar:'روسيا',capFr:'Moscou',capEn:'Moscow',capAr:'موسكو',continent:'Europe'},
   {flag:'🇨🇳',fr:'Chine',en:'China',ar:'الصين',capFr:'Pékin',capEn:'Beijing',capAr:'بكين',continent:'Asia'},
   {flag:'🇮🇳',fr:'Inde',en:'India',ar:'الهند',capFr:'New Delhi',capEn:'New Delhi',capAr:'نيودلهي',continent:'Asia'},
   {flag:'🇰🇷',fr:'Corée du Sud',en:'South Korea',ar:'كوريا الجنوبية',capFr:'Séoul',capEn:'Seoul',capAr:'سيول',continent:'Asia'},
-  {flag:'🇲🇽',fr:'Mexique',en:'Mexico',ar:'المكسيك',capFr:'Mexico City',capEn:'Mexico City',capAr:'مكسيكو',continent:'NorthAmerica'},
+  {flag:'🇲🇽',fr:'Mexique',en:'Mexico',ar:'المكسيك',capFr:'Mexico City',capEn:'Mexico City',capAr:'مكسيكو سيتي',continent:'NorthAmerica'},
   {flag:'🇦🇷',fr:'Argentine',en:'Argentina',ar:'الأرجنتين',capFr:'Buenos Aires',capEn:'Buenos Aires',capAr:'بوينس آيرس',continent:'SouthAmerica'},
   {flag:'🇵🇹',fr:'Portugal',en:'Portugal',ar:'البرتغال',capFr:'Lisbonne',capEn:'Lisbon',capAr:'لشبونة',continent:'Europe'},
-  {flag:'🇳🇱',fr:'Pays-Bas',en:'Netherlands',ar:'هولندا',capFr:'Amsterdam',capEn:'Amsterdam',capAr:'أمستردام',continent:'Europe'},
-  {flag:'🇸🇪',fr:'Suède',en:'Sweden',ar:'السويد',capFr:'Stockholm',capEn:'Stockholm',capAr:'ستوكهولم',continent:'Europe'},
-  {flag:'🇳🇴',fr:'Norvège',en:'Norway',ar:'النرويج',capFr:'Oslo',capEn:'Oslo',capAr:'أوسلو',continent:'Europe'},
-  {flag:'🇵🇱',fr:'Pologne',en:'Poland',ar:'بولندا',capFr:'Varsovie',capEn:'Warsaw',capAr:'وارسو',continent:'Europe'},
   {flag:'🇦🇺',fr:'Australie',en:'Australia',ar:'أستراليا',capFr:'Canberra',capEn:'Canberra',capAr:'كانبرا',continent:'Oceania'},
-  {flag:'🇿🇦',fr:'Afrique du Sud',en:'South Africa',ar:'جنوب أفريقيا',capFr:'Pretoria',capEn:'Pretoria',capAr:'بريتوريا',continent:'Africa'},
+  {flag:'🇿🇦',fr:'Afrique du Sud',en:'South Africa',ar:'جنوب إفريقيا',capFr:'Pretoria',capEn:'Pretoria',capAr:'بريتوريا',continent:'Africa'},
   {flag:'🇸🇦',fr:'Arabie Saoudite',en:'Saudi Arabia',ar:'السعودية',capFr:'Riyad',capEn:'Riyadh',capAr:'الرياض',continent:'Asia'},
   {flag:'🇶🇦',fr:'Qatar',en:'Qatar',ar:'قطر',capFr:'Doha',capEn:'Doha',capAr:'الدوحة',continent:'Asia'},
-  {flag:'🇦🇪',fr:'Émirats arabes unis',en:'UAE',ar:'الإمارات',capFr:'Abou Dabi',capEn:'Abu Dhabi',capAr:'أبوظبي',continent:'Asia'},
+  {flag:'🇦🇪',fr:'Émirats arabes unis',en:'UAE',ar:'الإمارات',capFr:'Abu Dhabi',capEn:'Abu Dhabi',capAr:'أبوظبي',continent:'Asia'},
   {flag:'🇬🇷',fr:'Grèce',en:'Greece',ar:'اليونان',capFr:'Athènes',capEn:'Athens',capAr:'أثينا',continent:'Europe'},
   {flag:'🇨🇭',fr:'Suisse',en:'Switzerland',ar:'سويسرا',capFr:'Berne',capEn:'Bern',capAr:'برن',continent:'Europe'},
   {flag:'🇯🇴',fr:'Jordanie',en:'Jordan',ar:'الأردن',capFr:'Amman',capEn:'Amman',capAr:'عمّان',continent:'Asia'},
@@ -619,14 +615,52 @@ const FLAGS=[
   {flag:'🇮🇩',fr:'Indonésie',en:'Indonesia',ar:'إندونيسيا',capFr:'Jakarta',capEn:'Jakarta',capAr:'جاكرتا',continent:'Asia'},
   {flag:'🇨🇱',fr:'Chili',en:'Chile',ar:'تشيلي',capFr:'Santiago',capEn:'Santiago',capAr:'سانتياغو',continent:'SouthAmerica'},
   {flag:'🇺🇦',fr:'Ukraine',en:'Ukraine',ar:'أوكرانيا',capFr:'Kiev',capEn:'Kyiv',capAr:'كييف',continent:'Europe'},
-  {flag:'🇭🇺',fr:'Hongrie',en:'Hungary',ar:'المجر',capFr:'Budapest',capEn:'Budapest',capAr:'بودابست',continent:'Europe'},
   {flag:'🇳🇿',fr:'Nouvelle-Zélande',en:'New Zealand',ar:'نيوزيلندا',capFr:'Wellington',capEn:'Wellington',capAr:'ويلينغتون',continent:'Oceania'},
-  {flag:'🇨🇺',fr:'Cuba',en:'Cuba',ar:'كوبا',capFr:'La Havane',capEn:'Havana',capAr:'هافانا',continent:'NorthAmerica'},
-  {flag:'🇪🇹',fr:'Éthiopie',en:'Ethiopia',ar:'إثيوبيا',capFr:'Addis-Abeba',capEn:'Addis Ababa',capAr:'أديس أبابا',continent:'Africa'},
   {flag:'🇸🇬',fr:'Singapour',en:'Singapore',ar:'سنغافورة',capFr:'Singapour',capEn:'Singapore',capAr:'سنغافورة',continent:'Asia'},
   {flag:'🇵🇰',fr:'Pakistan',en:'Pakistan',ar:'باكستان',capFr:'Islamabad',capEn:'Islamabad',capAr:'إسلام أباد',continent:'Asia'},
   {flag:'🇮🇷',fr:'Iran',en:'Iran',ar:'إيران',capFr:'Téhéran',capEn:'Tehran',capAr:'طهران',continent:'Asia'},
-  {flag:'🇮🇸',fr:'Islande',en:'Iceland',ar:'آيسلندا',capFr:'Reykjavik',capEn:'Reykjavik',capAr:'ريكيافيك',continent:'Europe'}
+  {flag:'🇮🇸',fr:'Islande',en:'Iceland',ar:'آيسلندا',capFr:'Reykjavik',capEn:'Reykjavik',capAr:'ريكيافيك',continent:'Europe'},
+  {flag:'🇳🇱',fr:'Pays-Bas',en:'Netherlands',ar:'هولندا',capFr:'Amsterdam',capEn:'Amsterdam',capAr:'أمستردام',continent:'Europe'},
+  {flag:'🇸🇪',fr:'Suède',en:'Sweden',ar:'السويد',capFr:'Stockholm',capEn:'Stockholm',capAr:'ستوكهولم',continent:'Europe'},
+  {flag:'🇳🇴',fr:'Norvège',en:'Norway',ar:'النرويج',capFr:'Oslo',capEn:'Oslo',capAr:'أوسلو',continent:'Europe'},
+  {flag:'🇵🇱',fr:'Pologne',en:'Poland',ar:'بولندا',capFr:'Varsovie',capEn:'Warsaw',capAr:'وارسو',continent:'Europe'},
+  {flag:'🇭🇺',fr:'Hongrie',en:'Hungary',ar:'المجر',capFr:'Budapest',capEn:'Budapest',capAr:'بودابست',continent:'Europe'},
+  {flag:'🇨🇺',fr:'Cuba',en:'Cuba',ar:'كوبا',capFr:'La Havane',capEn:'Havana',capAr:'هافانا',continent:'NorthAmerica'},
+  {flag:'🇪🇹',fr:'Éthiopie',en:'Ethiopia',ar:'إثيوبيا',capFr:'Addis-Abeba',capEn:'Addis Ababa',capAr:'أديس أبابا',continent:'Africa'},
+  {flag:'🇲🇱',fr:'Mali',en:'Mali',ar:'مالي',capFr:'Bamako',capEn:'Bamako',capAr:'باماكو',continent:'Africa'},
+  {flag:'🇸🇳',fr:'Sénégal',en:'Senegal',ar:'السنغال',capFr:'Dakar',capEn:'Dakar',capAr:'داكار',continent:'Africa'},
+  {flag:'🇬🇭',fr:'Ghana',en:'Ghana',ar:'غانا',capFr:'Accra',capEn:'Accra',capAr:'أكرا',continent:'Africa'},
+  {flag:'🇨🇮',fr:'Côte d\u2019Ivoire',en:'Côte d\u2019Ivoire',ar:'ساحل العاج',capFr:'Yamoussoukro',capEn:'Yamoussoukro',capAr:'ياموسوكرو',continent:'Africa'},
+  {flag:'🇨🇲',fr:'Cameroun',en:'Cameroon',ar:'الكاميرون',capFr:'Yaoundé',capEn:'Yaoundé',capAr:'ياوندي',continent:'Africa'},
+  {flag:'🇧🇩',fr:'Bangladesh',en:'Bangladesh',ar:'بنغلاديش',capFr:'Dacca',capEn:'Dhaka',capAr:'دكا',continent:'Asia'},
+  {flag:'🇲🇾',fr:'Malaisie',en:'Malaysia',ar:'ماليزيا',capFr:'Kuala Lumpur',capEn:'Kuala Lumpur',capAr:'كوالالمبور',continent:'Asia'},
+  {flag:'🇵🇭',fr:'Philippines',en:'Philippines',ar:'الفلبين',capFr:'Manille',capEn:'Manila',capAr:'مانيلا',continent:'Asia'},
+  {flag:'🇻🇪',fr:'Venezuela',en:'Venezuela',ar:'فنزويلا',capFr:'Caracas',capEn:'Caracas',capAr:'كاراكاس',continent:'SouthAmerica'},
+  {flag:'🇨🇴',fr:'Colombie',en:'Colombia',ar:'كولومبيا',capFr:'Bogotá',capEn:'Bogotá',capAr:'بوغوتا',continent:'SouthAmerica'},
+  {flag:'🇬🇪',fr:'Géorgie',en:'Georgia',ar:'جورجيا',capFr:'Tbilissi',capEn:'Tbilisi',capAr:'تبليسي',continent:'Asia'},
+  {flag:'🇰🇿',fr:'Kazakhstan',en:'Kazakhstan',ar:'كازاخستان',capFr:'Astana',capEn:'Astana',capAr:'أستانا',continent:'Asia'},
+  {flag:'🇧🇪',fr:'Belgique',en:'Belgium',ar:'بلجيكا',capFr:'Bruxelles',capEn:'Brussels',capAr:'بروكسل',continent:'Europe'},
+  {flag:'🇦🇹',fr:'Autriche',en:'Austria',ar:'النمسا',capFr:'Vienne',capEn:'Vienna',capAr:'فيينا',continent:'Europe'},
+  {flag:'🇮🇪',fr:'Irlande',en:'Ireland',ar:'أيرلندا',capFr:'Dublin',capEn:'Dublin',capAr:'دبلن',continent:'Europe'},
+  {flag:'🇨🇿',fr:'Tchéquie',en:'Czech Republic',ar:'جمهورية التشيك',capFr:'Prague',capEn:'Prague',capAr:'براغ',continent:'Europe'},
+  {flag:'🇮🇱',fr:'Israël',en:'Israel',ar:'إسرائيل',capFr:'Jérusalem',capEn:'Jerusalem',capAr:'القدس',continent:'Asia'},
+  {flag:'🇵🇸',fr:'Palestine',en:'Palestine',ar:'فلسطين',capFr:'Ramallah',capEn:'Ramallah',capAr:'رام الله',continent:'Asia'},
+  {flag:'🇳🇪',fr:'Niger',en:'Niger',ar:'النيجر',capFr:'Niamey',capEn:'Niamey',capAr:'نيامي',continent:'Africa'},
+  {flag:'🇿🇼',fr:'Zimbabwe',en:'Zimbabwe',ar:'زيمبابوي',capFr:'Harare',capEn:'Harare',capAr:'هرارة',continent:'Africa'},
+  {flag:'🇷🇸',fr:'Serbie',en:'Serbia',ar:'صربيا',capFr:'Belgrade',capEn:'Belgrade',capAr:'بلغراد',continent:'Europe'},
+  {flag:'🇧🇦',fr:'Bosnie-Herzégovine',en:'Bosnia',ar:'البوسنة والهرسك',capFr:'Sarajevo',capEn:'Sarajevo',capAr:'سراييفو',continent:'Europe'},
+  {flag:'🇪🇭',fr:'Sahara occidental',en:'Western Sahara',ar:'الصحراء الغربية',capFr:'Laâyoune',capEn:'Laâyoune',capAr:'العيون',continent:'Africa'},
+  {flag:'🇸🇾',fr:'Syrie',en:'Syria',ar:'سوريا',capFr:'Damas',capEn:'Damascus',capAr:'دمشق',continent:'Asia'},
+  {flag:'🇾🇪',fr:'Yémen',en:'Yemen',ar:'اليمن',capFr:'Sanaa',capEn:'Sanaa',capAr:'صنعاء',continent:'Asia'},
+  {flag:'🇱🇾',fr:'Libye',en:'Libya',ar:'ليبيا',capFr:'Tripoli',capEn:'Tripoli',capAr:'طرابلس',continent:'Africa'},
+  {flag:'🇲🇷',fr:'Mauritanie',en:'Mauritania',ar:'موريتانيا',capFr:'Nouakchott',capEn:'Nouakchott',capAr:'نواكشوط',continent:'Africa'},
+  {flag:'🇸🇩',fr:'Soudan',en:'Sudan',ar:'السودان',capFr:'Khartoum',capEn:'Khartoum',capAr:'الخرطوم',continent:'Africa'},
+  {flag:'🇸🇴',fr:'Somalie',en:'Somalia',ar:'الصومال',capFr:'Mogadiscio',capEn:'Mogadishu',capAr:'مقديشو',continent:'Africa'},
+  {flag:'🇩🇯',fr:'Djibouti',en:'Djibouti',ar:'جيبوتي',capFr:'Djibouti',capEn:'Djibouti',capAr:'جيبوتي',continent:'Africa'},
+  {flag:'🇰🇲',fr:'Comores',en:'Comoros',ar:'جزر القمر',capFr:'Moroni',capEn:'Moroni',capAr:'موروني',continent:'Africa'},
+  {flag:'🇧🇭',fr:'Bahreïn',en:'Bahrain',ar:'البحرين',capFr:'Manama',capEn:'Manama',capAr:'المنامة',continent:'Asia'},
+  {flag:'🇰🇼',fr:'Koweït',en:'Kuwait',ar:'الكويت',capFr:'Koweït',capEn:'Kuwait City',capAr:'مدينة الكويت',continent:'Asia'},
+  {flag:'🇴🇲',fr:'Oman',en:'Oman',ar:'عُمان',capFr:'Mascate',capEn:'Muscat',capAr:'مسقط',continent:'Asia'}
 ];
 
 const MONUMENTS=[
@@ -644,20 +678,48 @@ const MONUMENTS=[
   {fr:'Machu Picchu',en:'Machu Picchu',ar:'ماتشو بيتشو',answerFr:'Pérou',answerEn:'Peru',answerAr:'بيرو'},
   {fr:'Acropole',en:'Acropolis',ar:'الأكروبوليس',answerFr:'Grèce',answerEn:'Greece',answerAr:'اليونان'},
   {fr:'Petra',en:'Petra',ar:'البتراء',answerFr:'Jordanie',answerEn:'Jordan',answerAr:'الأردن'},
-  {fr:'Burj Khalifa',en:'Burj Khalifa',ar:'برج خليفة',answerFr:'Émirats arabes unis',answerEn:'UAE',answerAr:'الإمارات'}
+  {fr:'Burj Khalifa',en:'Burj Khalifa',ar:'برج خليفة',answerFr:'Émirats arabes unis',answerEn:'UAE',answerAr:'الإمارات'},
+  {fr:'Dôme du Rocher',en:'Dome of the Rock',ar:'قبة الصخرة',answerFr:'Palestine',answerEn:'Palestine',answerAr:'فلسطين'},
+  {fr:'Cathédrale Notre-Dame',en:'Notre-Dame',ar:'نوتردام',answerFr:'France',answerEn:'France',answerAr:'فرنسا'},
+  {fr:'Tour de Pise',en:'Leaning Tower of Pisa',ar:'برج بيزا المائل',answerFr:'Italie',answerEn:'Italy',answerAr:'إيطاليا'},
+  {fr:'Château de Versailles',en:'Palace of Versailles',ar:'قصر فرساي',answerFr:'France',answerEn:'France',answerAr:'فرنسا'},
+  {fr:'Alhambra',en:'Alhambra',ar:'الحمراء',answerFr:'Espagne',answerEn:'Spain',answerAr:'إسبانيا'},
+  {fr:'Mosquée Bleue',en:'Blue Mosque',ar:'المسجد الأزرق',answerFr:'Turquie',answerEn:'Turkey',answerAr:'تركيا'},
+  {fr:'Sainte-Sophie',en:'Hagia Sophia',ar:'آيا صوفيا',answerFr:'Turquie',answerEn:'Turkey',answerAr:'تركيا'},
+  {fr:'Château de Prague',en:'Prague Castle',ar:'قلعة براغ',answerFr:'Tchéquie',answerEn:'Czech Republic',answerAr:'جمهورية التشيك'},
+  {fr:'Grand Sphinx de Gizeh',en:'Great Sphinx of Giza',ar:'تمثال أبو الهول',answerFr:'Égypte',answerEn:'Egypt',answerAr:'مصر'}
 ];
 
 const HISTORY=[
-  {fr:'Qui a découvert l\'Amérique en 1492 ?',en:'Who discovered America in 1492?',ar:'من اكتشف أمريكا عام 1492؟',answer:{fr:'Christophe Colomb',en:'Christopher Columbus',ar:'كريستوف كولومبوس'},wrong:[{fr:'Vasco de Gama',en:'Vasco da Gama',ar:'فاسكو دا غاما'},{fr:'Marco Polo',en:'Marco Polo',ar:'ماركو بولو'},{fr:'Magellan',en:'Magellan',ar:'ماجلان'}]},
+  {fr:'Quel explorateur européen a atteint les Amériques en 1492 ?',en:'Which European explorer reached the Americas in 1492?',ar:'أي مستكشف أوروبي وصل إلى الأمريكا عام 1492؟',answer:{fr:'Christophe Colomb',en:'Christopher Columbus',ar:'كريستوف كولومبوس'},wrong:[{fr:'Vasco de Gama',en:'Vasco da Gama',ar:'فاسكو دا غاما'},{fr:'Marco Polo',en:'Marco Polo',ar:'ماركو بولو'},{fr:'Magellan',en:'Magellan',ar:'ماجلان'}]},
   {fr:'En quelle année la Révolution française a-t-elle commencé ?',en:'When did the French Revolution begin?',ar:'متى بدأت الثورة الفرنسية؟',answer:{fr:'1789',en:'1789',ar:'1789'},wrong:[{fr:'1776',en:'1776',ar:'1776'},{fr:'1804',en:'1804',ar:'1804'},{fr:'1815',en:'1815',ar:'1815'}]},
   {fr:'Qui a peint la Joconde ?',en:'Who painted the Mona Lisa?',ar:'من رسم الموناليزا؟',answer:{fr:'Léonard de Vinci',en:'Leonardo da Vinci',ar:'ليوناردو دا فينشي'},wrong:[{fr:'Michel-Ange',en:'Michelangelo',ar:'مايكل أنجلو'},{fr:'Raphaël',en:'Raphael',ar:'رافاييل'},{fr:'Picasso',en:'Picasso',ar:'بيكاسو'}]},
   {fr:'Quel empire a construit le Machu Picchu ?',en:'Which empire built Machu Picchu?',ar:'أي إمبراطورية بنت ماتشو بيتشو؟',answer:{fr:'Empire Inca',en:'Inca Empire',ar:'إمبراطورية الإنكا'},wrong:[{fr:'Empire Aztèque',en:'Aztec Empire',ar:'الأزتيك'},{fr:'Empire Romain',en:'Roman Empire',ar:'الرومان'},{fr:'Empire Mongol',en:'Mongol Empire',ar:'المغول'}]},
   {fr:'En quelle année le mur de Berlin est-il tombé ?',en:'When did the Berlin Wall fall?',ar:'متى سقط جدار برلين؟',answer:{fr:'1989',en:'1989',ar:'1989'},wrong:[{fr:'1991',en:'1991',ar:'1991'},{fr:'1985',en:'1985',ar:'1985'},{fr:'1979',en:'1979',ar:'1979'}]},
   {fr:'Qui a été le premier homme sur la Lune ?',en:'Who was the first man on the Moon?',ar:'من كان أول إنسان على القمر؟',answer:{fr:'Neil Armstrong',en:'Neil Armstrong',ar:'نيل أرمسترونغ'},wrong:[{fr:'Buzz Aldrin',en:'Buzz Aldrin',ar:'باز ألدرين'},{fr:'Youri Gagarine',en:'Yuri Gagarin',ar:'يوري غاغارين'},{fr:'John Glenn',en:'John Glenn',ar:'جون غلين'}]},
-  {fr:'Qui a fondé l\'Empire mongol ?',en:'Who founded the Mongol Empire?',ar:'من أسس الإمبراطورية المغولية؟',answer:{fr:'Gengis Khan',en:'Genghis Khan',ar:'جنكيز خان'},wrong:[{fr:'Kubilai Khan',en:'Kublai Khan',ar:'قوبلاي خان'},{fr:'Tamerlan',en:'Tamerlane',ar:'تيمورلنك'},{fr:'Attila',en:'Attila',ar:'أتيلا'}]},
-  {fr:'En quelle année l\'Algérie a-t-elle obtenu son indépendance ?',en:'When did Algeria gain independence?',ar:'متى استقلت الجزائر؟',answer:{fr:'1962',en:'1962',ar:'1962'},wrong:[{fr:'1954',en:'1954',ar:'1954'},{fr:'1956',en:'1956',ar:'1956'},{fr:'1970',en:'1970',ar:'1970'}]},
+  {fr:'Qui a fondé l\u2019Empire mongol ?',en:'Who founded the Mongol Empire?',ar:'من أسس الإمبراطورية المغولية؟',answer:{fr:'Gengis Khan',en:'Genghis Khan',ar:'جنكيز خان'},wrong:[{fr:'Kubilai Khan',en:'Kublai Khan',ar:'قوبلاي خان'},{fr:'Tamerlan',en:'Tamerlane',ar:'تيمورلنك'},{fr:'Attila',en:'Attila',ar:'أتيلا'}]},
   {fr:'Quelle est la plus ancienne université du monde ?',en:'What is the oldest university in the world?',ar:'ما أقدم جامعة في العالم؟',answer:{fr:'Al Quaraouiyine',en:'Al-Qarawiyyin',ar:'جامعة القرويين'},wrong:[{fr:'Oxford',en:'Oxford',ar:'أكسفورد'},{fr:'Bologne',en:'Bologna',ar:'بولونيا'},{fr:'Al-Azhar',en:'Al-Azhar',ar:'الأزهر'}]},
-  {fr:'Qui a inventé l\'imprimerie ?',en:'Who invented the printing press?',ar:'من اخترع المطبعة؟',answer:{fr:'Gutenberg',en:'Gutenberg',ar:'غوتنبرغ'},wrong:[{fr:'Newton',en:'Newton',ar:'نيوتن'},{fr:'Edison',en:'Edison',ar:'إديسون'},{fr:'Galilée',en:'Galileo',ar:'غاليليو'}]}
+  {fr:'Qui a inventé l\u2019imprimerie moderne ?',en:'Who invented the modern printing press?',ar:'من اخترع المطبعة الحديثة؟',answer:{fr:'Gutenberg',en:'Gutenberg',ar:'غوتنبرغ'},wrong:[{fr:'Newton',en:'Newton',ar:'نيوتن'},{fr:'Edison',en:'Edison',ar:'إديسون'},{fr:'Galilée',en:'Galileo',ar:'غاليليو'}]},
+  {fr:'À quel siècle commence la Renaissance en Italie ?',en:'In which century did the Renaissance begin in Italy?',ar:'في أي قرن بدأت النهضة في إيطاليا؟',answer:{fr:'14ème siècle',en:'14th century',ar:'القرن 14'},wrong:[{fr:'11ème siècle',en:'11th century',ar:'القرن 11'},{fr:'16ème siècle',en:'16th century',ar:'القرن 16'},{fr:'12ème siècle',en:'12th century',ar:'القرن 12'}]},
+  {fr:'Qui a écrit "Les Misérables" ?',en:'Who wrote "Les Misérables"?',ar:'من كتب رواية "البؤساء"؟',answer:{fr:'Victor Hugo',en:'Victor Hugo',ar:'فيكتور هوغو'},wrong:[{fr:'Balzac',en:'Balzac',ar:'بلزاك'},{fr:'Alexandre Dumas',en:'Alexandre Dumas',ar:'ألكسندر ديوما'},{fr:'Molière',en:'Molière',ar:'مولير'}]},
+  {fr:'En quelle année la Première Guerre mondiale s\u2019est-elle terminée ?',en:'When did World War I end?',ar:'متى انتهت الحرب العالمية الأولى؟',answer:{fr:'1918',en:'1918',ar:'1918'},wrong:[{fr:'1914',en:'1914',ar:'1914'},{fr:'1920',en:'1920',ar:'1920'},{fr:'1916',en:'1916',ar:'1916'}]},
+  {fr:'Dans quel pays la révolution industrielle a-t-elle débuté ?',en:'In which country did the Industrial Revolution begin?',ar:'في أي بلد بدأت الثورة الصناعية؟',answer:{fr:'Grande-Bretagne',en:'Great Britain',ar:'بريطانيا العظمى'},wrong:[{fr:'France',en:'France',ar:'فرنسا'},{fr:'Allemagne',en:'Germany',ar:'ألمانيا'},{fr:'Italie',en:'Italy',ar:'إيطاليا'}]},
+  {fr:'Qui a écrit "Don Quichotte" ?',en:'Who wrote "Don Quixote"?',ar:'من كتب "دون كيخوتة"؟',answer:{fr:'Cervantes',en:'Miguel de Cervantes',ar:'سرفانتس'},wrong:[{fr:'García Lorca',en:'García Lorca',ar:'غارسيا لوركا'},{fr:'Machado',en:'Machado',ar:'ماتشادو'},{fr:'Jorge Luis Borges',en:'Jorge Luis Borges',ar:'خورخي لويس بورخيس'}]},
+  {fr:'Quelle est la date du déclenchement de la Révolution algérienne ?',en:'When did the Algerian Revolution begin?',ar:'متى بدأت الثورة الجزائرية؟',answer:{fr:'1er novembre 1954',en:'November 1, 1954',ar:'1 نوفمبر 1954'},wrong:[{fr:'1er janvier 1945',en:'January 1, 1945',ar:'1 يناير 1945'},{fr:'14 juillet 1962',en:'July 14, 1962',ar:'14 يوليو 1962'},{fr:'8 mai 1945',en:'May 8, 1945',ar:'8 مايو 1945'}]},
+  {fr:'Combien de temps a duré la colonisation française en Algérie ?',en:'How long did French colonization of Algeria last?',ar:'كم استمرت فترة الاستعمار الفرنسي للجزائر؟',answer:{fr:'132 ans',en:'132 years',ar:'132 سنة'},wrong:[{fr:'150 ans',en:'150 years',ar:'150 سنة'},{fr:'100 ans',en:'100 years',ar:'100 سنة'},{fr:'200 ans',en:'200 years',ar:'200 سنة'}]},
+  {fr:'Quelle est la date de l\u2019indépendance de l\u2019Algérie ?',en:'When did Algeria gain independence?',ar:'متى استقلت الجزائر؟',answer:{fr:'5 juillet 1962',en:'July 5, 1962',ar:'5 يوليو 1962'},wrong:[{fr:'1er novembre 1954',en:'November 1, 1954',ar:'1 نوفمبر 1954'},{fr:'8 mai 1945',en:'May 8, 1945',ar:'8 مايو 1945'},{fr:'14 juillet 1960',en:'July 14, 1960',ar:'14 يوليو 1960'}]},
+  {fr:'Qui était l\u2019Émir Abdelkader ?',en:'Who was Emir Abdelkader?',ar:'من هو الأمير عبد القادر الجزائري؟',answer:{fr:'Leader de la résistance algérienne',en:'Leader of Algerian resistance',ar:'زعيم المقاومة الجزائرية'},wrong:[{fr:'Premier président algérien',en:'First Algerian president',ar:'أول رئيس جزائري'},{fr:'Fondateur de l\u2019ONU',en:'UN founder',ar:'مؤسس الأمم المتحدة'},{fr:'Général français',en:'French general',ar:'جنرال فرنسي'}]},
+  {fr:'Qui a fondé l\u2019Étoile Nord-Africaine, mouvement précurseur de l\u2019indépendance algérienne ?',en:'Who founded the North African Star, a precursor movement to Algerian independence?',ar:'من أسس نجم شمال أفريقيا، الحركة التي مهدت لاستقلال الجزائر؟',answer:{fr:'Messali Hadj',en:'Messali Hadj',ar:'مصالي الحاج'},wrong:[{fr:'Ben Bella',en:'Ben Bella',ar:'بن بيلا'},{fr:'Ferhat Abbas',en:'Ferhat Abbas',ar:'فرحات عباس'},{fr:'Houari Boumédiène',en:'Houari Boumediene',ar:'هواري بومدين'}]},
+  {fr:'Qu\u2019est-ce que le Congrès de la Soummam (1956) ?',en:'What was the Soummam Congress (1956)?',ar:'ما هو مؤتمر الصومام (1956)؟',answer:{fr:'Congrès historique du FLN',en:'Historic FLN Congress',ar:'مؤتمر تاريخي لجبهة التحرير الوطني'},wrong:[{fr:'Traité franco-algérien',en:'Franco-Algerian treaty',ar:'معاهدة فرنسية جزائرية'},{fr:'Accord d\u2019Évian',en:'Évian Accords',ar:'اتفاقيات إيفيان'},{fr:'Réunion de l\u2019ONU',en:'UN meeting',ar:'اجتماع للأمم المتحدة'}]},
+  {fr:'Quelle année correspond au début du calendrier musulman (Hégire) ?',en:'Which year marks the start of the Islamic (Hijri) calendar?',ar:'في أي سنة بدأ التقويم الهجري؟',answer:{fr:'622 après J.-C.',en:'622 AD',ar:'622 ميلادي'},wrong:[{fr:'570 après J.-C.',en:'570 AD',ar:'570 ميلادي'},{fr:'700 après J.-C.',en:'700 AD',ar:'700 ميلادي'},{fr:'1000 après J.-C.',en:'1000 AD',ar:'1000 ميلادي'}]},
+  {fr:'Quelle ville est devenue la première capitale de l\u2019État islamique naissant ?',en:'Which city became the first capital of the early Islamic state?',ar:'ما هي أول عاصمة للدولة الإسلامية الناشئة؟',answer:{fr:'Médine',en:'Medina',ar:'المدينة المنورة'},wrong:[{fr:'Damas',en:'Damascus',ar:'دمشق'},{fr:'Bagdad',en:'Baghdad',ar:'بغداد'},{fr:'Le Caire',en:'Cairo',ar:'القاهرة'}]},
+  {fr:'Quel centre de savoir de Bagdad a traduit et préservé les œuvres grecques antiques ?',en:'Which center of learning in Baghdad translated and preserved ancient Greek works?',ar:'أي مركز علمي في بغداد ترجم وحفظ الأعمال اليونانية القديمة؟',answer:{fr:'La Maison de la Sagesse',en:'The House of Wisdom',ar:'بيت الحكمة'},wrong:[{fr:'La Grande Bibliothèque',en:'The Great Library',ar:'المكتبة الكبرى'},{fr:'L\u2019Académie d\u2019Athènes',en:'The Academy of Athens',ar:'أكاديمية أثينا'},{fr:'L\u2019Université Al-Azhar',en:'Al-Azhar University',ar:'جامعة الأزهر'}]},
+  {fr:'Quel savant est à l\u2019origine du mot "algèbre" ?',en:'Which scholar gave us the word "algebra"?',ar:'أي عالم أعطانا كلمة "الجبر"؟',answer:{fr:'Al-Khwarizmi',en:'Al-Khwarizmi',ar:'الخوارزمي'},wrong:[{fr:'Ibn Sina',en:'Ibn Sina',ar:'ابن سينا'},{fr:'Al-Biruni',en:'Al-Biruni',ar:'البيروني'},{fr:'Omar Khayyam',en:'Omar Khayyam',ar:'عمر الخيام'}]},
+  {fr:'Quel médecin et philosophe a écrit le "Canon de la médecine" ?',en:'Which physician and philosopher wrote the "Canon of Medicine"?',ar:'أي طبيب وفيلسوف كتب "القانون في الطب"؟',answer:{fr:'Ibn Sina (Avicenne)',en:'Ibn Sina (Avicenna)',ar:'ابن سينا'},wrong:[{fr:'Al-Razi',en:'Al-Razi',ar:'الرازي'},{fr:'Al-Zahrawi',en:'Al-Zahrawi',ar:'الزهراوي'},{fr:'Al-Kindi',en:'Al-Kindi',ar:'الكندي'}]},
+  {fr:'À quelle période historique correspond le "Printemps arabe" ?',en:'To which period does the "Arab Spring" correspond?',ar:'إلى أي فترة يعود "الربيع العربي"؟',answer:{fr:'2010-2012',en:'2010-2012',ar:'2010-2012'},wrong:[{fr:'2005-2008',en:'2005-2008',ar:'2005-2008'},{fr:'2015-2018',en:'2015-2018',ar:'2015-2018'},{fr:'2000-2005',en:'2000-2005',ar:'2000-2005'}]},
+  {fr:'Quel pays a accueilli la Coupe du Monde de football 2022 ?',en:'Which country hosted the 2022 FIFA World Cup?',ar:'أي بلد استضاف كأس العالم لكرة القدم 2022؟',answer:{fr:'Qatar',en:'Qatar',ar:'قطر'},wrong:[{fr:'Émirats arabes unis',en:'UAE',ar:'الإمارات'},{fr:'Arabie Saoudite',en:'Saudi Arabia',ar:'السعودية'},{fr:'Maroc',en:'Morocco',ar:'المغرب'}]},
+  {fr:'Quelle organisation régionale regroupe les pays arabes ?',en:'Which regional organization brings together Arab countries?',ar:'ما هي المنظمة الإقليمية التي تجمع الدول العربية؟',answer:{fr:'La Ligue arabe',en:'The Arab League',ar:'جامعة الدول العربية'},wrong:[{fr:'L\u2019ONU',en:'The UN',ar:'الأمم المتحدة'},{fr:'L\u2019OTAN',en:'NATO',ar:'حلف الناتو'},{fr:'L\u2019Union africaine',en:'The African Union',ar:'الاتحاد الأفريقي'}]},
+  {fr:'En quelle année l\u2019Organisation des Nations Unies a-t-elle été fondée ?',en:'In which year was the United Nations founded?',ar:'في أي سنة تأسست منظمة الأمم المتحدة؟',answer:{fr:'1945',en:'1945',ar:'1945'},wrong:[{fr:'1939',en:'1939',ar:'1939'},{fr:'1950',en:'1950',ar:'1950'},{fr:'1960',en:'1960',ar:'1960'}]}
 ];
 
 const BADGES_DEF=[
@@ -1511,15 +1573,15 @@ function closeModal(id){document.getElementById(id).classList.add('hidden')}
 
 // ===== LEGAL =====
 const LEGAL={
-  fr:{about:'<h2 class="font-bold text-lg mb-4 mt-8">À propos d\'AtlasQuest</h2><p>Quiz géographique interactif. © 2025 AtlasQuest Studio. All Rights Reserved.</p>',
-      privacy:'<h2 class="font-bold text-lg mb-4 mt-8">Confidentialité</h2><p>Données stockées localement (localStorage). Aucune donnée envoyée à un serveur tiers.</p>',
-      terms:'<h2 class="font-bold text-lg mb-4 mt-8">CGU</h2><p>Application éducative gratuite. Usage personnel uniquement. Toute reproduction interdite.</p>'},
-  en:{about:'<h2 class="font-bold text-lg mb-4 mt-8">About AtlasQuest</h2><p>Interactive geography quiz. © 2025 AtlasQuest Studio. All Rights Reserved.</p>',
-      privacy:'<h2 class="font-bold text-lg mb-4 mt-8">Privacy</h2><p>Data stored locally only (localStorage). No server transmission.</p>',
-      terms:'<h2 class="font-bold text-lg mb-4 mt-8">Terms</h2><p>Free educational app. Personal use only.</p>'},
-  ar:{about:'<h2 class="font-bold text-lg mb-4 mt-8">عن AtlasQuest</h2><p>لعبة جغرافيا تفاعلية. © 2025 AtlasQuest Studio.</p>',
-      privacy:'<h2 class="font-bold text-lg mb-4 mt-8">الخصوصية</h2><p>البيانات مخزنة محلياً فقط.</p>',
-      terms:'<h2 class="font-bold text-lg mb-4 mt-8">الشروط</h2><p>تطبيق تعليمي مجاني للاستخدام الشخصي.</p>'}
+  fr:{about:'<h2 class="font-bold text-lg mb-4 mt-8">À propos d\u2019AtlasQuest</h2><p>AtlasQuest est une application éducative dédiée à l\u2019apprentissage de la géographie et de l\u2019histoire du monde, en français, anglais et arabe. © 2026 AtlasQuest Studio. Tous droits réservés.</p>',
+      privacy:`<h2 class="font-bold text-lg mb-4 mt-8">Politique de Confidentialité</h2><p class="mb-3"><strong>Dernière mise à jour : 14 juin 2026</strong></p><h3 class="font-bold text-base mb-2 mt-4">1. Données collectées</h3><p class="mb-3">AtlasQuest collecte uniquement les données suivantes :</p><ul class="list-disc list-inside mb-3 space-y-1"><li>Scores et résultats de quiz</li><li>Progression (niveaux, XP, badges, gems, vies)</li><li>Langue préférée</li><li>Historique de jeu (dates et catégories)</li></ul><p class="mb-3 text-sm opacity-80">Toutes ces données sont stockées <strong>exclusivement sur votre appareil</strong> via le navigateur (localStorage). Aucun serveur externe n\u2019accède à ces informations.</p><h3 class="font-bold text-base mb-2 mt-4">2. Pas de partage de données</h3><p class="mb-3">Nous ne partageons, ne vendons et ne transmettons vos données à aucun tiers, entreprise de publicité ou service de tracking. Vos données vous appartiennent.</p><h3 class="font-bold text-base mb-2 mt-4">3. Droit à la suppression</h3><p class="mb-3">Vous pouvez supprimer toutes vos données à tout moment en désinstallant l\u2019application ou en vidant le cache/données de l\u2019application. Cela effacera tous vos progrès et scores locaux.</p><h3 class="font-bold text-base mb-2 mt-4">4. Sécurité</h3><p class="mb-3">Les données sont stockées localement et ne sont jamais transmises. Aucun compte utilisateur ou authentification n\u2019est requis.</p><h3 class="font-bold text-base mb-2 mt-4">5. Contact</h3><p class="mb-3">Pour toute question sur la confidentialité, contactez-nous à : <strong>atlasquest.info@gmail.com</strong></p>`,
+      terms:`<h2 class="font-bold text-lg mb-4 mt-8">Conditions d\u2019Utilisation</h2><p class="mb-3"><strong>Dernière mise à jour : 14 juin 2026</strong></p><h3 class="font-bold text-base mb-2 mt-4">1. Conditions Générales</h3><p class="mb-3">En utilisant AtlasQuest, vous acceptez ces conditions d\u2019utilisation. L\u2019application est fournie "telle quelle" à titre gratuit et éducatif.</p><h3 class="font-bold text-base mb-2 mt-4">2. Licence d\u2019utilisation</h3><p class="mb-3">Vous avez le droit d\u2019utiliser AtlasQuest à titre personnel et non commercial. Toute reproduction, modification ou distribution sans autorisation est interdite.</p><h3 class="font-bold text-base mb-2 mt-4">3. Propriété Intellectuelle</h3><p class="mb-3">Tous les contenus (textes, images, quiz, données géographiques) sont la propriété d\u2019AtlasQuest © 2026. Les drapeaux utilisés sont du domaine public. Les monuments et lieux géographiques sont cités à titre éducatif.</p><h3 class="font-bold text-base mb-2 mt-4">4. Achats intégrés</h3><p class="mb-3">Si l\u2019application propose des achats intégrés (gems, vies, abonnement premium), ceux-ci sont gérés via Google Play et soumis à ses propres conditions de paiement et de remboursement.</p><h3 class="font-bold text-base mb-2 mt-4">5. Limitation de responsabilité</h3><p class="mb-3">AtlasQuest est fourni sans garantie d\u2019exactitude complète. Bien que nous vérifiions nos données, aucune responsabilité n\u2019est engagée pour les erreurs ou omissions. L\u2019utilisation est à vos risques et périls.</p><h3 class="font-bold text-base mb-2 mt-4">6. Modification du service</h3><p class="mb-3">Nous nous réservons le droit de modifier ou de cesser le service à tout moment, sans préavis.</p><h3 class="font-bold text-base mb-2 mt-4">7. Contact</h3><p class="mb-3">Pour toute question, écrivez à : <strong>atlasquest.info@gmail.com</strong></p>`},
+  en:{about:'<h2 class="font-bold text-lg mb-4 mt-8">About AtlasQuest</h2><p>AtlasQuest is an educational app dedicated to learning world geography and history, in French, English and Arabic. © 2026 AtlasQuest Studio. All Rights Reserved.</p>',
+      privacy:`<h2 class="font-bold text-lg mb-4 mt-8">Privacy Policy</h2><p class="mb-3"><strong>Last updated: June 14, 2026</strong></p><h3 class="font-bold text-base mb-2 mt-4">1. Data Collected</h3><p class="mb-3">AtlasQuest collects only the following data:</p><ul class="list-disc list-inside mb-3 space-y-1"><li>Quiz scores and results</li><li>Game progress (levels, XP, badges, gems, lives)</li><li>Preferred language</li><li>Game history (dates and categories played)</li></ul><p class="mb-3 text-sm opacity-80">All data is stored <strong>exclusively on your device</strong> via browser storage (localStorage). No external server accesses this information.</p><h3 class="font-bold text-base mb-2 mt-4">2. No Data Sharing</h3><p class="mb-3">We do not share, sell, or transmit your data to any third party, advertising company, or tracking service. Your data is yours alone.</p><h3 class="font-bold text-base mb-2 mt-4">3. Right to Deletion</h3><p class="mb-3">You can delete all your data at any time by uninstalling the app or clearing its cache/storage. This will erase all your progress and scores.</p><h3 class="font-bold text-base mb-2 mt-4">4. Security</h3><p class="mb-3">Data is stored locally and never transmitted. No user accounts or authentication are required.</p><h3 class="font-bold text-base mb-2 mt-4">5. Contact</h3><p class="mb-3">For any privacy questions, contact us at: <strong>atlasquest.info@gmail.com</strong></p>`,
+      terms:`<h2 class="font-bold text-lg mb-4 mt-8">Terms of Service</h2><p class="mb-3"><strong>Last updated: June 14, 2026</strong></p><h3 class="font-bold text-base mb-2 mt-4">1. General Terms</h3><p class="mb-3">By using AtlasQuest, you agree to these terms of service. The app is provided "as is" at no cost for educational purposes.</p><h3 class="font-bold text-base mb-2 mt-4">2. License Grant</h3><p class="mb-3">You are granted the right to use AtlasQuest for personal, non-commercial purposes only. Any reproduction, modification, or distribution without authorization is prohibited.</p><h3 class="font-bold text-base mb-2 mt-4">3. Intellectual Property</h3><p class="mb-3">All content (text, images, quizzes, geographic data) is the property of AtlasQuest © 2026. Flags are public domain. Monuments and geographic locations are cited for educational purposes.</p><h3 class="font-bold text-base mb-2 mt-4">4. In-App Purchases</h3><p class="mb-3">If the app offers in-app purchases (gems, lives, premium subscription), these are managed through Google Play and subject to its own payment and refund terms.</p><h3 class="font-bold text-base mb-2 mt-4">5. Disclaimer</h3><p class="mb-3">AtlasQuest is provided without warranty of complete accuracy. While we verify our data, no liability is accepted for errors or omissions. Use is at your own risk.</p><h3 class="font-bold text-base mb-2 mt-4">6. Service Modifications</h3><p class="mb-3">We reserve the right to modify or discontinue the service at any time without notice.</p><h3 class="font-bold text-base mb-2 mt-4">7. Contact</h3><p class="mb-3">For inquiries, email us at: <strong>atlasquest.info@gmail.com</strong></p>`},
+  ar:{about:'<h2 class="font-bold text-lg mb-4 mt-8">عن AtlasQuest</h2><p>AtlasQuest تطبيق تعليمي مخصص لتعلم الجغرافيا وتاريخ العالم، بثلاث لغات: الفرنسية والإنجليزية والعربية. © 2026 AtlasQuest Studio. جميع الحقوق محفوظة.</p>',
+      privacy:`<h2 class="font-bold text-lg mb-4 mt-8">سياسة الخصوصية</h2><p class="mb-3"><strong>آخر تحديث: 14 يونيو 2026</strong></p><h3 class="font-bold text-base mb-2 mt-4">1. البيانات المجمعة</h3><p class="mb-3">يجمع AtlasQuest فقط البيانات التالية:</p><ul class="list-disc list-inside mb-3 space-y-1" style="margin-right:1.25rem"><li>درجات ونتائج الاختبارات</li><li>التقدم (المستويات، النقاط، الشارات، الجواهر، الحيوات)</li><li>اللغة المفضلة</li><li>سجل اللعب (التواريخ والفئات)</li></ul><p class="mb-3 text-sm opacity-80">تُخزَّن جميع هذه البيانات <strong>حصراً على جهازك</strong> عبر التخزين المحلي. لا يصل أي خادم خارجي إلى هذه المعلومات.</p><h3 class="font-bold text-base mb-2 mt-4">2. عدم مشاركة البيانات</h3><p class="mb-3">لا نشارك أو نبيع أو ننقل بياناتك إلى أي طرف ثالث أو شركة إعلانات. بياناتك خاصة بك فقط.</p><h3 class="font-bold text-base mb-2 mt-4">3. حق الحذف</h3><p class="mb-3">يمكنك حذف جميع بياناتك في أي وقت عبر إزالة التطبيق أو مسح ذاكرته المحلية. سيؤدي ذلك إلى حذف كل تقدمك.</p><h3 class="font-bold text-base mb-2 mt-4">4. الأمان</h3><p class="mb-3">يتم تخزين البيانات محلياً ولا تُنقل أبداً. لا توجد حسابات مستخدم أو مصادقة.</p><h3 class="font-bold text-base mb-2 mt-4">5. التواصل</h3><p class="mb-3">لأي استفسارات: <strong>atlasquest.info@gmail.com</strong></p>`,
+      terms:`<h2 class="font-bold text-lg mb-4 mt-8">شروط الخدمة</h2><p class="mb-3"><strong>آخر تحديث: 14 يونيو 2026</strong></p><h3 class="font-bold text-base mb-2 mt-4">1. الشروط العامة</h3><p class="mb-3">باستخدام AtlasQuest، توافق على هذه الشروط. التطبيق مجاني لأغراض تعليمية.</p><h3 class="font-bold text-base mb-2 mt-4">2. ترخيص الاستخدام</h3><p class="mb-3">يُسمح لك باستخدام AtlasQuest لأغراض شخصية غير تجارية فقط. أي نسخ أو تعديل غير مصرح به محظور.</p><h3 class="font-bold text-base mb-2 mt-4">3. حقوق الملكية الفكرية</h3><p class="mb-3">جميع المحتوى ملك AtlasQuest © 2026. الأعلام عامة. المعالم والمواقع الجغرافية مذكورة لأغراض تعليمية.</p><h3 class="font-bold text-base mb-2 mt-4">4. المشتريات داخل التطبيق</h3><p class="mb-3">إن وُجدت مشتريات داخل التطبيق (جواهر، حيوات، اشتراك مميز)، فإنها تُدار عبر Google Play وتخضع لشروطه.</p><h3 class="font-bold text-base mb-2 mt-4">5. تنصل من المسؤولية</h3><p class="mb-3">يُقدم التطبيق بدون ضمان دقة كاملة. بينما نتحقق من البيانات، لا نتحمل مسؤولية الأخطاء أو الحذف.</p><h3 class="font-bold text-base mb-2 mt-4">6. تعديل الخدمة</h3><p class="mb-3">نحتفظ بالحق في تعديل أو إيقاف الخدمة في أي وقت دون إشعار.</p><h3 class="font-bold text-base mb-2 mt-4">7. التواصل</h3><p class="mb-3">للاستفسارات: <strong>atlasquest.info@gmail.com</strong></p>`}
 };
 function showLegal(page){
   document.getElementById('legal-content').innerHTML=(LEGAL[lang]||LEGAL.fr)[page];
@@ -1553,6 +1615,12 @@ function init(){
   lucide.createIcons();
 }
 init();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
 </script>
 </body>
 </html>
