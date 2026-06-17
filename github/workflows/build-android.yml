@@ -1,1 +1,171 @@
+name: 2 - Build Android APK
 
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Capacitor CLI and dependencies
+        run: |
+          npm install -g @capacitor/cli@6
+          npm install \
+            @capacitor/core@6 \
+            @capacitor/android@6
+
+      - name: Create minimal package.json for Capacitor
+        run: |
+          cat > package.json << 'EOF'
+          {
+            "name": "atlasquest",
+            "version": "1.0.0",
+            "private": true,
+            "dependencies": {
+              "@capacitor/core": "^6.0.0",
+              "@capacitor/android": "^6.0.0"
+            }
+          }
+          EOF
+          npm install
+
+      - name: Create Capacitor config
+        run: |
+          cat > capacitor.config.json << 'EOF'
+          {
+            "appId": "com.atlasquest.app",
+            "appName": "AtlasQuest",
+            "webDir": "www",
+            "server": {
+              "androidScheme": "https"
+            }
+          }
+          EOF
+
+      - name: Prepare www folder (our web app)
+        run: |
+          mkdir -p www/icons
+          cp index.html www/index.html
+          cp manifest.json www/manifest.json
+          cp sw.js www/sw.js
+          [ -f privacy.html ] && cp privacy.html www/privacy.html
+          [ -f terms.html ] && cp terms.html www/terms.html
+          [ -f icons/icon-192.png ] && cp icons/icon-192.png www/icons/
+          [ -f icons/icon-512.png ] && cp icons/icon-512.png www/icons/
+          [ -f icons/icon-maskable-512.png ] && cp icons/icon-maskable-512.png www/icons/
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync web assets to Android
+        run: npx cap sync android
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Set up Android app icons
+        run: |
+          MIPMAP_DIRS="android/app/src/main/res"
+          for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
+            mkdir -p "$MIPMAP_DIRS/$dir"
+          done
+          python3 - << 'PYEOF'
+          from PIL import Image
+          import os
+          sizes = {
+              'mipmap-mdpi': 48,
+              'mipmap-hdpi': 72,
+              'mipmap-xhdpi': 96,
+              'mipmap-xxhdpi': 144,
+              'mipmap-xxxhdpi': 192,
+          }
+          src = 'icons/icon-512.png'
+          src_mask = 'icons/icon-maskable-512.png'
+          base = 'android/app/src/main/res'
+          img = Image.open(src).convert('RGBA')
+          img_fg = Image.open(src_mask).convert('RGBA')
+          for d, s in sizes.items():
+              img.resize((s,s), Image.LANCZOS).save(f'{base}/{d}/ic_launcher.png')
+              img.resize((s,s), Image.LANCZOS).save(f'{base}/{d}/ic_launcher_round.png')
+              img_fg.resize((s,s), Image.LANCZOS).save(f'{base}/{d}/ic_launcher_foreground.png')
+          print('Icons set')
+          PYEOF
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/atlasquest.keystore
+
+      - name: Configure signing in Gradle
+        run: |
+          cat >> android/app/build.gradle << 'EOF'
+
+          android {
+              signingConfigs {
+                  release {
+                      storeFile file('atlasquest.keystore')
+                      storePassword System.getenv('KEYSTORE_PASSWORD')
+                      keyAlias System.getenv('KEY_ALIAS')
+                      keyPassword System.getenv('KEY_PASSWORD')
+                  }
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          EOF
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Build release APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          cd android
+          ./gradlew assembleRelease --no-daemon
+
+      - name: Build release AAB (Play Store)
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          cd android
+          ./gradlew bundleRelease --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AtlasQuest-APK
+          path: android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+
+      - name: Upload AAB artifact (Play Store)
+        uses: actions/upload-artifact@v4
+        with:
+          name: AtlasQuest-AAB-PlayStore
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+          
