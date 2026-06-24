@@ -1,8 +1,10 @@
-const CACHE_NAME = 'atlasquest-v1';
+const CACHE_NAME = 'atlasquest-v2';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './privacy.html',
+  './terms.html'
 ];
 
 self.addEventListener('install', (event) => {

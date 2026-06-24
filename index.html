@@ -3,9 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AtlasQuest</title>
+  <title>AtlasQuest — Quiz Géographie & Histoire du Monde (FR/EN/AR)</title>
+  <meta name="description" content="AtlasQuest : quiz éducatif gratuit de géographie et d'histoire en français, anglais et arabe. Drapeaux, capitales, monuments, Algérie, Monde Arabe et plus.">
+  <meta name="keywords" content="quiz géographie, drapeaux, capitales, histoire, Algérie, monde arabe, quiz éducatif, geography quiz">
+  <meta name="author" content="AtlasQuest">
+  <link rel="canonical" href="https://atlasquest369.github.io/AtlasQuest/">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#FFD700">
+  <!-- Open Graph (aperçu de lien sur les réseaux sociaux) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AtlasQuest — Quiz Géographie & Histoire du Monde">
+  <meta property="og:description" content="Quiz éducatif gratuit FR/EN/AR : drapeaux, capitales, monuments, Algérie, Monde Arabe.">
+  <meta property="og:url" content="https://atlasquest369.github.io/AtlasQuest/">
+  <meta property="og:image" content="https://atlasquest369.github.io/AtlasQuest/icons/icon-512.png">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AtlasQuest — Quiz Géographie & Histoire">
+  <meta name="twitter:description" content="Quiz éducatif gratuit FR/EN/AR. Teste tes connaissances du monde !">
+  <meta name="twitter:image" content="https://atlasquest369.github.io/AtlasQuest/icons/icon-512.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -276,6 +293,24 @@
         <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
           <span class="text-3xl">📚</span>
           <span class="text-sm font-bold" id="cat-culture-text">Culture G.</span>
+        </div>
+      </button>
+      <button onclick="selectCategory('algeria')" class="cat-card overflow-hidden relative rounded-xl" style="aspect-ratio:4/3;background:linear-gradient(135deg,rgba(0,98,51,.28),rgba(255,255,255,.04));border:1.5px solid rgba(0,128,0,.45)">
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+          <span class="text-3xl">🇩🇿</span>
+          <span class="text-sm font-bold" id="cat-algeria-text">Algérie</span>
+        </div>
+      </button>
+      <button onclick="selectCategory('arab')" class="cat-card overflow-hidden relative rounded-xl" style="aspect-ratio:4/3;background:linear-gradient(135deg,rgba(255,215,0,.14),rgba(255,255,255,.03));border:1.5px solid rgba(255,215,0,.35)">
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+          <span class="text-3xl">🌙</span>
+          <span class="text-sm font-bold" id="cat-arab-text">Monde Arabe</span>
+        </div>
+      </button>
+      <button onclick="selectCategory('math')" class="cat-card overflow-hidden relative rounded-xl" style="aspect-ratio:4/3;background:linear-gradient(135deg,rgba(0,229,255,.12),rgba(255,255,255,.03));border:1.5px solid rgba(0,229,255,.35)">
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+          <span class="text-3xl">🔢</span>
+          <span class="text-sm font-bold" id="cat-math-text">Chiffres</span>
         </div>
       </button>
       <button onclick="startDuelSetup()" class="cat-card rounded-xl overflow-hidden relative col-span-2 py-4" style="background:linear-gradient(135deg,rgba(239,68,68,.2),rgba(249,115,22,.2));border:1.5px solid rgba(239,68,68,.4)">
@@ -554,10 +589,12 @@ document.addEventListener('selectstart',e=>{
   if(e.target.closest('#view-quiz,#view-duel-quiz'))e.preventDefault()
 });
 
-// ===== STORAGE =====
+// ===== STORAGE (encoded base64 — light anti-tamper, not real encryption) =====
 const SK='atlasquest_v2';
-function loadData(){try{return JSON.parse(localStorage.getItem(SK))||null}catch(e){return null}}
-function saveData(d){try{localStorage.setItem(SK,JSON.stringify(d))}catch(e){}}
+function enc(d){try{return btoa(unescape(encodeURIComponent(JSON.stringify(d))))}catch(e){return JSON.stringify(d)}}
+function dec(s){if(!s)return null;try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch(e){try{return JSON.parse(s)}catch(e2){return null}}}
+function loadData(){try{return dec(localStorage.getItem(SK))}catch(e){return null}}
+function saveData(d){try{localStorage.setItem(SK,enc(d))}catch(e){}}
 
 // ===== AUDIO =====
 let audioCtx;
@@ -569,9 +606,9 @@ function playLevelUp(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone
 
 // ===== TRANSLATIONS =====
 const T={
-  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',next:'Suivant →',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
-  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',next:'Next →',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
-  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',next:'التالي →',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
+  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',next:'Suivant →',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
+  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',next:'Next →',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
+  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',next:'التالي →',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
 };
 
 // ===== QUIZ DATA =====
@@ -643,7 +680,6 @@ const FLAGS=[
   {flag:'🇦🇹',fr:'Autriche',en:'Austria',ar:'النمسا',capFr:'Vienne',capEn:'Vienna',capAr:'فيينا',continent:'Europe'},
   {flag:'🇮🇪',fr:'Irlande',en:'Ireland',ar:'أيرلندا',capFr:'Dublin',capEn:'Dublin',capAr:'دبلن',continent:'Europe'},
   {flag:'🇨🇿',fr:'Tchéquie',en:'Czech Republic',ar:'جمهورية التشيك',capFr:'Prague',capEn:'Prague',capAr:'براغ',continent:'Europe'},
-  {flag:'🇮🇱',fr:'Israël',en:'Israel',ar:'إسرائيل',capFr:'Jérusalem',capEn:'Jerusalem',capAr:'القدس',continent:'Asia'},
   {flag:'🇵🇸',fr:'Palestine',en:'Palestine',ar:'فلسطين',capFr:'Ramallah',capEn:'Ramallah',capAr:'رام الله',continent:'Asia'},
   {flag:'🇳🇪',fr:'Niger',en:'Niger',ar:'النيجر',capFr:'Niamey',capEn:'Niamey',capAr:'نيامي',continent:'Africa'},
   {flag:'🇿🇼',fr:'Zimbabwe',en:'Zimbabwe',ar:'زيمبابوي',capFr:'Harare',capEn:'Harare',capAr:'هرارة',continent:'Africa'},
@@ -720,6 +756,45 @@ const HISTORY=[
   {fr:'Quel pays a accueilli la Coupe du Monde de football 2022 ?',en:'Which country hosted the 2022 FIFA World Cup?',ar:'أي بلد استضاف كأس العالم لكرة القدم 2022؟',answer:{fr:'Qatar',en:'Qatar',ar:'قطر'},wrong:[{fr:'Émirats arabes unis',en:'UAE',ar:'الإمارات'},{fr:'Arabie Saoudite',en:'Saudi Arabia',ar:'السعودية'},{fr:'Maroc',en:'Morocco',ar:'المغرب'}]},
   {fr:'Quelle organisation régionale regroupe les pays arabes ?',en:'Which regional organization brings together Arab countries?',ar:'ما هي المنظمة الإقليمية التي تجمع الدول العربية؟',answer:{fr:'La Ligue arabe',en:'The Arab League',ar:'جامعة الدول العربية'},wrong:[{fr:'L\u2019ONU',en:'The UN',ar:'الأمم المتحدة'},{fr:'L\u2019OTAN',en:'NATO',ar:'حلف الناتو'},{fr:'L\u2019Union africaine',en:'The African Union',ar:'الاتحاد الأفريقي'}]},
   {fr:'En quelle année l\u2019Organisation des Nations Unies a-t-elle été fondée ?',en:'In which year was the United Nations founded?',ar:'في أي سنة تأسست منظمة الأمم المتحدة؟',answer:{fr:'1945',en:'1945',ar:'1945'},wrong:[{fr:'1939',en:'1939',ar:'1939'},{fr:'1950',en:'1950',ar:'1950'},{fr:'1960',en:'1960',ar:'1960'}]}
+];
+
+const ALGERIA_Q=[
+  {fr:'Combien de wilayas compte l’Algérie aujourd’hui ?',en:'How many provinces (wilayas) does Algeria have today?',ar:'كم عدد ولايات الجزائر اليوم؟',answer:{fr:'69 wilayas',en:'69 provinces',ar:'69 ولاية'},wrong:[{fr:'48 wilayas',en:'48 provinces',ar:'48 ولاية'},{fr:'58 wilayas',en:'58 provinces',ar:'58 ولاية'},{fr:'52 wilayas',en:'52 provinces',ar:'52 ولاية'}]},
+  {fr:'Quelle est la capitale de l’Algérie ?',en:'What is the capital of Algeria?',ar:'ما هي عاصمة الجزائر؟',answer:{fr:'Alger',en:'Algiers',ar:'الجزائر العاصمة'},wrong:[{fr:'Oran',en:'Oran',ar:'وهران'},{fr:'Constantine',en:'Constantine',ar:'قسنطينة'},{fr:'Annaba',en:'Annaba',ar:'عنابة'}]},
+  {fr:'Quelle est la date du déclenchement de la Révolution algérienne ?',en:'When did the Algerian Revolution begin?',ar:'متى اندلعت الثورة الجزائرية؟',answer:{fr:'1er novembre 1954',en:'November 1, 1954',ar:'1 نوفمبر 1954'},wrong:[{fr:'5 juillet 1962',en:'July 5, 1962',ar:'5 يوليو 1962'},{fr:'8 mai 1945',en:'May 8, 1945',ar:'8 مايو 1945'},{fr:'20 août 1956',en:'August 20, 1956',ar:'20 أوت 1956'}]},
+  {fr:'Quelle est la date de l’indépendance de l’Algérie ?',en:'When did Algeria gain independence?',ar:'متى استقلت الجزائر؟',answer:{fr:'5 juillet 1962',en:'July 5, 1962',ar:'5 يوليو 1962'},wrong:[{fr:'1er novembre 1954',en:'November 1, 1954',ar:'1 نوفمبر 1954'},{fr:'19 mars 1962',en:'March 19, 1962',ar:'19 مارس 1962'},{fr:'8 mai 1945',en:'May 8, 1945',ar:'8 مايو 1945'}]},
+  {fr:'Quel est le plus grand pays d’Afrique par superficie ?',en:'What is the largest country in Africa by area?',ar:'ما هو أكبر بلد في أفريقيا من حيث المساحة؟',answer:{fr:'Algérie',en:'Algeria',ar:'الجزائر'},wrong:[{fr:'Soudan',en:'Sudan',ar:'السودان'},{fr:'Libye',en:'Libya',ar:'ليبيا'},{fr:'Égypte',en:'Egypt',ar:'مصر'}]},
+  {fr:'Quel désert couvre la majeure partie du sud de l’Algérie ?',en:'Which desert covers most of southern Algeria?',ar:'ما الصحراء التي تغطي معظم جنوب الجزائر؟',answer:{fr:'Le Sahara',en:'The Sahara',ar:'الصحراء الكبرى'},wrong:[{fr:'Le Kalahari',en:'The Kalahari',ar:'كالاهاري'},{fr:'Le Namib',en:'The Namib',ar:'ناميب'},{fr:'Le Néguev',en:'The Negev',ar:'النقب'}]},
+  {fr:'Qui était l’Émir Abdelkader ?',en:'Who was Emir Abdelkader?',ar:'من هو الأمير عبد القادر الجزائري؟',answer:{fr:'Chef de la résistance algérienne',en:'Leader of the Algerian resistance',ar:'زعيم المقاومة الجزائرية'},wrong:[{fr:'Premier président',en:'First president',ar:'أول رئيس'},{fr:'Poète andalou',en:'Andalusian poet',ar:'شاعر أندلسي'},{fr:'Général ottoman',en:'Ottoman general',ar:'جنرال عثماني'}]},
+  {fr:'Qu’est-ce que le Congrès de la Soummam (20 août 1956) ?',en:'What was the Soummam Congress (August 20, 1956)?',ar:'ما هو مؤتمر الصومام (20 أوت 1956)؟',answer:{fr:'Congrès fondateur d’organisation du FLN',en:'Founding congress organizing the FLN',ar:'مؤتمر تنظيمي لجبهة التحرير'},wrong:[{fr:'Un traité avec la France',en:'A treaty with France',ar:'معاهدة مع فرنسا'},{fr:'Une bataille',en:'A battle',ar:'معركة'},{fr:'Un accord de paix',en:'A peace accord',ar:'اتفاق سلام'}]},
+  {fr:'Quelle chaîne de montagnes traverse le nord de l’Algérie ?',en:'Which mountain range crosses northern Algeria?',ar:'ما سلسلة الجبال التي تعبر شمال الجزائر؟',answer:{fr:'L’Atlas',en:'The Atlas',ar:'جبال الأطلس'},wrong:[{fr:'Les Alpes',en:'The Alps',ar:'الألب'},{fr:'L’Himalaya',en:'The Himalayas',ar:'الهيمالايا'},{fr:'Les Pyrénées',en:'The Pyrenees',ar:'البيرينيه'}]},
+  {fr:'Quelle est la monnaie officielle de l’Algérie ?',en:'What is the official currency of Algeria?',ar:'ما هي العملة الرسمية للجزائر؟',answer:{fr:'Le dinar algérien',en:'The Algerian dinar',ar:'الدينار الجزائري'},wrong:[{fr:'Le dirham',en:'The dirham',ar:'الدرهم'},{fr:'L’euro',en:'The euro',ar:'اليورو'},{fr:'Le franc',en:'The franc',ar:'الفرنك'}]}
+];
+
+const ARAB_Q=[
+  {fr:'Quelle est la capitale de l’Égypte ?',en:'What is the capital of Egypt?',ar:'ما هي عاصمة مصر؟',answer:{fr:'Le Caire',en:'Cairo',ar:'القاهرة'},wrong:[{fr:'Alexandrie',en:'Alexandria',ar:'الإسكندرية'},{fr:'Gizeh',en:'Giza',ar:'الجيزة'},{fr:'Louxor',en:'Luxor',ar:'الأقصر'}]},
+  {fr:'Quelle est la capitale administrative de la Palestine ?',en:'What is the administrative capital of Palestine?',ar:'ما هي العاصمة الإدارية لفلسطين؟',answer:{fr:'Ramallah',en:'Ramallah',ar:'رام الله'},wrong:[{fr:'Gaza',en:'Gaza',ar:'غزة'},{fr:'Naplouse',en:'Nablus',ar:'نابلس'},{fr:'Hébron',en:'Hebron',ar:'الخليل'}]},
+  {fr:'Quelle ville sainte est la capitale revendiquée de l’État de Palestine ?',en:'Which holy city is the claimed capital of the State of Palestine?',ar:'ما المدينة المقدسة التي تُعدّ العاصمة المعلنة لدولة فلسطين؟',answer:{fr:'Al-Qods (Jérusalem-Est)',en:'Al-Quds (East Jerusalem)',ar:'القدس'},wrong:[{fr:'Ramallah',en:'Ramallah',ar:'رام الله'},{fr:'Amman',en:'Amman',ar:'عمّان'},{fr:'Beyrouth',en:'Beirut',ar:'بيروت'}]},
+  {fr:'Quelle est la capitale de l’Arabie Saoudite ?',en:'What is the capital of Saudi Arabia?',ar:'ما هي عاصمة السعودية؟',answer:{fr:'Riyad',en:'Riyadh',ar:'الرياض'},wrong:[{fr:'Djeddah',en:'Jeddah',ar:'جدة'},{fr:'La Mecque',en:'Mecca',ar:'مكة'},{fr:'Médine',en:'Medina',ar:'المدينة'}]},
+  {fr:'Quelle est la capitale des Émirats arabes unis ?',en:'What is the capital of the United Arab Emirates?',ar:'ما هي عاصمة الإمارات العربية المتحدة؟',answer:{fr:'Abu Dhabi',en:'Abu Dhabi',ar:'أبوظبي'},wrong:[{fr:'Dubaï',en:'Dubai',ar:'دبي'},{fr:'Charjah',en:'Sharjah',ar:'الشارقة'},{fr:'Ajman',en:'Ajman',ar:'عجمان'}]},
+  {fr:'Où se trouve le siège de la Ligue arabe ?',en:'Where is the headquarters of the Arab League?',ar:'أين يقع مقر جامعة الدول العربية؟',answer:{fr:'Le Caire',en:'Cairo',ar:'القاهرة'},wrong:[{fr:'Riyad',en:'Riyadh',ar:'الرياض'},{fr:'Tunis',en:'Tunis',ar:'تونس'},{fr:'Damas',en:'Damascus',ar:'دمشق'}]},
+  {fr:'Quel pays arabe a accueilli la Coupe du Monde 2022 ?',en:'Which Arab country hosted the 2022 World Cup?',ar:'أي بلد عربي استضاف كأس العالم 2022؟',answer:{fr:'Qatar',en:'Qatar',ar:'قطر'},wrong:[{fr:'Émirats arabes unis',en:'UAE',ar:'الإمارات'},{fr:'Maroc',en:'Morocco',ar:'المغرب'},{fr:'Arabie Saoudite',en:'Saudi Arabia',ar:'السعودية'}]},
+  {fr:'Quelle est la capitale de la Tunisie ?',en:'What is the capital of Tunisia?',ar:'ما هي عاصمة تونس؟',answer:{fr:'Tunis',en:'Tunis',ar:'تونس'},wrong:[{fr:'Sfax',en:'Sfax',ar:'صفاقس'},{fr:'Sousse',en:'Sousse',ar:'سوسة'},{fr:'Bizerte',en:'Bizerte',ar:'بنزرت'}]},
+  {fr:'Quel fleuve traverse l’Égypte du sud au nord ?',en:'Which river crosses Egypt from south to north?',ar:'ما النهر الذي يعبر مصر من الجنوب إلى الشمال؟',answer:{fr:'Le Nil',en:'The Nile',ar:'النيل'},wrong:[{fr:'L’Euphrate',en:'The Euphrates',ar:'الفرات'},{fr:'Le Tigre',en:'The Tigris',ar:'دجلة'},{fr:'Le Jourdain',en:'The Jordan',ar:'الأردن'}]},
+  {fr:'Quelle est la capitale du Maroc ?',en:'What is the capital of Morocco?',ar:'ما هي عاصمة المغرب؟',answer:{fr:'Rabat',en:'Rabat',ar:'الرباط'},wrong:[{fr:'Casablanca',en:'Casablanca',ar:'الدار البيضاء'},{fr:'Marrakech',en:'Marrakesh',ar:'مراكش'},{fr:'Fès',en:'Fez',ar:'فاس'}]}
+];
+
+const MATH_Q=[
+  {fr:'Combien de continents y a-t-il sur Terre ?',en:'How many continents are there on Earth?',ar:'كم عدد القارات على الأرض؟',answer:{fr:'7',en:'7',ar:'7'},wrong:[{fr:'5',en:'5',ar:'5'},{fr:'6',en:'6',ar:'6'},{fr:'8',en:'8',ar:'8'}]},
+  {fr:'Quel pays est le plus peuplé du monde ?',en:'Which country is the most populous in the world?',ar:'ما هو أكثر بلد سكاناً في العالم؟',answer:{fr:'Inde',en:'India',ar:'الهند'},wrong:[{fr:'Chine',en:'China',ar:'الصين'},{fr:'États-Unis',en:'United States',ar:'الولايات المتحدة'},{fr:'Indonésie',en:'Indonesia',ar:'إندونيسيا'}]},
+  {fr:'Combien d’océans compte la Terre ?',en:'How many oceans does Earth have?',ar:'كم عدد المحيطات على الأرض؟',answer:{fr:'5',en:'5',ar:'5'},wrong:[{fr:'3',en:'3',ar:'3'},{fr:'4',en:'4',ar:'4'},{fr:'7',en:'7',ar:'7'}]},
+  {fr:'Quel est le plus grand pays du monde par superficie ?',en:'What is the largest country in the world by area?',ar:'ما أكبر دولة في العالم مساحةً؟',answer:{fr:'Russie',en:'Russia',ar:'روسيا'},wrong:[{fr:'Canada',en:'Canada',ar:'كندا'},{fr:'Chine',en:'China',ar:'الصين'},{fr:'États-Unis',en:'United States',ar:'الولايات المتحدة'}]},
+  {fr:'Environ combien de pays sont membres de l’ONU ?',en:'About how many countries are UN members?',ar:'كم عدد الدول الأعضاء في الأمم المتحدة تقريباً؟',answer:{fr:'193',en:'193',ar:'193'},wrong:[{fr:'150',en:'150',ar:'150'},{fr:'210',en:'210',ar:'210'},{fr:'175',en:'175',ar:'175'}]},
+  {fr:'Quelle est la superficie approximative de l’Algérie ?',en:'What is the approximate area of Algeria?',ar:'ما هي المساحة التقريبية للجزائر؟',answer:{fr:'2,38 millions km²',en:'2.38 million km²',ar:'2.38 مليون كم²'},wrong:[{fr:'1 million km²',en:'1 million km²',ar:'1 مليون كم²'},{fr:'3,5 millions km²',en:'3.5 million km²',ar:'3.5 مليون كم²'},{fr:'800 000 km²',en:'800,000 km²',ar:'800 ألف كم²'}]},
+  {fr:'Quel est le plus long fleuve du monde ?',en:'What is the longest river in the world?',ar:'ما هو أطول نهر في العالم؟',answer:{fr:'Le Nil',en:'The Nile',ar:'النيل'},wrong:[{fr:'L’Amazone',en:'The Amazon',ar:'الأمازون'},{fr:'Le Yangtsé',en:'The Yangtze',ar:'اليانغتسي'},{fr:'Le Mississippi',en:'The Mississippi',ar:'المسيسيبي'}]},
+  {fr:'Combien de fuseaux horaires traverse la Russie ?',en:'How many time zones does Russia span?',ar:'كم عدد المناطق الزمنية التي تمتد عبرها روسيا؟',answer:{fr:'11',en:'11',ar:'11'},wrong:[{fr:'5',en:'5',ar:'5'},{fr:'8',en:'8',ar:'8'},{fr:'24',en:'24',ar:'24'}]},
+  {fr:'Quelle est la plus haute montagne du monde ?',en:'What is the highest mountain in the world?',ar:'ما هو أعلى جبل في العالم؟',answer:{fr:'L’Everest (8 849 m)',en:'Everest (8,849 m)',ar:'إيفرست (8849 م)'},wrong:[{fr:'Le K2',en:'K2',ar:'كي 2'},{fr:'Le Mont Blanc',en:'Mont Blanc',ar:'مون بلان'},{fr:'Le Kilimandjaro',en:'Kilimanjaro',ar:'كليمنجارو'}]},
+  {fr:'Combien y a-t-il de pays membres de la Ligue arabe ?',en:'How many member states does the Arab League have?',ar:'كم عدد الدول الأعضاء في جامعة الدول العربية؟',answer:{fr:'22',en:'22',ar:'22'},wrong:[{fr:'15',en:'15',ar:'15'},{fr:'18',en:'18',ar:'18'},{fr:'27',en:'27',ar:'27'}]}
 ];
 
 const BADGES_DEF=[
@@ -905,6 +980,7 @@ function applyTranslations(){
     'cat-flags-text':'flags','cat-capitals-text':'capitals',
     'cat-monuments-text':'monuments','cat-history-text':'history',
     'cat-continents-text':'continents','cat-culture-text':'culture',
+    'cat-algeria-text':'algeria','cat-arab-text':'arab','cat-math-text':'math',
     'cat-duel-text':'duel','cat-select-title-text':'catTitle',
     'cat-select-desc-text':'catDesc','play-btn-text':'play',
     'replay-btn-text':'replay','result-title-text':'results',
@@ -1115,7 +1191,9 @@ function generateForCat(cat){
       return{display:getName(q),type:'text',answer:locMap[correct],options:opts,meta:q}
     });
   }
-  return shuffle([...HISTORY]).slice(0,Math.min(count,HISTORY.length)).map(q=>{
+  const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q};
+  const bank=BANKS[cat]||HISTORY;
+  return shuffle([...bank]).slice(0,Math.min(count,bank.length)).map(q=>{
     const ans=q.answer[lang]||q.answer.fr;
     return{display:q[lang]||q.fr,type:'text',answer:ans,options:shuffle([ans,...q.wrong.map(w=>w[lang]||w.fr)]),meta:q}
   });
@@ -1615,6 +1693,13 @@ function init(){
   lucide.createIcons();
 }
 init();
+
+// ===== PWA: register service worker (offline + installable) =====
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
 </script>
 </body>
 </html>
