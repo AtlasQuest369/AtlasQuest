@@ -341,7 +341,7 @@
       <button class="diff-btn px-4 py-2 rounded-lg text-xs font-bold" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2)" onclick="setDiffDuel('expert',this)">Expert</button>
     </div>
     <button class="px-8 py-3 rounded-xl font-bold text-lg shadow-lg mt-4 text-black" style="background:linear-gradient(135deg,#ef4444,#f97316)" onclick="startDuel()" id="duel-start-btn-text">Commencer</button>
-    <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')">← Annuler</button>
+    <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')" id="duel-cancel-btn">← Annuler</button>
   </section>
 
   <!-- CATEGORY SELECT -->
@@ -412,7 +412,7 @@
     <h2 class="playfair font-bold mt-8 text-2xl" id="duel-result-title-text">Résultats du Duel</h2>
     <div id="duel-winner" class="text-3xl font-bold mb-2" style="color:var(--gold)"></div>
     <div id="duel-result-cards" class="w-full grid grid-cols-2 gap-3"></div>
-    <button class="px-8 py-3 rounded-xl font-bold shadow-lg text-black" style="background:linear-gradient(135deg,var(--purple),#6d28d9)" onclick="switchView('view-dashboard')">Retour au menu</button>
+    <button class="px-8 py-3 rounded-xl font-bold shadow-lg text-black" style="background:linear-gradient(135deg,var(--purple),#6d28d9)" onclick="switchView('view-dashboard')" id="duel-back-btn">Retour au menu</button>
   </section>
 
   <!-- RESULTS -->
@@ -437,14 +437,14 @@
       <button class="league-tab flex-1 py-2 rounded-lg text-xs font-bold" data-league="gold" onclick="setLeague('gold',this)" style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);color:var(--gold)">🥇 Gold</button>
       <button class="league-tab flex-1 py-2 rounded-lg text-xs font-bold" data-league="diamond" onclick="setLeague('diamond',this)" style="background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);color:var(--cyan)">💎 Dia.</button>
     </div>
-    <p class="text-xs opacity-50 w-full text-center">Top 3 promus à la ligue supérieure 🚀</p>
+    <p class="text-xs opacity-50 w-full text-center" id="lb-promo-text">Top 3 promus à la ligue supérieure 🚀</p>
     <div id="leaderboard-list" class="w-full flex flex-col gap-2"></div>
   </section>
 
   <!-- DAILY QUESTS -->
   <section id="view-quests" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-up">
     <h2 class="playfair font-bold mt-8 text-2xl" id="quests-title-text">Quêtes du Jour</h2>
-    <p class="text-xs opacity-50" id="quests-reset-text">Reset dans <span id="quests-timer">--</span></p>
+    <p class="text-xs opacity-50"><span id="quests-reset-label">Reset dans</span> <span id="quests-timer">--</span></p>
     <div id="quests-list" class="w-full flex flex-col gap-3"></div>
   </section>
 
@@ -459,17 +459,17 @@
         <span class="font-bold" style="color:var(--gold)">Premium</span>
         <span class="text-xs px-2 py-0.5 rounded-full font-bold text-black" style="background:var(--gold)">1.99€ / 3 mois</span>
       </div>
-      <p class="text-xs opacity-70 mb-3">Sans pub · Vies illimitées · Contenu exclusif · Certificats</p>
-      <button onclick="activatePremium()" class="w-full py-2 rounded-xl font-bold text-sm text-black" style="background:linear-gradient(135deg,var(--gold),#f59e0b)">Upgrade to Premium ✨</button>
-      <p class="text-[10px] opacity-40 mt-1 text-center">Puis 4.99€/3 mois · Annulable à tout moment</p>
+      <p class="text-xs opacity-70 mb-3" id="shop-prem-features">Sans pub · Vies illimitées · Contenu exclusif · Certificats</p>
+      <button onclick="activatePremium()" class="w-full py-2 rounded-xl font-bold text-sm text-black" style="background:linear-gradient(135deg,var(--gold),#f59e0b)" id="shop-prem-btn">Upgrade to Premium ✨</button>
+      <p class="text-[10px] opacity-40 mt-1 text-center" id="shop-prem-then">Puis 4.99€/3 mois · Annulable à tout moment</p>
     </div>
 
     <!-- ITEMS -->
-    <h3 class="font-bold w-full text-sm opacity-70">🎮 Items</h3>
+    <h3 class="font-bold w-full text-sm opacity-70" id="shop-items-title">🎮 Items</h3>
     <div id="shop-items" class="w-full flex flex-col gap-2"></div>
 
     <!-- GEM PACKAGES -->
-    <h3 class="font-bold w-full text-sm opacity-70 mt-2">💎 Packages de Gems</h3>
+    <h3 class="font-bold w-full text-sm opacity-70 mt-2" id="shop-gems-title">💎 Packages de Gems</h3>
     <div id="shop-gems" class="w-full flex flex-col gap-2"></div>
 
     <p id="shop-demo-msg" class="hidden text-xs mt-2 font-medium" style="color:#10b981"></p>
@@ -479,7 +479,7 @@
   <section id="view-profile" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-up">
     <h2 class="playfair font-bold mt-8 text-2xl" id="profile-title-text">Mon Profil</h2>
     <div class="w-full grid grid-cols-2 gap-3" id="profile-stats"></div>
-    <h3 class="font-bold w-full mt-4 text-sm opacity-70">📊 Statistiques par catégorie</h3>
+    <h3 class="font-bold w-full mt-4 text-sm opacity-70" id="cat-stats-title">📊 Statistiques par catégorie</h3>
     <div id="category-stats-grid" class="w-full grid grid-cols-2 gap-2"></div>
     <h3 class="font-bold w-full mt-4" id="badges-title">🏆 Badges</h3>
     <div id="badges-grid" class="grid grid-cols-4 gap-3 w-full"></div>
@@ -488,7 +488,7 @@
   <!-- LEGAL -->
   <section id="view-legal" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-up">
     <div id="legal-content" class="w-full text-sm leading-relaxed mt-8"></div>
-    <button class="opacity-50 text-sm underline mt-6" onclick="switchView('view-dashboard')">← Retour</button>
+    <button class="opacity-50 text-sm underline mt-6" onclick="switchView('view-dashboard')" id="legal-back-btn">← Retour</button>
   </section>
 
 </div><!-- /main -->
@@ -496,7 +496,7 @@
 <!-- AD BANNER -->
 <div id="ad-banner" class="hidden">
   <div class="flex-1">
-    <div class="text-[9px] opacity-40 mb-0.5">Publicité Google</div>
+    <div class="text-[9px] opacity-40 mb-0.5" id="ad-label">Publicité Google</div>
     <div id="ad-content" class="text-xs font-medium opacity-80">📱 Télécharge l'app AtlasQuest Pro — Quiz illimités !</div>
   </div>
   <button onclick="closeAd()" class="text-xs opacity-40 hover:opacity-80 px-2">✕</button>
@@ -532,11 +532,11 @@
 <footer class="fixed z-30 w-full text-center text-[9px] opacity-30" style="bottom:56px;background:rgba(15,15,26,.9);padding:3px">
   © 2025 AtlasQuest · All Rights Reserved
   <span class="mx-2">·</span>
-  <button onclick="showLegal('about')" class="hover:opacity-70">À propos</button>
+  <button onclick="showLegal('about')" class="hover:opacity-70" id="foot-about">À propos</button>
   <span class="mx-1">·</span>
-  <button onclick="showLegal('privacy')" class="hover:opacity-70">Confidentialité</button>
+  <button onclick="showLegal('privacy')" class="hover:opacity-70" id="foot-privacy">Confidentialité</button>
   <span class="mx-1">·</span>
-  <button onclick="showLegal('terms')" class="hover:opacity-70">CGU</button>
+  <button onclick="showLegal('terms')" class="hover:opacity-70" id="foot-terms">CGU</button>
 </footer>
 
 <!-- MODALS -->
@@ -545,10 +545,10 @@
   <div class="modal-box" style="border:2px solid #ef4444">
     <div class="text-center">
       <div class="text-5xl mb-3">💔</div>
-      <h3 class="font-bold text-xl mb-2">Plus de vies !</h3>
-      <p class="text-sm opacity-60 mb-4">Tu as utilisé toutes tes vies aujourd'hui.</p>
-      <button onclick="startRewardedAd()" class="w-full py-3 rounded-xl font-bold mb-2 text-white" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">📺 Regarder une pub (+1 ❤️)</button>
-      <button onclick="closeModal('modal-no-lives')" class="w-full py-2 rounded-xl text-sm opacity-50">Revenir demain</button>
+      <h3 class="font-bold text-xl mb-2" id="nolives-title">Plus de vies !</h3>
+      <p class="text-sm opacity-60 mb-4" id="nolives-desc">Tu as utilisé toutes tes vies aujourd'hui.</p>
+      <button onclick="startRewardedAd()" class="w-full py-3 rounded-xl font-bold mb-2 text-white" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)" id="nolives-watch">📺 Regarder une pub (+1 ❤️)</button>
+      <button onclick="closeModal('modal-no-lives')" class="w-full py-2 rounded-xl text-sm opacity-50" id="nolives-later">Revenir demain</button>
     </div>
   </div>
 </div>
@@ -558,8 +558,8 @@
   <div class="modal-box" style="border:1px solid rgba(255,255,255,.2)">
     <div class="text-center">
       <div class="text-4xl mb-3">📺</div>
-      <h3 class="font-bold text-lg mb-1">Publicité en cours…</h3>
-      <p class="text-xs opacity-50 mb-4">Regarde jusqu'à la fin pour gagner +1 ❤️</p>
+      <h3 class="font-bold text-lg mb-1" id="adplay-title">Publicité en cours…</h3>
+      <p class="text-xs opacity-50 mb-4" id="adplay-desc">Regarde jusqu'à la fin pour gagner +1 ❤️</p>
       <div class="w-full rounded-full overflow-hidden mb-3" style="background:rgba(255,255,255,.1);height:8px">
         <div id="ad-progress-bar" class="h-full rounded-full" style="width:0%;background:linear-gradient(90deg,var(--purple),var(--cyan));transition:width 1s linear"></div>
       </div>
@@ -573,9 +573,9 @@
 <div id="modal-level-up" class="modal-overlay hidden">
   <div class="modal-box text-center" style="border:2px solid var(--gold)">
     <div class="text-5xl mb-3">🎉</div>
-    <h3 class="playfair font-bold text-2xl mb-1" style="color:var(--gold)">Niveau supérieur !</h3>
+    <h3 class="playfair font-bold text-2xl mb-1" style="color:var(--gold)" id="levelup-title">Niveau supérieur !</h3>
     <p id="level-up-text" class="text-lg font-bold mb-4"></p>
-    <button onclick="closeModal('modal-level-up')" class="px-8 py-3 rounded-xl font-bold text-black" style="background:linear-gradient(135deg,var(--gold),#f59e0b)">Super ! 🚀</button>
+    <button onclick="closeModal('modal-level-up')" class="px-8 py-3 rounded-xl font-bold text-black" style="background:linear-gradient(135deg,var(--gold),#f59e0b)" id="levelup-btn">Super ! 🚀</button>
   </div>
 </div>
 
@@ -606,9 +606,9 @@ function playLevelUp(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone
 
 // ===== TRANSLATIONS =====
 const T={
-  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',next:'Suivant →',onboardStart:'C\'est parti !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
-  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',next:'Next →',onboardStart:'Let\'s go!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
-  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',next:'التالي →',onboardStart:'هيا بنا!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
+  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
+  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
+  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
 };
 
 // ===== QUIZ DATA =====
@@ -868,11 +868,11 @@ const FAKE_PLAYERS_ALL={
   ]
 };
 
-const AD_CONTENTS=[
-  '📱 Télécharge AtlasQuest Pro — Quiz illimités !',
-  '🌍 Découvrez nos cartes géographiques interactives',
-  '📚 Cours de géographie en ligne — 30 jours gratuits'
-];
+const AD_CONTENTS={
+  fr:['📱 Télécharge AtlasQuest Pro — Quiz illimités !','🌍 Découvrez nos cartes géographiques interactives','📚 Cours de géographie en ligne — 30 jours gratuits'],
+  en:['📱 Download AtlasQuest Pro — Unlimited quizzes!','🌍 Discover our interactive geography maps','📚 Online geography courses — 30 days free'],
+  ar:['📱 حمّل AtlasQuest Pro — اختبارات غير محدودة!','🌍 اكتشف خرائطنا الجغرافية التفاعلية','📚 دورات جغرافيا عبر الإنترنت — 30 يوماً مجاناً']
+};
 
 const contNameMap={
   fr:{Europe:'Europe',Asia:'Asie',Africa:'Afrique',SouthAmerica:'Amérique du Sud',NorthAmerica:'Amérique du Nord',Oceania:'Océanie'},
@@ -991,7 +991,17 @@ function applyTranslations(){
     'fact-next-btn':'next','duel-setup-title-text':'duelSetupTitle',
     'duel-p1-lbl':'duelP1','duel-p2-lbl':'duelP2',
     'duel-start-btn-text':'duelStart','duel-result-title-text':'duelResult',
-    'quests-title-text':'quests',
+    'quests-title-text':'quests','quests-reset-label':'questsReset',
+    'lb-promo-text':'lbPromo','shop-prem-features':'premFeat',
+    'shop-prem-then':'premThen','shop-prem-btn':'premBtn',
+    'shop-items-title':'itemsTitle','shop-gems-title':'gemsTitle',
+    'foot-about':'footAbout','foot-privacy':'footPrivacy','foot-terms':'footTerms',
+    'legal-back-btn':'back','cat-stats-title':'catStats',
+    'ad-label':'adLabel','nolives-title':'noLivesTitle','nolives-desc':'noLivesDesc',
+    'nolives-watch':'watchAd','nolives-later':'comeBack',
+    'adplay-title':'adPlaying','adplay-desc':'adWatchEnd',
+    'levelup-title':'levelUpTitle','levelup-btn':'levelUpBtn',
+    'duel-cancel-btn':'cancel','duel-back-btn':'backMenu',
     'tab-home-label':'tabHome','tab-lb-label':'tabLb',
     'tab-quests-label':'tabQuests','tab-shop-label':'tabShop',
     'tab-profile-label':'tabProfile'
@@ -1000,6 +1010,12 @@ function applyTranslations(){
     const el=document.getElementById(id);
     if(el)el.textContent=t(key);
   });
+  // duel input placeholders
+  const dp1=document.getElementById('duel-p1-input'),dp2=document.getElementById('duel-p2-input');
+  if(dp1)dp1.placeholder=t('duelP1');if(dp2)dp2.placeholder=t('duelP2');
+  // refresh visible ad text in current language
+  const adC=document.getElementById('ad-content');
+  if(adC){const ads=AD_CONTENTS[lang]||AD_CONTENTS.fr;adC.textContent=ads[0];}
   // diff buttons
   ['easy','normal','expert'].forEach((d,i)=>{
     document.querySelectorAll('#diff-buttons .diff-btn')[i].textContent=t(d);
@@ -1094,11 +1110,14 @@ function showAdBanner(){
   const banner=document.getElementById('ad-banner');
   const content=document.getElementById('ad-content');
   banner.classList.remove('hidden');
+  const ads=AD_CONTENTS[lang]||AD_CONTENTS.fr;
   let adIdx=0;
+  content.textContent=ads[0];
   clearInterval(adTimer);
   adTimer=setInterval(()=>{
-    adIdx=(adIdx+1)%AD_CONTENTS.length;
-    content.textContent=AD_CONTENTS[adIdx];
+    const list=AD_CONTENTS[lang]||AD_CONTENTS.fr;
+    adIdx=(adIdx+1)%list.length;
+    content.textContent=list[adIdx];
   },30000);
 }
 function closeAd(){
@@ -1497,7 +1516,7 @@ function renderShop(){
       <span class="text-2xl">💎</span>
       <div class="flex-1">
         <div class="text-sm font-bold">${pkg.gems} Gems</div>
-        ${pkg.popular?'<span class="text-[10px] px-2 py-0.5 rounded-full font-bold text-black" style="background:var(--gold)">POPULAIRE</span>':''}
+        ${pkg.popular?'<span class="text-[10px] px-2 py-0.5 rounded-full font-bold text-black" style="background:var(--gold)">'+t('popular')+'</span>':''}
       </div>
       <button onclick="buyGems(${pkg.gems},'${pkg.price}')" class="px-3 py-1.5 rounded-lg text-xs font-bold" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2)">
         ${pkg.price}
@@ -1610,7 +1629,7 @@ function updateProfileView(){
 function renderCategoryStats(){
   const grid=document.getElementById('category-stats-grid');
   if(!grid||!userData)return;
-  const cats=[{id:'flags',emoji:'🚩'},{id:'capitals',emoji:'🏛️'},{id:'monuments',emoji:'🏰'},{id:'history',emoji:'📜'},{id:'continents',emoji:'🌍'},{id:'culture',emoji:'📚'}];
+  const cats=[{id:'flags',emoji:'🚩'},{id:'capitals',emoji:'🏛️'},{id:'monuments',emoji:'🏰'},{id:'history',emoji:'📜'},{id:'continents',emoji:'🌍'},{id:'algeria',emoji:'🇩🇿'},{id:'arab',emoji:'🌙'},{id:'math',emoji:'🔢'},{id:'culture',emoji:'📚'}];
   const stats=JSON.parse(userData.category_stats||'{}');
   grid.innerHTML=cats.map(c=>{
     const s=stats[c.id]||{q:0,c:0};
