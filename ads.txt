@@ -1,0 +1,4 @@
+# AtlasQuest — Google AdSense ownership file
+# Remplace pub-0000000000000000 par TON ID éditeur AdSense (le numéro après "ca-"),
+# puis garde ce fichier à la racine du site. Sans ça, AdSense refuse de diffuser des pubs.
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

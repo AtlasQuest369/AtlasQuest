@@ -73,3 +73,42 @@ Le contenu suit les positions officielles de la République Algérienne et les r
 - **Palestine** incluse (🇵🇸, capitale administrative Ramallah ; Al-Qods comme capitale revendiquée). **Israël n'est pas un pays jouable.**
 - **Sahara occidental** présenté comme territoire distinct (non rattaché au Maroc).
 - **Algérie : 69 wilayas.** Russie classée en Europe. « Washington D.C. ».
+
+---
+
+## 💰 Monétisation (publicité)
+
+L'app contient une **bannière publicitaire simulée** par défaut (aucun revenu). Deux pistes réelles :
+
+### A. Web (GitHub Pages) — Google AdSense
+1. Crée un compte sur https://adsense.google.com et ajoute le site `atlasquest369.github.io`.
+2. Édite **`ads.txt`** : remplace `pub-0000000000000000` par ton **ID éditeur** réel.
+3. Dans **`index.html`**, renseigne en haut du script :
+   - `var ADSENSE_CLIENT='ca-pub-XXXXXXXXXXXXXXXX';`
+   - `var ADSENSE_SLOT='1234567890';`
+4. Dès que ces deux valeurs sont remplies, la vraie pub AdSense remplace automatiquement la bannière simulée. Tant qu'elles sont vides, rien n'est chargé (zéro risque de blocage de compte).
+> AdSense exige un site avec du contenu et un trafic réel, puis une validation (1–14 jours). Les utilisateurs Premium ne voient pas la pub (déjà géré).
+
+### B. Application Android (Play Store) — Google AdMob
+AdSense est pour le web ; dans l'APK, utilise **AdMob** (SDK natif) :
+```
+npm install @capacitor-community/admob && npx cap sync
+```
+Puis initialise AdMob au démarrage et remplace le modal « regarder une pub » par un `RewardVideoAd`. IDs de test pendant le dev, IDs réels avant publication.
+
+### ⚠️ Réalité paiement (Algérie)
+- AdSense/AdMob **sont accessibles aux éditeurs algériens**, seuil de paiement **100 $**.
+- Le paiement se fait par **virement bancaire (EFT) vers un compte au nom du titulaire** — **pas vers une carte virtuelle ni Grey**. Prévois un compte bancaire (ou via un proche de confiance) au nom du bénéficiaire AdSense.
+
+---
+
+## 🍏 iOS / App Store (iPhone)
+
+**Oui, c'est techniquement possible** avec le même code (Capacitor cible aussi iOS), mais c'est plus lourd que pour Android :
+- Il faut un **compte Apple Developer** : **99 $/an** (récurrent), payable par carte (ta carte virtuelle Grey peut convenir si c'est une Visa/Mastercard valide).
+- Compiler iOS exige **macOS + Xcode** — donc soit un Mac, soit un **CI macOS** (GitHub Actions runner `macos`, ou Codemagic). Pas faisable directement depuis Android comme l'APK.
+- Apple applique la règle **4.2 (functionalité minimale)** : un simple « site emballé » peut être refusé. Il faut soigner l'expérience native (offline, animations, pas de bouton de paiement web).
+
+**Solution immédiate gratuite :** sur iPhone, Safari → Partager → **« Sur l'écran d'accueil »** installe déjà AtlasQuest comme une app (PWA), sans App Store ni frais.
+
+**Recommandation studio :** lancer d'abord sur **Google Play + Web (AdSense)** depuis l'Algérie (coût 25 $ unique), construire l'audience et les premiers revenus, puis envisager l'App Store iOS dans un second temps.

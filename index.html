@@ -495,10 +495,11 @@
 
 <!-- AD BANNER -->
 <div id="ad-banner" class="hidden">
-  <div class="flex-1">
+  <div class="flex-1" id="ad-sim">
     <div class="text-[9px] opacity-40 mb-0.5" id="ad-label">Publicité Google</div>
     <div id="ad-content" class="text-xs font-medium opacity-80">📱 Télécharge l'app AtlasQuest Pro — Quiz illimités !</div>
   </div>
+  <ins id="adsense-slot" class="adsbygoogle" style="display:none;width:100%;height:50px" data-ad-format="auto" data-full-width-responsive="true"></ins>
   <button onclick="closeAd()" class="text-xs opacity-40 hover:opacity-80 px-2">✕</button>
 </div>
 
@@ -589,6 +590,32 @@ document.addEventListener('selectstart',e=>{
   if(e.target.closest('#view-quiz,#view-duel-quiz'))e.preventDefault()
 });
 
+// ====== MONÉTISATION GOOGLE ADSENSE ======
+// Laisser VIDE = bannière simulée (aucune pub réelle chargée).
+// Pour activer la vraie pub : colle ton ID éditeur AdSense + l'ID du bloc d'annonce.
+//   ADSENSE_CLIENT : 'ca-pub-XXXXXXXXXXXXXXXX'   (Compte AdSense → Compte → ID éditeur)
+//   ADSENSE_SLOT   : '1234567890'                (Annonces → par bloc d'annonces)
+var ADSENSE_CLIENT='';
+var ADSENSE_SLOT='';
+function initAds(){
+  if(!ADSENSE_CLIENT||window.__adsInit)return;
+  window.__adsInit=true;
+  try{
+    var s=document.createElement('script');
+    s.async=true;s.crossOrigin='anonymous';
+    s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+ADSENSE_CLIENT;
+    document.head.appendChild(s);
+    var ins=document.getElementById('adsense-slot'),sim=document.getElementById('ad-sim');
+    if(ins){
+      ins.setAttribute('data-ad-client',ADSENSE_CLIENT);
+      if(ADSENSE_SLOT)ins.setAttribute('data-ad-slot',ADSENSE_SLOT);
+      ins.style.display='block';
+      if(sim)sim.style.display='none';
+      (window.adsbygoogle=window.adsbygoogle||[]).push({});
+    }
+  }catch(e){}
+}
+
 // ===== STORAGE (encoded base64 — light anti-tamper, not real encryption) =====
 const SK='atlasquest_v2';
 function enc(d){try{return btoa(unescape(encodeURIComponent(JSON.stringify(d))))}catch(e){return JSON.stringify(d)}}
@@ -606,9 +633,9 @@ function playLevelUp(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone
 
 // ===== TRANSLATIONS =====
 const T={
-  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
-  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
-  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
+  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',toastLife:'❤️ +1 Vie gagnée !',toastPremium:'✅ Premium activé ! Profite de l\'expérience complète 👑',toastShield:'🛡️ Bouclier activé ! Erreur protégée',toastAnswer:'Réponse :',toastQuestDone:'Quête complète !',toastError:'Erreur',toastNoGems:'❌ Gems insuffisantes !',toastBought:'acheté !',toastDemo:'💎 Démo — achat bientôt disponible !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
+  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',toastLife:'❤️ +1 Life earned!',toastPremium:'✅ Premium activated! Enjoy the full experience 👑',toastShield:'🛡️ Shield active! Mistake protected',toastAnswer:'Answer:',toastQuestDone:'Quest complete!',toastError:'Error',toastNoGems:'❌ Not enough gems!',toastBought:'purchased!',toastDemo:'💎 Demo — purchases coming soon!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
+  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',toastLife:'❤️ +1 حياة!',toastPremium:'✅ تم تفعيل بريميوم! استمتع بالتجربة الكاملة 👑',toastShield:'🛡️ الدرع مُفعّل! تم تفادي الخطأ',toastAnswer:'الإجابة:',toastQuestDone:'اكتملت المهمة!',toastError:'خطأ',toastNoGems:'❌ جواهر غير كافية!',toastBought:'تم شراؤه!',toastDemo:'💎 تجريبي — الشراء قريباً!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
 };
 
 // ===== QUIZ DATA =====
@@ -1110,6 +1137,7 @@ function showAdBanner(){
   const banner=document.getElementById('ad-banner');
   const content=document.getElementById('ad-content');
   banner.classList.remove('hidden');
+  if(ADSENSE_CLIENT){initAds();return;} // vraie pub AdSense configurée
   const ads=AD_CONTENTS[lang]||AD_CONTENTS.fr;
   let adIdx=0;
   content.textContent=ads[0];
@@ -1145,7 +1173,7 @@ function startRewardedAd(){
       closeModal('modal-rewarded-ad');
       if(userData){userData.lives=Math.min(5,userData.lives+1);saveData(userData)}
       updateLivesBadge();
-      showToast('❤️ +1 Vie gagnée !','green');
+      showToast(t('toastLife'),'green');
     }
   },1000);
 }
@@ -1158,7 +1186,7 @@ function activatePremium(){
   document.getElementById('ad-banner').classList.add('hidden');
   document.getElementById('premium-badge').classList.remove('hidden');
   clearInterval(adTimer);
-  showToast('✅ Premium activé ! Profite de l\'expérience complète 👑','gold');
+  showToast(t('toastPremium'),'gold');
 }
 
 // ===== QUIZ ENGINE =====
@@ -1294,12 +1322,12 @@ function selectAnswer(answer,btn){
     // Shield check
     if(shieldActive&&answer!==null){
       shieldActive=false;if(userData)userData.shield_active=false;
-      showToast('🛡️ Bouclier activé ! Erreur protégée','gold');
+      showToast(t('toastShield'),'gold');
     }else{
       if(streak>maxStreak)maxStreak=streak;streak=0;
       playWrong();
       if(btn){btn.style.background='rgba(239,68,68,.35)';btn.classList.add('wrong-pulse')}
-      if(answer!==null)showToast(`❌ Réponse : ${q.answer}`,'red');
+      if(answer!==null)showToast(`❌ ${t('toastAnswer')} ${q.answer}`,'red');
     }
   }
 
@@ -1426,17 +1454,17 @@ function updateQuestProgress(pct){
   // q1: quizzes today
   userData.quests_progress.q1=Math.min(3,(userData.quests_progress.q1||0)+1);
   if(userData.quests_progress.q1>=3&&!userData.quests_done.q1){
-    userData.quests_done.q1=true;addGems(50);showToast('✅ Quête 1 complète ! +50 💎','gold');
+    userData.quests_done.q1=true;addGems(50);showToast('✅ '+t('toastQuestDone')+' +50 💎','gold');
   }
   // q2: streak maintained
   if(correctCount>0&&!userData.quests_done.q2){
     userData.quests_progress.q2=1;userData.quests_done.q2=true;
-    addGems(30);showToast('✅ Quête 2 complète ! +30 💎','gold');
+    addGems(30);showToast('✅ '+t('toastQuestDone')+' +30 💎','gold');
   }
   // q3: 100%
   if(pct===100&&!userData.quests_done.q3){
     userData.quests_progress.q3=1;userData.quests_done.q3=true;
-    addGems(80);showToast('🎯 Quête 3 complète ! +80 💎','gold');
+    addGems(80);showToast('🎯 '+t('toastQuestDone')+' +80 💎','gold');
   }
   saveData(userData);
 }
@@ -1526,9 +1554,9 @@ function renderShop(){
 }
 
 function buyItem(id,price){
-  if(!userData){showToast('Erreur','red');return}
+  if(!userData){showToast(t('toastError'),'red');return}
   if(userData.gems<price){
-    showToast('❌ Gems insuffisantes !','red');
+    showToast(t('toastNoGems'),'red');
     const items=document.getElementById('shop-items');
     items.classList.add('shop-item-shake');
     setTimeout(()=>items.classList.remove('shop-item-shake'),400);
@@ -1539,10 +1567,10 @@ function buyItem(id,price){
   else if(id==='xp_boost'){userData.xp_boost_active=true;saveData(userData)}
   else if(id==='shield'){userData.shield_active=true;saveData(userData)}
   const item=SHOP_ITEMS.find(i=>i.id===id);
-  showToast(`✅ ${item?item[lang]||item.fr:'Item'} acheté !`,'gold');
+  showToast(`✅ ${item?item[lang]||item.fr:'Item'} ${t('toastBought')}`,'gold');
 }
 function buyGems(n,price){
-  showToast(`💎 Demo — ${n} gems pour ${price}. Bientôt disponible !`,'gold');
+  showToast(t('toastDemo'),'gold');
 }
 
 // ===== DUEL =====
