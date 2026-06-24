@@ -1,0 +1,18 @@
+# Dependencies / build artifacts (Capacitor APK pipeline runs in CI)
+node_modules/
+www/
+android/
+ios/
+dist/
+build/
+
+# Signing — must NEVER be committed
+*.keystore
+*.jks
+keystore*.txt
+*.b64.txt
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
