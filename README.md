@@ -1,248 +1,75 @@
-# AtlasQuest — Source Code
+# AtlasQuest — Quiz Géographie Monde 🌍
 
-A Duolingo-style geography quiz app built with React + TypeScript.
-Self-contained single file — no backend required.
+Application web de quiz de géographie et d'histoire, **multilingue (FR / EN / AR avec support RTL)**.
+Un seul fichier autonome — pas de backend, pas de base de données. Tout tourne dans le navigateur.
 
-## Features
-- Language selector: French / English / Arabic (RTL support)
-- Daily streak with automatic reset if you miss a day
-- Lives system with timed refill (1 life per 30 minutes)
-- Gems economy + Premium mode (ad-free, unlimited lives)
-- Simulated AdMob rewarded ads (ready for real integration)
-- Full localStorage persistence across sessions
-- Built-in APK + Play Store + AdMob integration guide tab
+**En ligne :** https://atlasquest369.github.io/AtlasQuest
 
 ---
 
-## Quick Start (Web Preview in Browser)
+## Architecture
 
-1. Create a Vite + React + TypeScript project:
+| Fichier | Rôle |
+|---|---|
+| `index.html` | **L'application complète** (HTML + CSS + JS en un seul fichier). Source de vérité unique. |
+| `manifest.json` | Manifeste PWA (installable sur Android) |
+| `sw.js` | Service worker (mode hors-ligne + installation) |
+| `privacy.html` / `terms.html` | Pages légales dédiées (URL requises par le Play Store) |
+| `icons/` | Icônes PWA / Android (192, 512, maskable) |
+| `.github/workflows/` | Pipeline d'automatisation de l'APK (voir ci-dessous) |
 
-   npm create vite@latest atlasquest -- --template react-ts
-   cd atlasquest
-
-2. Replace src/App.tsx with AtlasQuestFinal.tsx content
-3. In src/main.tsx keep: import App from './App'
-4. Run:
-
-   npm install
-   npm run dev
-
-Open http://localhost:5173 — the app runs fully in the browser.
+Stack : Tailwind CSS (CDN), Lucide icons (CDN), Google Fonts (DM Sans / Playfair / Cairo).
+Stockage : `localStorage`, clé unique `atlasquest_v2`, encodée en base64 (anti-triche léger, pas un chiffrement réel).
 
 ---
 
-## Convert to Android APK
+## Fonctionnalités
 
-### Step 1 — Install prerequisites
-
-- Node.js 18+       →  https://nodejs.org
-- Java 17 JDK       →  https://adoptium.net
-- Android Studio    →  https://developer.android.com/studio
-- Android SDK API 34 (install inside Android Studio → SDK Manager)
-
-After installing, set environment variables:
-  JAVA_HOME  = path to your JDK folder
-  ANDROID_HOME = path to your Android SDK folder
-
-Verify:
-  node -v        (should show 18+)
-  java -version  (should show 17+)
+- 9 catégories : Drapeaux, Capitales, Monuments, Histoire, Continents, Culture G., **Algérie**, **Monde Arabe**, **Chiffres**
+- 3 difficultés (Facile / Normal / Expert) avec timer, + Mode Entraînement et Mode Duel (2 joueurs)
+- XP, niveaux, séries, vies (5/jour), gems, quêtes quotidiennes, classement par ligue, boutique
+- Multilingue FR / EN / AR complet avec RTL
+- PWA installable + mode hors-ligne
+- Sons (Web Audio API, aucun fichier externe), confettis, badges
 
 ---
 
-### Step 2 — Build the web app
+## Déploiement Web (GitHub Pages)
 
-  npm run build
-  # Creates dist/ folder — this is what Capacitor packages
-
----
-
-### Step 3 — Add Capacitor
-
-  npm install @capacitor/core @capacitor/cli @capacitor/android
-  npx cap init AtlasQuest com.yourname.atlasquest
-  npx cap add android
-  npx cap sync
+`index.html` est servi directement par GitHub Pages (branche `main`, dossier racine).
+Pour mettre à jour : remplacer `index.html` puis commit → GitHub Pages se met à jour en 1–2 min.
 
 ---
 
-### Step 4 — Generate a Keystore (one time only)
+## Génération de l'APK / AAB (Play Store) — via GitHub Actions
 
-You must sign your app to publish it. Run this once and keep the file safe:
+Aucun PC requis. Deux workflows manuels (onglet **Actions** du dépôt) :
 
-  keytool -genkey -v \
-    -keystore atlasquest.keystore \
-    -alias atlasquest \
-    -keyalg RSA -keysize 2048 \
-    -validity 10000
+**1 — Generate Keystore** (`generate-keystore.yml`) — à lancer **une seule fois**
+- Génère et signe une clé. Télécharge l'artefact `KEYSTORE-SAUVEGARDER`.
+- Copier le contenu de `keystore.b64.txt` dans le secret GitHub `KEYSTORE_BASE64`.
+- Créer les secrets : `KEYSTORE_PASSWORD`, `KEY_PASSWORD` (le mot de passe affiché), `KEY_ALIAS` = `atlasquest`.
 
-You will be prompted for a password and your name/organization.
+> ⚠️ Ne jamais perdre ce keystore : Google exige **exactement la même clé** pour chaque mise à jour. Ne jamais le committer dans le dépôt.
 
-WARNING: Never lose this file. Google requires the EXACT same key
-for every future update. If you lose it, you cannot update your app.
-
----
-
-### Step 5 — Build a signed AAB in Android Studio
-
-  npx cap open android
-
-In Android Studio:
-  Build → Generate Signed Bundle / APK
-  → Android App Bundle (recommended for Play Store)
-  → Choose your atlasquest.keystore
-  → Enter key alias: atlasquest
-  → Enter your password
-  → Build
-
-Output: android/app/build/outputs/bundle/release/app-release.aab
-
-Or from the command line:
-  cd android
-  ./gradlew bundleRelease
+**2 — Build Android APK** (`build-android.yml`)
+- Empaquette `index.html` (+ légal + icônes) avec Capacitor et produit un **APK** et un **AAB** signés.
+- Artefacts : `AtlasQuest-APK` (test) et `AtlasQuest-AAB-PlayStore` (soumission Play Store).
 
 ---
 
-## Publish to Google Play Store
+## Publier sur le Play Store
 
-1. Create a developer account at https://play.google.com/console
-   (one-time $25 registration fee)
-
-2. Click "Create app" → fill in:
-   - App title and description (in all languages you support)
-   - Screenshots: phone (min 2), 7" tablet optional
-   - Feature graphic: 1024 x 500 px
-   - App icon: 512 x 512 px PNG
-   - Privacy Policy URL (required — host a simple page)
-
-3. Navigate to: Production → Releases → Create new release
-   → Upload your .aab file
-
-4. Complete the content rating questionnaire
-5. Submit for review
-
-Review takes 1–3 days for new apps, faster for updates.
-
-Release strategy (recommended order):
-  Internal testing  →  up to 100 testers, instant publish
-  Closed testing    →  invite-only testers
-  Open testing      →  anyone can join as tester
-  Production        →  full public release
+1. Compte développeur : https://play.google.com/console (frais unique de 25 $)
+2. Créer l'app → titre, description, captures, icône 512×512, **URL de politique de confidentialité** (utiliser la page `privacy.html` hébergée sur GitHub Pages)
+3. Production → Nouvelle release → uploader le fichier `.aab`
+4. Questionnaire de classification → Soumettre. Revue : 1–3 jours.
 
 ---
 
-## Save to GitHub
+## Notes géopolitiques (à ne jamais régresser)
 
-1. Create a new repo at https://github.com (click + → New repository)
-   Name it "atlasquest", set to Public or Private, no template files.
-
-2. In your project folder, open a terminal and run:
-
-   echo "node_modules/" > .gitignore
-   echo "dist/" >> .gitignore
-   echo "android/" >> .gitignore
-   echo "ios/" >> .gitignore
-   echo "*.keystore" >> .gitignore
-
-   git init
-   git add .
-   git commit -m "Initial commit: AtlasQuest"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/atlasquest.git
-   git push -u origin main
-
-   Replace YOUR_USERNAME with your actual GitHub username.
-
-3. To save future changes:
-
-   git add .
-   git commit -m "Describe what changed"
-   git push
-
-IMPORTANT: The *.keystore line in .gitignore is critical.
-Your signing keystore must NEVER be uploaded to GitHub (public or private).
-
----
-
-## Real AdMob Integration
-
-The app currently simulates ads. To use real Google AdMob:
-
-Install the Capacitor plugin:
-  npm install @capacitor-community/admob
-  npx cap sync
-
-Add App IDs to AndroidManifest.xml:
-  <meta-data
-    android:name="com.google.android.gms.ads.APPLICATION_ID"
-    android:value="ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX"/>
-
-Initialize on app start:
-  import { AdMob } from '@capacitor-community/admob';
-  await AdMob.initialize({
-    requestTrackingAuthorization: true,
-    initializeForTesting: false,
-  });
-
-Show rewarded ad (replace the simulated modal in the component):
-  import { AdMob, RewardAdPluginEvents } from '@capacitor-community/admob';
-
-  const REWARDED_ID = 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX';
-  await AdMob.prepareRewardVideoAd({ adId: REWARDED_ID });
-  AdMob.addListener(RewardAdPluginEvents.Rewarded, () => {
-    grantLife(); // ONLY grant the reward inside this callback
-  });
-  await AdMob.showRewardVideoAd();
-
-Show banner ad (replaces ad-strip div):
-  await AdMob.showBanner({
-    adId: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX',
-    adSize: AdSize.BANNER,
-    position: AdPosition.BOTTOM_CENTER,
-  });
-  // For Premium users: await AdMob.hideBanner();
-
-Test Ad Unit IDs (use ONLY during development):
-  Rewarded: ca-app-pub-3940256099942544/5224354917
-  Banner:   ca-app-pub-3940256099942544/6300978111
-
-Go-live checklist:
-  Replace all test Ad Unit IDs with real production IDs
-  Set isTesting: false in AdMob.initialize()
-  Register your app at https://admob.google.com
-  Complete your AdMob payment profile
-  Add GDPR consent dialog (UMP SDK) for European users
-  Test on a real physical device before store submission
-  Never click your own ads (Google bans accounts for invalid traffic)
-
----
-
-## localStorage Keys
-
-All data is stored with the prefix aq_v1_:
-
-  aq_v1_lang           Selected language: "fr" | "en" | "ar"
-  aq_v1_gems           Gem count (number)
-  aq_v1_streak         Current streak (number)
-  aq_v1_isPrem         Premium status (boolean)
-  aq_v1_lives          Remaining lives (number, max 5)
-  aq_v1_livesTs        Timestamp of last life change (ms)
-  aq_v1_modProgress    Module progress object per module ID
-  aq_v1_lastPlayedDate Date string "YYYY-MM-DD" of last quiz completion
-
-To reset all data for testing:
-  Object.keys(localStorage).filter(k=>k.startsWith('aq_v1_')).forEach(k=>localStorage.removeItem(k));
-
----
-
-## File Structure
-
-  AtlasQuestFinal.tsx     Complete self-contained React + TS component
-  README.md               This guide
-  capacitor.config.json   Capacitor config template (fill in your IDs)
-  .gitignore              Files to exclude from GitHub
-
----
-
-Built with React 18 + TypeScript. No external dependencies beyond React itself.
+Le contenu suit les positions officielles de la République Algérienne et les résolutions de l'ONU :
+- **Palestine** incluse (🇵🇸, capitale administrative Ramallah ; Al-Qods comme capitale revendiquée). **Israël n'est pas un pays jouable.**
+- **Sahara occidental** présenté comme territoire distinct (non rattaché au Maroc).
+- **Algérie : 69 wilayas.** Russie classée en Europe. « Washington D.C. ».
