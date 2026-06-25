@@ -65,15 +65,29 @@ jobs:
           pip install Pillow --quiet
           python3 - << 'EOF'
           from PIL import Image
-          sizes = {'mipmap-mdpi':48,'mipmap-hdpi':72,'mipmap-xhdpi':96,'mipmap-xxhdpi':144,'mipmap-xxxhdpi':192}
           base = 'android/app/src/main/res'
           img = Image.open('icons/icon-512.png').convert('RGBA')
-          for d,s in sizes.items():
+          # Legacy square icons (Android < 8)
+          legacy = {'mipmap-mdpi':48,'mipmap-hdpi':72,'mipmap-xhdpi':96,'mipmap-xxhdpi':144,'mipmap-xxxhdpi':192}
+          for d,s in legacy.items():
               r = img.resize((s,s), Image.LANCZOS)
               r.save(f'{base}/{d}/ic_launcher.png')
               r.save(f'{base}/{d}/ic_launcher_round.png')
+          # Adaptive foreground (Android 8+): logo centered with safe padding on a transparent canvas
+          fg = {'mipmap-mdpi':108,'mipmap-hdpi':162,'mipmap-xhdpi':216,'mipmap-xxhdpi':324,'mipmap-xxxhdpi':432}
+          for d,s in fg.items():
+              canvas = Image.new('RGBA',(s,s),(0,0,0,0))
+              inner = int(s*0.62)
+              logo = img.resize((inner,inner), Image.LANCZOS)
+              off = (s-inner)//2
+              canvas.paste(logo,(off,off),logo)
+              canvas.save(f'{base}/{d}/ic_launcher_foreground.png')
           print('Icons done')
           EOF
+          mkdir -p android/app/src/main/res/values android/app/src/main/res/mipmap-anydpi-v26
+          printf '<?xml version="1.0" encoding="utf-8"?>\n<resources><color name="ic_launcher_background">#0F0F1A</color></resources>\n' > android/app/src/main/res/values/ic_launcher_background.xml
+          printf '<?xml version="1.0" encoding="utf-8"?>\n<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n  <background android:drawable="@color/ic_launcher_background"/>\n  <foreground android:drawable="@mipmap/ic_launcher_foreground"/>\n</adaptive-icon>\n' > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          cp android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
 
       - name: Decode keystore
         run: |
