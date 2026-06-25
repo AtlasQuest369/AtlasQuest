@@ -319,7 +319,35 @@
           <span class="font-bold" id="cat-duel-text">Mode Duel — 2 Joueurs</span>
         </div>
       </button>
+      <button onclick="openKids()" class="cat-card rounded-xl overflow-hidden relative col-span-2 py-4" style="background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(250,204,21,.2));border:1.5px solid rgba(34,197,94,.45)">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl">🧸</span>
+          <span class="font-bold" id="cat-kids-text">Espace Enfants</span>
+        </div>
+      </button>
     </div>
+  </section>
+
+  <!-- KIDS ZONE -->
+  <section id="view-kids" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-up">
+    <div class="text-5xl mt-8">🧸</div>
+    <h2 class="playfair font-bold text-2xl" id="kids-title" style="color:#22c55e">Espace Enfants</h2>
+    <p class="text-sm opacity-70 text-center" id="kids-desc">Choisis ton âge</p>
+    <div class="w-full flex flex-col gap-3 mt-2">
+      <button onclick="startKids('kids_3_5')" class="cat-card rounded-2xl py-5 px-4 flex items-center gap-4" style="background:linear-gradient(135deg,rgba(244,114,182,.18),rgba(255,255,255,.04));border:1.5px solid rgba(244,114,182,.4)">
+        <span class="text-4xl">🐣</span>
+        <div class="text-left"><div class="font-bold text-lg" id="kids-35">3–5 ans</div><div class="text-xs opacity-60" id="kids-35d">Couleurs, animaux, formes</div></div>
+      </button>
+      <button onclick="startKids('kids_6_8')" class="cat-card rounded-2xl py-5 px-4 flex items-center gap-4" style="background:linear-gradient(135deg,rgba(96,165,250,.18),rgba(255,255,255,.04));border:1.5px solid rgba(96,165,250,.4)">
+        <span class="text-4xl">🦁</span>
+        <div class="text-left"><div class="font-bold text-lg" id="kids-68">6–8 ans</div><div class="text-xs opacity-60" id="kids-68d">Nature, animaux, monde</div></div>
+      </button>
+      <button onclick="startKids('kids_9_12')" class="cat-card rounded-2xl py-5 px-4 flex items-center gap-4" style="background:linear-gradient(135deg,rgba(167,139,250,.18),rgba(255,255,255,.04));border:1.5px solid rgba(167,139,250,.4)">
+        <span class="text-4xl">🌍</span>
+        <div class="text-left"><div class="font-bold text-lg" id="kids-912">9–12 ans</div><div class="text-xs opacity-60" id="kids-912d">Géographie, sciences faciles</div></div>
+      </button>
+    </div>
+    <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')" id="kids-back">← Retour</button>
   </section>
 
   <!-- DUEL SETUP -->
@@ -633,9 +661,9 @@ function playLevelUp(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone
 
 // ===== TRANSLATIONS =====
 const T={
-  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',toastLife:'❤️ +1 Vie gagnée !',toastPremium:'✅ Premium activé ! Profite de l\'expérience complète 👑',toastShield:'🛡️ Bouclier activé ! Erreur protégée',toastAnswer:'Réponse :',toastQuestDone:'Quête complète !',toastError:'Erreur',toastNoGems:'❌ Gems insuffisantes !',toastBought:'acheté !',toastDemo:'💎 Démo — achat bientôt disponible !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
-  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',toastLife:'❤️ +1 Life earned!',toastPremium:'✅ Premium activated! Enjoy the full experience 👑',toastShield:'🛡️ Shield active! Mistake protected',toastAnswer:'Answer:',toastQuestDone:'Quest complete!',toastError:'Error',toastNoGems:'❌ Not enough gems!',toastBought:'purchased!',toastDemo:'💎 Demo — purchases coming soon!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
-  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',toastLife:'❤️ +1 حياة!',toastPremium:'✅ تم تفعيل بريميوم! استمتع بالتجربة الكاملة 👑',toastShield:'🛡️ الدرع مُفعّل! تم تفادي الخطأ',toastAnswer:'الإجابة:',toastQuestDone:'اكتملت المهمة!',toastError:'خطأ',toastNoGems:'❌ جواهر غير كافية!',toastBought:'تم شراؤه!',toastDemo:'💎 تجريبي — الشراء قريباً!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
+  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',kidsBtn:'Espace Enfants',kidsTitle:'Espace Enfants',kidsDesc:'Choisis ton âge',k35:'3–5 ans',k35d:'Couleurs, animaux, formes',k68:'6–8 ans',k68d:'Nature, animaux, monde',k912:'9–12 ans',k912d:'Géographie, sciences faciles',toastLife:'❤️ +1 Vie gagnée !',toastPremium:'✅ Premium activé ! Profite de l\'expérience complète 👑',toastShield:'🛡️ Bouclier activé ! Erreur protégée',toastAnswer:'Réponse :',toastQuestDone:'Quête complète !',toastError:'Erreur',toastNoGems:'❌ Gems insuffisantes !',toastBought:'acheté !',toastDemo:'💎 Démo — achat bientôt disponible !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
+  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',kidsBtn:'Kids Zone',kidsTitle:'Kids Zone',kidsDesc:'Choose your age',k35:'3–5 yrs',k35d:'Colors, animals, shapes',k68:'6–8 yrs',k68d:'Nature, animals, world',k912:'9–12 yrs',k912d:'Geography, easy science',toastLife:'❤️ +1 Life earned!',toastPremium:'✅ Premium activated! Enjoy the full experience 👑',toastShield:'🛡️ Shield active! Mistake protected',toastAnswer:'Answer:',toastQuestDone:'Quest complete!',toastError:'Error',toastNoGems:'❌ Not enough gems!',toastBought:'purchased!',toastDemo:'💎 Demo — purchases coming soon!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
+  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',kidsBtn:'ركن الأطفال',kidsTitle:'ركن الأطفال',kidsDesc:'اختر عمرك',k35:'3–5 سنوات',k35d:'ألوان وحيوانات وأشكال',k68:'6–8 سنوات',k68d:'طبيعة وحيوانات وعالم',k912:'9–12 سنة',k912d:'جغرافيا وعلوم سهلة',toastLife:'❤️ +1 حياة!',toastPremium:'✅ تم تفعيل بريميوم! استمتع بالتجربة الكاملة 👑',toastShield:'🛡️ الدرع مُفعّل! تم تفادي الخطأ',toastAnswer:'الإجابة:',toastQuestDone:'اكتملت المهمة!',toastError:'خطأ',toastNoGems:'❌ جواهر غير كافية!',toastBought:'تم شراؤه!',toastDemo:'💎 تجريبي — الشراء قريباً!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
 };
 
 // ===== QUIZ DATA =====
@@ -824,6 +852,40 @@ const MATH_Q=[
   {fr:'Combien y a-t-il de pays membres de la Ligue arabe ?',en:'How many member states does the Arab League have?',ar:'كم عدد الدول الأعضاء في جامعة الدول العربية؟',answer:{fr:'22',en:'22',ar:'22'},wrong:[{fr:'15',en:'15',ar:'15'},{fr:'18',en:'18',ar:'18'},{fr:'27',en:'27',ar:'27'}]}
 ];
 
+const KIDS_3_5=[
+  {fr:'De quelle couleur est la banane 🍌 ?',en:'What color is the banana 🍌?',ar:'ما لون الموزة 🍌؟',answer:{fr:'Jaune',en:'Yellow',ar:'أصفر'},wrong:[{fr:'Bleu',en:'Blue',ar:'أزرق'},{fr:'Rouge',en:'Red',ar:'أحمر'},{fr:'Vert',en:'Green',ar:'أخضر'}]},
+  {fr:'Quel animal fait « Miaou » 🐱 ?',en:'Which animal says "Meow" 🐱?',ar:'أي حيوان يقول "مياو" 🐱؟',answer:{fr:'Le chat',en:'Cat',ar:'القطة'},wrong:[{fr:'Le chien',en:'Dog',ar:'الكلب'},{fr:'La vache',en:'Cow',ar:'البقرة'},{fr:'Le mouton',en:'Sheep',ar:'الخروف'}]},
+  {fr:'Combien de pattes a un chien 🐶 ?',en:'How many legs does a dog 🐶 have?',ar:'كم رِجلاً للكلب 🐶؟',answer:{fr:'4',en:'4',ar:'4'},wrong:[{fr:'2',en:'2',ar:'2'},{fr:'6',en:'6',ar:'6'},{fr:'8',en:'8',ar:'8'}]},
+  {fr:'Quelle forme a un ballon ⚽ ?',en:'What shape is a ball ⚽?',ar:'ما شكل الكرة ⚽؟',answer:{fr:'Rond',en:'Round',ar:'دائري'},wrong:[{fr:'Carré',en:'Square',ar:'مربع'},{fr:'Triangle',en:'Triangle',ar:'مثلث'},{fr:'Étoile',en:'Star',ar:'نجمة'}]},
+  {fr:'De quelle couleur est le ciel ☀️ ?',en:'What color is the sky ☀️?',ar:'ما لون السماء ☀️؟',answer:{fr:'Bleu',en:'Blue',ar:'أزرق'},wrong:[{fr:'Rose',en:'Pink',ar:'وردي'},{fr:'Marron',en:'Brown',ar:'بني'},{fr:'Noir',en:'Black',ar:'أسود'}]},
+  {fr:'Quel fruit est rouge 🍎 ?',en:'Which fruit is red 🍎?',ar:'أي فاكهة حمراء 🍎؟',answer:{fr:'La pomme',en:'Apple',ar:'التفاحة'},wrong:[{fr:'La banane',en:'Banana',ar:'الموزة'},{fr:'Le kiwi',en:'Kiwi',ar:'الكيوي'},{fr:'Le citron',en:'Lemon',ar:'الليمون'}]},
+  {fr:'Quel animal vit dans l’eau 🐟 ?',en:'Which animal lives in water 🐟?',ar:'أي حيوان يعيش في الماء 🐟؟',answer:{fr:'Le poisson',en:'Fish',ar:'السمكة'},wrong:[{fr:'Le lapin',en:'Rabbit',ar:'الأرنب'},{fr:'L’oiseau',en:'Bird',ar:'الطائر'},{fr:'Le chat',en:'Cat',ar:'القطة'}]},
+  {fr:'Combien font 1 + 1 ?',en:'What is 1 + 1?',ar:'كم يساوي 1 + 1؟',answer:{fr:'2',en:'2',ar:'2'},wrong:[{fr:'1',en:'1',ar:'1'},{fr:'3',en:'3',ar:'3'},{fr:'4',en:'4',ar:'4'}]}
+];
+
+const KIDS_6_8=[
+  {fr:'Quel est le plus grand animal terrestre 🐘 ?',en:'What is the largest land animal 🐘?',ar:'ما أكبر حيوان بري 🐘؟',answer:{fr:'L’éléphant',en:'Elephant',ar:'الفيل'},wrong:[{fr:'Le lion',en:'Lion',ar:'الأسد'},{fr:'Le cheval',en:'Horse',ar:'الحصان'},{fr:'La girafe',en:'Giraffe',ar:'الزرافة'}]},
+  {fr:'Où vivent les pingouins 🐧 ?',en:'Where do penguins 🐧 live?',ar:'أين تعيش طيور البطريق 🐧؟',answer:{fr:'Dans les régions froides',en:'In cold regions',ar:'في المناطق الباردة'},wrong:[{fr:'Dans le désert',en:'In the desert',ar:'في الصحراء'},{fr:'Dans la jungle',en:'In the jungle',ar:'في الغابة'},{fr:'En ville',en:'In cities',ar:'في المدن'}]},
+  {fr:'Combien de jours y a-t-il dans une semaine ?',en:'How many days are in a week?',ar:'كم يوماً في الأسبوع؟',answer:{fr:'7',en:'7',ar:'7'},wrong:[{fr:'5',en:'5',ar:'5'},{fr:'10',en:'10',ar:'10'},{fr:'12',en:'12',ar:'12'}]},
+  {fr:'Sur quelle planète vivons-nous 🌍 ?',en:'Which planet do we live on 🌍?',ar:'على أي كوكب نعيش 🌍؟',answer:{fr:'La Terre',en:'Earth',ar:'الأرض'},wrong:[{fr:'Mars',en:'Mars',ar:'المريخ'},{fr:'La Lune',en:'The Moon',ar:'القمر'},{fr:'Le Soleil',en:'The Sun',ar:'الشمس'}]},
+  {fr:'Quel animal est surnommé le roi des animaux 🦁 ?',en:'Which animal is called the king of animals 🦁?',ar:'أي حيوان يُلقب بملك الحيوانات 🦁؟',answer:{fr:'Le lion',en:'Lion',ar:'الأسد'},wrong:[{fr:'Le tigre',en:'Tiger',ar:'النمر'},{fr:'L’ours',en:'Bear',ar:'الدب'},{fr:'Le loup',en:'Wolf',ar:'الذئب'}]},
+  {fr:'Que mange une abeille 🐝 pour faire du miel ?',en:'What does a bee 🐝 use to make honey?',ar:'مِمَّ يصنع النحل 🐝 العسل؟',answer:{fr:'Le nectar des fleurs',en:'Flower nectar',ar:'رحيق الأزهار'},wrong:[{fr:'De l’herbe',en:'Grass',ar:'العشب'},{fr:'Du sable',en:'Sand',ar:'الرمل'},{fr:'De l’eau',en:'Water',ar:'الماء'}]},
+  {fr:'Combien de couleurs y a-t-il dans un arc-en-ciel 🌈 ?',en:'How many colors are in a rainbow 🌈?',ar:'كم لوناً في قوس قزح 🌈؟',answer:{fr:'7',en:'7',ar:'7'},wrong:[{fr:'3',en:'3',ar:'3'},{fr:'5',en:'5',ar:'5'},{fr:'10',en:'10',ar:'10'}]},
+  {fr:'Quel oiseau ne peut pas voler 🐧 ?',en:'Which bird cannot fly 🐧?',ar:'أي طائر لا يستطيع الطيران 🐧؟',answer:{fr:'Le pingouin',en:'Penguin',ar:'البطريق'},wrong:[{fr:'L’aigle',en:'Eagle',ar:'النسر'},{fr:'Le moineau',en:'Sparrow',ar:'العصفور'},{fr:'La colombe',en:'Dove',ar:'الحمامة'}]},
+  {fr:'Combien font 5 + 3 ?',en:'What is 5 + 3?',ar:'كم يساوي 5 + 3؟',answer:{fr:'8',en:'8',ar:'8'},wrong:[{fr:'7',en:'7',ar:'7'},{fr:'9',en:'9',ar:'9'},{fr:'6',en:'6',ar:'6'}]}
+];
+
+const KIDS_9_12=[
+  {fr:'Quelle est la capitale de la France ?',en:'What is the capital of France?',ar:'ما عاصمة فرنسا؟',answer:{fr:'Paris',en:'Paris',ar:'باريس'},wrong:[{fr:'Lyon',en:'Lyon',ar:'ليون'},{fr:'Madrid',en:'Madrid',ar:'مدريد'},{fr:'Rome',en:'Rome',ar:'روما'}]},
+  {fr:'Combien y a-t-il de continents sur Terre ?',en:'How many continents are on Earth?',ar:'كم عدد القارات على الأرض؟',answer:{fr:'7',en:'7',ar:'7'},wrong:[{fr:'5',en:'5',ar:'5'},{fr:'6',en:'6',ar:'6'},{fr:'4',en:'4',ar:'4'}]},
+  {fr:'Quel est le plus grand océan du monde ?',en:'What is the largest ocean?',ar:'ما أكبر محيط في العالم؟',answer:{fr:'L’océan Pacifique',en:'Pacific Ocean',ar:'المحيط الهادئ'},wrong:[{fr:'L’Atlantique',en:'Atlantic',ar:'الأطلسي'},{fr:'L’océan Indien',en:'Indian Ocean',ar:'المحيط الهندي'},{fr:'L’Arctique',en:'Arctic',ar:'المتجمد الشمالي'}]},
+  {fr:'Quel astre éclaire la nuit 🌙 ?',en:'Which body lights the night 🌙?',ar:'ما الجرم الذي يضيء الليل 🌙؟',answer:{fr:'La Lune',en:'The Moon',ar:'القمر'},wrong:[{fr:'Le Soleil',en:'The Sun',ar:'الشمس'},{fr:'Mars',en:'Mars',ar:'المريخ'},{fr:'La Terre',en:'Earth',ar:'الأرض'}]},
+  {fr:'Dans quel pays se trouve la Tour Eiffel ?',en:'In which country is the Eiffel Tower?',ar:'في أي بلد يقع برج إيفل؟',answer:{fr:'La France',en:'France',ar:'فرنسا'},wrong:[{fr:'L’Italie',en:'Italy',ar:'إيطاليا'},{fr:'L’Espagne',en:'Spain',ar:'إسبانيا'},{fr:'L’Allemagne',en:'Germany',ar:'ألمانيا'}]},
+  {fr:'Quelle est la capitale de l’Algérie ?',en:'What is the capital of Algeria?',ar:'ما عاصمة الجزائر؟',answer:{fr:'Alger',en:'Algiers',ar:'الجزائر'},wrong:[{fr:'Oran',en:'Oran',ar:'وهران'},{fr:'Tunis',en:'Tunis',ar:'تونس'},{fr:'Rabat',en:'Rabat',ar:'الرباط'}]},
+  {fr:'Combien de planètes dans le système solaire ?',en:'How many planets in the solar system?',ar:'كم عدد كواكب المجموعة الشمسية؟',answer:{fr:'8',en:'8',ar:'8'},wrong:[{fr:'7',en:'7',ar:'7'},{fr:'9',en:'9',ar:'9'},{fr:'10',en:'10',ar:'10'}]},
+  {fr:'Quel est le plus grand désert chaud du monde ?',en:'What is the largest hot desert?',ar:'ما أكبر صحراء حارة في العالم؟',answer:{fr:'Le Sahara',en:'The Sahara',ar:'الصحراء الكبرى'},wrong:[{fr:'Le Gobi',en:'Gobi',ar:'غوبي'},{fr:'Le Kalahari',en:'Kalahari',ar:'كالاهاري'},{fr:'L’Atacama',en:'Atacama',ar:'أتاكاما'}]}
+];
+
 const BADGES_DEF=[
   {id:'first_quiz',emoji:'🎮',fr:'Premier quiz',en:'First Quiz',ar:'أول اختبار',check:d=>d.quizzes_completed>=1},
   {id:'ten_quizzes',emoji:'🔟',fr:'10 quiz',en:'10 Quizzes',ar:'10 اختبارات',check:d=>d.quizzes_completed>=10},
@@ -913,7 +975,7 @@ const DIFF={easy:{time:20,count:5},normal:{time:15,count:10},expert:{time:10,cou
 let lang='fr',difficulty='easy',category='flags';
 let userData=null;
 let questions=[],current=0,score=0,streak=0,maxStreak=0,correctCount=0,timer=null,totalQ=10;
-let isDaily=false,isTraining=false,onboardStep=0;
+let isDaily=false,isTraining=false,onboardStep=0,kidsMode=false;
 let duelPlayers={p1:'',p2:''},duelScores={p1:0,p2:0},duelCurrent=0;
 let quizStartTime=0;
 let adTimer=null,adCloseTimer=null;
@@ -1008,7 +1070,10 @@ function applyTranslations(){
     'cat-monuments-text':'monuments','cat-history-text':'history',
     'cat-continents-text':'continents','cat-culture-text':'culture',
     'cat-algeria-text':'algeria','cat-arab-text':'arab','cat-math-text':'math',
-    'cat-duel-text':'duel','cat-select-title-text':'catTitle',
+    'cat-duel-text':'duel','cat-kids-text':'kidsBtn',
+    'kids-title':'kidsTitle','kids-desc':'kidsDesc','kids-back':'back',
+    'kids-35':'k35','kids-35d':'k35d','kids-68':'k68','kids-68d':'k68d','kids-912':'k912','kids-912d':'k912d',
+    'cat-select-title-text':'catTitle',
     'cat-select-desc-text':'catDesc','play-btn-text':'play',
     'replay-btn-text':'replay','result-title-text':'results',
     'lb-title-text':'leaderboard','profile-title-text':'profileTitle',
@@ -1068,7 +1133,9 @@ function switchView(id){
   if(id==='view-profile'){updateProfileView();renderBadges()}
 }
 
-function selectCategory(cat){category=cat;switchView('view-categories')}
+function selectCategory(cat){kidsMode=false;category=cat;switchView('view-categories')}
+function openKids(){kidsMode=false;switchView('view-kids')}
+function startKids(cat){kidsMode=true;category=cat;difficulty='easy';startQuiz(false)}
 function setDiff(d,btn){difficulty=d;document.querySelectorAll('#diff-buttons .diff-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
 function setDiffDuel(d,btn){difficulty=d;document.querySelectorAll('#diff-buttons-duel .diff-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
 
@@ -1127,7 +1194,7 @@ function updateDailyStatus(){
 }
 function startDaily(){
   if(isDailyDone())return;
-  category='flags';difficulty='expert';
+  kidsMode=false;category='flags';difficulty='expert';
   startQuiz(true);
 }
 
@@ -1241,7 +1308,7 @@ function generateForCat(cat){
       return{display:getName(q),type:'text',answer:locMap[correct],options:opts,meta:q}
     });
   }
-  const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q};
+  const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q,kids_3_5:KIDS_3_5,kids_6_8:KIDS_6_8,kids_9_12:KIDS_9_12};
   const bank=BANKS[cat]||HISTORY;
   return shuffle([...bank]).slice(0,Math.min(count,bank.length)).map(q=>{
     const ans=q.answer[lang]||q.answer.fr;
@@ -1255,7 +1322,7 @@ function startQuiz(daily=false){
     return;
   }
   isDaily=daily;
-  isTraining=document.getElementById('training-toggle').checked&&!daily;
+  isTraining=kidsMode||(document.getElementById('training-toggle').checked&&!daily);
   questions=generateQuestions();
   current=0;score=0;streak=0;maxStreak=0;correctCount=0;
   quizStartTime=Date.now();
