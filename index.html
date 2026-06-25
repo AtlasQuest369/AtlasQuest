@@ -709,7 +709,7 @@ const FLAGS=[
   {flag:'🇨🇿',fr:'Tchéquie',en:'Czech Republic',ar:'جمهورية التشيك',capFr:'Prague',capEn:'Prague',capAr:'براغ',continent:'Europe'},
   {flag:'🇵🇸',fr:'Palestine',en:'Palestine',ar:'فلسطين',capFr:'Ramallah',capEn:'Ramallah',capAr:'رام الله',continent:'Asia'},
   {flag:'🇳🇪',fr:'Niger',en:'Niger',ar:'النيجر',capFr:'Niamey',capEn:'Niamey',capAr:'نيامي',continent:'Africa'},
-  {flag:'🇿🇼',fr:'Zimbabwe',en:'Zimbabwe',ar:'زيمبابوي',capFr:'Harare',capEn:'Harare',capAr:'هرارة',continent:'Africa'},
+  {flag:'🇿🇼',fr:'Zimbabwe',en:'Zimbabwe',ar:'زيمبابوي',capFr:'Harare',capEn:'Harare',capAr:'هراري',continent:'Africa'},
   {flag:'🇷🇸',fr:'Serbie',en:'Serbia',ar:'صربيا',capFr:'Belgrade',capEn:'Belgrade',capAr:'بلغراد',continent:'Europe'},
   {flag:'🇧🇦',fr:'Bosnie-Herzégovine',en:'Bosnia',ar:'البوسنة والهرسك',capFr:'Sarajevo',capEn:'Sarajevo',capAr:'سراييفو',continent:'Europe'},
   {flag:'🇪🇭',fr:'Sahara occidental',en:'Western Sahara',ar:'الصحراء الغربية',capFr:'Laâyoune',capEn:'Laâyoune',capAr:'العيون',continent:'Africa'},
@@ -1200,12 +1200,15 @@ function generateQuestions(){
   return generateForCat(category);
 }
 
+// Drapeaux quasi identiques : ne jamais les proposer comme distracteurs l'un de l'autre
+var LOOKALIKE=[['🇦🇺','🇳🇿'],['🇮🇪','🇨🇮'],['🇮🇩','🇵🇱'],['🇲🇱','🇸🇳'],['🇸🇾','🇾🇪'],['🇪🇬','🇮🇶']];
+function looksLike(a,b){return LOOKALIKE.some(function(g){return g.indexOf(a.flag)>-1&&g.indexOf(b.flag)>-1})}
 function generateForCat(cat){
   const count=DIFF[difficulty].count;
   if(cat==='flags'){
     return shuffle([...FLAGS]).slice(0,count).map(q=>{
       const opts=[getName(q)];
-      const others=shuffle(FLAGS.filter(f=>f!==q));
+      const others=shuffle(FLAGS.filter(f=>f!==q&&!looksLike(f,q)));
       opts.push(getName(others[0]),getName(others[1]),getName(others[2]));
       return{display:q.flag,type:'flag',answer:getName(q),options:shuffle(opts),meta:q}
     });
