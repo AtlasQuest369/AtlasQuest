@@ -347,6 +347,12 @@
         <div class="text-left"><div class="font-bold text-lg" id="kids-912">9–12 ans</div><div class="text-xs opacity-60" id="kids-912d">Géographie, sciences faciles</div></div>
       </button>
     </div>
+    <h3 class="font-bold w-full text-sm opacity-70 mt-4 text-center" id="kids-lang-title">📖 Règles de langue</h3>
+    <div class="w-full grid grid-cols-3 gap-2">
+      <button onclick="startKids('kids_lang_fr')" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(255,255,255,.04));border:1.5px solid rgba(59,130,246,.4)"><div class="text-2xl">🇫🇷</div><div class="text-xs font-bold mt-1">Français</div></button>
+      <button onclick="startKids('kids_lang_ar')" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(34,197,94,.18),rgba(255,255,255,.04));border:1.5px solid rgba(34,197,94,.4)"><div class="text-2xl">🇸🇦</div><div class="text-xs font-bold mt-1">العربية</div></button>
+      <button onclick="startKids('kids_lang_en')" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(244,114,182,.18),rgba(255,255,255,.04));border:1.5px solid rgba(244,114,182,.4)"><div class="text-2xl">🇬🇧</div><div class="text-xs font-bold mt-1">English</div></button>
+    </div>
     <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')" id="kids-back">← Retour</button>
   </section>
 
@@ -384,6 +390,10 @@
     <label class="flex items-center gap-3 mt-3 cursor-pointer">
       <input type="checkbox" id="training-toggle" class="w-5 h-5 rounded accent-purple-500">
       <span class="text-sm font-medium" id="training-label">Mode Entraînement</span>
+    </label>
+    <label class="flex items-center gap-3 mt-2 cursor-pointer">
+      <input type="checkbox" id="haptic-toggle" class="w-5 h-5 rounded accent-purple-500" onchange="setHaptic(this.checked)">
+      <span class="text-sm font-medium" id="haptic-label">Vibrations</span>
     </label>
     <button class="px-8 py-3 rounded-xl font-bold text-lg shadow-lg mt-4 text-black" style="background:linear-gradient(135deg,var(--purple),#6d28d9)" onclick="startQuiz()" id="play-btn-text">Jouer</button>
   </section>
@@ -656,15 +666,18 @@ function saveData(d){try{localStorage.setItem(SK,enc(d))}catch(e){}}
 let audioCtx;
 function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
 function playTone(f,type,dur){try{const a=getAudio(),o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.value=f;g.gain.value=.12;o.connect(g);g.connect(a.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);o.stop(a.currentTime+dur)}catch(e){}}
-function playCorrect(){playTone(880,'sine',.15);setTimeout(()=>playTone(1100,'sine',.15),100)}
-function playWrong(){playTone(200,'square',.3)}
+var hapticOn=(function(){try{return localStorage.getItem('aq_haptic')!=='0'}catch(e){return true}})();
+function haptic(ms){if(hapticOn&&navigator.vibrate){try{navigator.vibrate(ms)}catch(e){}}}
+function setHaptic(on){hapticOn=on;try{localStorage.setItem('aq_haptic',on?'1':'0')}catch(e){}if(on)haptic(15)}
+function playCorrect(){haptic(12);playTone(880,'sine',.15);setTimeout(()=>playTone(1100,'sine',.15),100)}
+function playWrong(){haptic(45);playTone(200,'square',.3)}
 function playLevelUp(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',.3),i*150))}
 
 // ===== TRANSLATIONS =====
 const T={
-  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',kidsBtn:'Espace Enfants',kidsTitle:'Espace Enfants',kidsDesc:'Choisis ton âge',k35:'3–5 ans',k35d:'Couleurs, animaux, formes',k68:'6–8 ans',k68d:'Nature, animaux, monde',k912:'9–12 ans',k912d:'Géographie, sciences faciles',shareBtn:'📤 Partager mon score',shareMsg:'🌍 J\'ai eu {s}/{t} au quiz AtlasQuest ! Tu fais mieux ? 👇',shareCopied:'✅ Lien copié ! Colle-le sur WhatsApp/Insta',toastLife:'❤️ +1 Vie gagnée !',toastPremium:'✅ Premium activé ! Profite de l\'expérience complète 👑',toastShield:'🛡️ Bouclier activé ! Erreur protégée',toastAnswer:'Réponse :',toastQuestDone:'Quête complète !',toastError:'Erreur',toastNoGems:'❌ Gems insuffisantes !',toastBought:'acheté !',toastDemo:'💎 Démo — achat bientôt disponible !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
-  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',kidsBtn:'Kids Zone',kidsTitle:'Kids Zone',kidsDesc:'Choose your age',k35:'3–5 yrs',k35d:'Colors, animals, shapes',k68:'6–8 yrs',k68d:'Nature, animals, world',k912:'9–12 yrs',k912d:'Geography, easy science',shareBtn:'📤 Share my score',shareMsg:'🌍 I scored {s}/{t} on the AtlasQuest quiz! Can you beat me? 👇',shareCopied:'✅ Link copied! Paste it on WhatsApp/Insta',toastLife:'❤️ +1 Life earned!',toastPremium:'✅ Premium activated! Enjoy the full experience 👑',toastShield:'🛡️ Shield active! Mistake protected',toastAnswer:'Answer:',toastQuestDone:'Quest complete!',toastError:'Error',toastNoGems:'❌ Not enough gems!',toastBought:'purchased!',toastDemo:'💎 Demo — purchases coming soon!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
-  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',kidsBtn:'ركن الأطفال',kidsTitle:'ركن الأطفال',kidsDesc:'اختر عمرك',k35:'3–5 سنوات',k35d:'ألوان وحيوانات وأشكال',k68:'6–8 سنوات',k68d:'طبيعة وحيوانات وعالم',k912:'9–12 سنة',k912d:'جغرافيا وعلوم سهلة',shareBtn:'📤 شارك نتيجتي',shareMsg:'🌍 حصلت على {s}/{t} في اختبار AtlasQuest! هل تتفوق عليّ؟ 👇',shareCopied:'✅ تم نسخ الرابط! الصقه على واتساب/إنستغرام',toastLife:'❤️ +1 حياة!',toastPremium:'✅ تم تفعيل بريميوم! استمتع بالتجربة الكاملة 👑',toastShield:'🛡️ الدرع مُفعّل! تم تفادي الخطأ',toastAnswer:'الإجابة:',toastQuestDone:'اكتملت المهمة!',toastError:'خطأ',toastNoGems:'❌ جواهر غير كافية!',toastBought:'تم شراؤه!',toastDemo:'💎 تجريبي — الشراء قريباً!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
+  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',haptic:'Vibrations',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',kidsBtn:'Espace Enfants',kidsTitle:'Espace Enfants',kidsDesc:'Choisis ton âge',k35:'3–5 ans',k35d:'Couleurs, animaux, formes',k68:'6–8 ans',k68d:'Nature, animaux, monde',k912:'9–12 ans',k912d:'Géographie, sciences faciles',kidsLang:'📖 Règles de langue',shareBtn:'📤 Partager mon score',shareMsg:'🌍 J\'ai eu {s}/{t} au quiz AtlasQuest ! Tu fais mieux ? 👇',shareCopied:'✅ Lien copié ! Colle-le sur WhatsApp/Insta',toastLife:'❤️ +1 Vie gagnée !',toastPremium:'✅ Premium activé ! Profite de l\'expérience complète 👑',toastShield:'🛡️ Bouclier activé ! Erreur protégée',toastAnswer:'Réponse :',toastQuestDone:'Quête complète !',toastError:'Erreur',toastNoGems:'❌ Gems insuffisantes !',toastBought:'acheté !',toastDemo:'💎 Démo — achat bientôt disponible !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
+  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',haptic:'Vibration',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',kidsBtn:'Kids Zone',kidsTitle:'Kids Zone',kidsDesc:'Choose your age',k35:'3–5 yrs',k35d:'Colors, animals, shapes',k68:'6–8 yrs',k68d:'Nature, animals, world',k912:'9–12 yrs',k912d:'Geography, easy science',kidsLang:'📖 Language rules',shareBtn:'📤 Share my score',shareMsg:'🌍 I scored {s}/{t} on the AtlasQuest quiz! Can you beat me? 👇',shareCopied:'✅ Link copied! Paste it on WhatsApp/Insta',toastLife:'❤️ +1 Life earned!',toastPremium:'✅ Premium activated! Enjoy the full experience 👑',toastShield:'🛡️ Shield active! Mistake protected',toastAnswer:'Answer:',toastQuestDone:'Quest complete!',toastError:'Error',toastNoGems:'❌ Not enough gems!',toastBought:'purchased!',toastDemo:'💎 Demo — purchases coming soon!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
+  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',haptic:'الاهتزاز',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',kidsBtn:'ركن الأطفال',kidsTitle:'ركن الأطفال',kidsDesc:'اختر عمرك',k35:'3–5 سنوات',k35d:'ألوان وحيوانات وأشكال',k68:'6–8 سنوات',k68d:'طبيعة وحيوانات وعالم',k912:'9–12 سنة',k912d:'جغرافيا وعلوم سهلة',kidsLang:'📖 قواعد اللغة',shareBtn:'📤 شارك نتيجتي',shareMsg:'🌍 حصلت على {s}/{t} في اختبار AtlasQuest! هل تتفوق عليّ؟ 👇',shareCopied:'✅ تم نسخ الرابط! الصقه على واتساب/إنستغرام',toastLife:'❤️ +1 حياة!',toastPremium:'✅ تم تفعيل بريميوم! استمتع بالتجربة الكاملة 👑',toastShield:'🛡️ الدرع مُفعّل! تم تفادي الخطأ',toastAnswer:'الإجابة:',toastQuestDone:'اكتملت المهمة!',toastError:'خطأ',toastNoGems:'❌ جواهر غير كافية!',toastBought:'تم شراؤه!',toastDemo:'💎 تجريبي — الشراء قريباً!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
 };
 
 // ===== QUIZ DATA =====
@@ -756,24 +769,24 @@ const FLAGS=[
 ];
 
 const MONUMENTS=[
-  {fr:'Tour Eiffel',en:'Eiffel Tower',ar:'برج إيفل',answerFr:'France',answerEn:'France',answerAr:'فرنسا'},
-  {fr:'Colisée',en:'Colosseum',ar:'الكولوسيوم',answerFr:'Italie',answerEn:'Italy',answerAr:'إيطاليا'},
-  {fr:'Taj Mahal',en:'Taj Mahal',ar:'تاج محل',answerFr:'Inde',answerEn:'India',answerAr:'الهند'},
+  {fr:'Tour Eiffel',en:'Eiffel Tower',ar:'برج إيفل',answerFr:'France',answerEn:'France',answerAr:'فرنسا',img:'eiffel.svg'},
+  {fr:'Colisée',en:'Colosseum',ar:'الكولوسيوم',answerFr:'Italie',answerEn:'Italy',answerAr:'إيطاليا',img:'colosseum.svg'},
+  {fr:'Taj Mahal',en:'Taj Mahal',ar:'تاج محل',answerFr:'Inde',answerEn:'India',answerAr:'الهند',img:'taj.svg'},
   {fr:'Grande Muraille',en:'Great Wall',ar:'سور الصين العظيم',answerFr:'Chine',answerEn:'China',answerAr:'الصين'},
-  {fr:'Statue de la Liberté',en:'Statue of Liberty',ar:'تمثال الحرية',answerFr:'États-Unis',answerEn:'United States',answerAr:'الولايات المتحدة'},
-  {fr:'Big Ben',en:'Big Ben',ar:'بيغ بن',answerFr:'Royaume-Uni',answerEn:'United Kingdom',answerAr:'المملكة المتحدة'},
-  {fr:'Pyramides de Gizeh',en:'Pyramids of Giza',ar:'أهرامات الجيزة',answerFr:'Égypte',answerEn:'Egypt',answerAr:'مصر'},
+  {fr:'Statue de la Liberté',en:'Statue of Liberty',ar:'تمثال الحرية',answerFr:'États-Unis',answerEn:'United States',answerAr:'الولايات المتحدة',img:'liberty.svg'},
+  {fr:'Big Ben',en:'Big Ben',ar:'بيغ بن',answerFr:'Royaume-Uni',answerEn:'United Kingdom',answerAr:'المملكة المتحدة',img:'bigben.svg'},
+  {fr:'Pyramides de Gizeh',en:'Pyramids of Giza',ar:'أهرامات الجيزة',answerFr:'Égypte',answerEn:'Egypt',answerAr:'مصر',img:'pyramids.svg'},
   {fr:'Sagrada Família',en:'Sagrada Família',ar:'ساغرادا فاميليا',answerFr:'Espagne',answerEn:'Spain',answerAr:'إسبانيا'},
-  {fr:'Opéra de Sydney',en:'Sydney Opera House',ar:'دار أوبرا سيدني',answerFr:'Australie',answerEn:'Australia',answerAr:'أستراليا'},
-  {fr:'Christ Rédempteur',en:'Christ the Redeemer',ar:'المسيح الفادي',answerFr:'Brésil',answerEn:'Brazil',answerAr:'البرازيل'},
-  {fr:'Mont Fuji',en:'Mount Fuji',ar:'جبل فوجي',answerFr:'Japon',answerEn:'Japan',answerAr:'اليابان'},
+  {fr:'Opéra de Sydney',en:'Sydney Opera House',ar:'دار أوبرا سيدني',answerFr:'Australie',answerEn:'Australia',answerAr:'أستراليا',img:'sydney.svg'},
+  {fr:'Christ Rédempteur',en:'Christ the Redeemer',ar:'المسيح الفادي',answerFr:'Brésil',answerEn:'Brazil',answerAr:'البرازيل',img:'christ.svg'},
+  {fr:'Mont Fuji',en:'Mount Fuji',ar:'جبل فوجي',answerFr:'Japon',answerEn:'Japan',answerAr:'اليابان',img:'fuji.svg'},
   {fr:'Machu Picchu',en:'Machu Picchu',ar:'ماتشو بيتشو',answerFr:'Pérou',answerEn:'Peru',answerAr:'بيرو'},
   {fr:'Acropole',en:'Acropolis',ar:'الأكروبوليس',answerFr:'Grèce',answerEn:'Greece',answerAr:'اليونان'},
   {fr:'Petra',en:'Petra',ar:'البتراء',answerFr:'Jordanie',answerEn:'Jordan',answerAr:'الأردن'},
-  {fr:'Burj Khalifa',en:'Burj Khalifa',ar:'برج خليفة',answerFr:'Émirats arabes unis',answerEn:'UAE',answerAr:'الإمارات'},
-  {fr:'Dôme du Rocher',en:'Dome of the Rock',ar:'قبة الصخرة',answerFr:'Palestine',answerEn:'Palestine',answerAr:'فلسطين'},
+  {fr:'Burj Khalifa',en:'Burj Khalifa',ar:'برج خليفة',answerFr:'Émirats arabes unis',answerEn:'UAE',answerAr:'الإمارات',img:'burj.svg'},
+  {fr:'Dôme du Rocher',en:'Dome of the Rock',ar:'قبة الصخرة',answerFr:'Palestine',answerEn:'Palestine',answerAr:'فلسطين',img:'dome.svg'},
   {fr:'Cathédrale Notre-Dame',en:'Notre-Dame',ar:'نوتردام',answerFr:'France',answerEn:'France',answerAr:'فرنسا'},
-  {fr:'Tour de Pise',en:'Leaning Tower of Pisa',ar:'برج بيزا المائل',answerFr:'Italie',answerEn:'Italy',answerAr:'إيطاليا'},
+  {fr:'Tour de Pise',en:'Leaning Tower of Pisa',ar:'برج بيزا المائل',answerFr:'Italie',answerEn:'Italy',answerAr:'إيطاليا',img:'pisa.svg'},
   {fr:'Château de Versailles',en:'Palace of Versailles',ar:'قصر فرساي',answerFr:'France',answerEn:'France',answerAr:'فرنسا'},
   {fr:'Alhambra',en:'Alhambra',ar:'الحمراء',answerFr:'Espagne',answerEn:'Spain',answerAr:'إسبانيا'},
   {fr:'Mosquée Bleue',en:'Blue Mosque',ar:'المسجد الأزرق',answerFr:'Turquie',answerEn:'Turkey',answerAr:'تركيا'},
@@ -812,6 +825,13 @@ const HISTORY=[
   {fr:'Quel pays a accueilli la Coupe du Monde de football 2022 ?',en:'Which country hosted the 2022 FIFA World Cup?',ar:'أي بلد استضاف كأس العالم لكرة القدم 2022؟',answer:{fr:'Qatar',en:'Qatar',ar:'قطر'},wrong:[{fr:'Émirats arabes unis',en:'UAE',ar:'الإمارات'},{fr:'Arabie Saoudite',en:'Saudi Arabia',ar:'السعودية'},{fr:'Maroc',en:'Morocco',ar:'المغرب'}]},
   {fr:'Quelle organisation régionale regroupe les pays arabes ?',en:'Which regional organization brings together Arab countries?',ar:'ما هي المنظمة الإقليمية التي تجمع الدول العربية؟',answer:{fr:'La Ligue arabe',en:'The Arab League',ar:'جامعة الدول العربية'},wrong:[{fr:'L\u2019ONU',en:'The UN',ar:'الأمم المتحدة'},{fr:'L\u2019OTAN',en:'NATO',ar:'حلف الناتو'},{fr:'L\u2019Union africaine',en:'The African Union',ar:'الاتحاد الأفريقي'}]},
   {fr:'En quelle année l\u2019Organisation des Nations Unies a-t-elle été fondée ?',en:'In which year was the United Nations founded?',ar:'في أي سنة تأسست منظمة الأمم المتحدة؟',answer:{fr:'1945',en:'1945',ar:'1945'},wrong:[{fr:'1939',en:'1939',ar:'1939'},{fr:'1950',en:'1950',ar:'1950'},{fr:'1960',en:'1960',ar:'1960'}]}
+,
+  {fr:'Qui a construit les pyramides de Gizeh ?',en:'Who built the Pyramids of Giza?',ar:'من بنى أهرامات الجيزة؟',answer:{fr:'Les anciens Égyptiens',en:'The ancient Egyptians',ar:'المصريون القدماء'},wrong:[{fr:'Les Romains',en:'The Romans',ar:'الرومان'},{fr:'Les Grecs',en:'The Greeks',ar:'الإغريق'},{fr:'Les Perses',en:'The Persians',ar:'الفرس'}]},
+  {fr:'En quelle année l’homme a-t-il marché sur la Lune ?',en:'In which year did man first walk on the Moon?',ar:'في أي سنة مشى الإنسان على القمر؟',answer:{fr:'1969',en:'1969',ar:'1969'},wrong:[{fr:'1965',en:'1965',ar:'1965'},{fr:'1972',en:'1972',ar:'1972'},{fr:'1958',en:'1958',ar:'1958'}]},
+  {fr:'Quelle bataille marqua la chute de Napoléon en 1815 ?',en:'Which battle marked Napoleon’s fall in 1815?',ar:'أي معركة شهدت سقوط نابليون عام 1815؟',answer:{fr:'Waterloo',en:'Waterloo',ar:'واترلو'},wrong:[{fr:'Austerlitz',en:'Austerlitz',ar:'أوسترليتز'},{fr:'Trafalgar',en:'Trafalgar',ar:'ترافالغار'},{fr:'Verdun',en:'Verdun',ar:'فردان'}]},
+  {fr:'Quelle civilisation a inventé l’écriture cunéiforme ?',en:'Which civilization invented cuneiform writing?',ar:'أي حضارة اخترعت الكتابة المسمارية؟',answer:{fr:'La Mésopotamie',en:'Mesopotamia',ar:'بلاد الرافدين'},wrong:[{fr:'L’Égypte',en:'Egypt',ar:'مصر'},{fr:'La Chine',en:'China',ar:'الصين'},{fr:'L’Inde',en:'India',ar:'الهند'}]},
+  {fr:'Qui a écrit l’Iliade et l’Odyssée ?',en:'Who wrote the Iliad and the Odyssey?',ar:'من كتب الإلياذة والأوديسة؟',answer:{fr:'Homère',en:'Homer',ar:'هوميروس'},wrong:[{fr:'Platon',en:'Plato',ar:'أفلاطون'},{fr:'Aristote',en:'Aristotle',ar:'أرسطو'},{fr:'Virgile',en:'Virgil',ar:'فيرجيل'}]},
+  {fr:'Qui fut le premier président des États-Unis ?',en:'Who was the first president of the United States?',ar:'من كان أول رئيس للولايات المتحدة؟',answer:{fr:'George Washington',en:'George Washington',ar:'جورج واشنطن'},wrong:[{fr:'Abraham Lincoln',en:'Abraham Lincoln',ar:'أبراهام لينكولن'},{fr:'Thomas Jefferson',en:'Thomas Jefferson',ar:'توماس جيفرسون'},{fr:'Benjamin Franklin',en:'Benjamin Franklin',ar:'بنجامين فرانكلين'}]}
 ];
 
 const ALGERIA_Q=[
@@ -825,6 +845,15 @@ const ALGERIA_Q=[
   {fr:'Qu’est-ce que le Congrès de la Soummam (20 août 1956) ?',en:'What was the Soummam Congress (August 20, 1956)?',ar:'ما هو مؤتمر الصومام (20 أوت 1956)؟',answer:{fr:'Congrès fondateur d’organisation du FLN',en:'Founding congress organizing the FLN',ar:'مؤتمر تنظيمي لجبهة التحرير'},wrong:[{fr:'Un traité avec la France',en:'A treaty with France',ar:'معاهدة مع فرنسا'},{fr:'Une bataille',en:'A battle',ar:'معركة'},{fr:'Un accord de paix',en:'A peace accord',ar:'اتفاق سلام'}]},
   {fr:'Quelle chaîne de montagnes traverse le nord de l’Algérie ?',en:'Which mountain range crosses northern Algeria?',ar:'ما سلسلة الجبال التي تعبر شمال الجزائر؟',answer:{fr:'L’Atlas',en:'The Atlas',ar:'جبال الأطلس'},wrong:[{fr:'Les Alpes',en:'The Alps',ar:'الألب'},{fr:'L’Himalaya',en:'The Himalayas',ar:'الهيمالايا'},{fr:'Les Pyrénées',en:'The Pyrenees',ar:'البيرينيه'}]},
   {fr:'Quelle est la monnaie officielle de l’Algérie ?',en:'What is the official currency of Algeria?',ar:'ما هي العملة الرسمية للجزائر؟',answer:{fr:'Le dinar algérien',en:'The Algerian dinar',ar:'الدينار الجزائري'},wrong:[{fr:'Le dirham',en:'The dirham',ar:'الدرهم'},{fr:'L’euro',en:'The euro',ar:'اليورو'},{fr:'Le franc',en:'The franc',ar:'الفرنك'}]}
+,
+  {fr:'Quel est le point culminant de l’Algérie ?',en:'What is the highest peak in Algeria?',ar:'ما هي أعلى قمة في الجزائر؟',answer:{fr:'Le Mont Tahat (Hoggar)',en:'Mount Tahat (Hoggar)',ar:'جبل تاهات (الهقار)'},wrong:[{fr:'Le Djurdjura',en:'Djurdjura',ar:'جرجرة'},{fr:'Les Aurès',en:'Aurès',ar:'الأوراس'},{fr:'L’Atlas blidéen',en:'Blidean Atlas',ar:'أطلس البليدة'}]},
+  {fr:'Quelle mer borde l’Algérie au nord ?',en:'Which sea borders Algeria to the north?',ar:'أي بحر يحد الجزائر من الشمال؟',answer:{fr:'La mer Méditerranée',en:'The Mediterranean Sea',ar:'البحر الأبيض المتوسط'},wrong:[{fr:'La mer Rouge',en:'The Red Sea',ar:'البحر الأحمر'},{fr:'L’océan Atlantique',en:'The Atlantic Ocean',ar:'المحيط الأطلسي'},{fr:'La mer Noire',en:'The Black Sea',ar:'البحر الأسود'}]},
+  {fr:'Quelles sont les langues officielles de l’Algérie ?',en:'What are the official languages of Algeria?',ar:'ما هي اللغتان الرسميتان في الجزائر؟',answer:{fr:'Arabe et Tamazight',en:'Arabic and Tamazight',ar:'العربية والأمازيغية'},wrong:[{fr:'Arabe et Français',en:'Arabic and French',ar:'العربية والفرنسية'},{fr:'Arabe seulement',en:'Arabic only',ar:'العربية فقط'},{fr:'Français seulement',en:'French only',ar:'الفرنسية فقط'}]},
+  {fr:'Quelle est la deuxième plus grande ville d’Algérie ?',en:'What is the second largest city in Algeria?',ar:'ما هي ثاني أكبر مدينة في الجزائر؟',answer:{fr:'Oran',en:'Oran',ar:'وهران'},wrong:[{fr:'Constantine',en:'Constantine',ar:'قسنطينة'},{fr:'Annaba',en:'Annaba',ar:'عنابة'},{fr:'Tlemcen',en:'Tlemcen',ar:'تلمسان'}]},
+  {fr:'Comment s’appelle l’hymne national algérien ?',en:'What is the name of Algeria’s national anthem?',ar:'ما اسم النشيد الوطني الجزائري؟',answer:{fr:'Kassaman',en:'Kassaman',ar:'قَسَماً'},wrong:[{fr:'Fida’i',en:'Fida’i',ar:'فدائي'},{fr:'Humat al-Hima',en:'Humat al-Hima',ar:'حماة الحمى'},{fr:'Mawtini',en:'Mawtini',ar:'موطني'}]},
+  {fr:'Quelles sont les couleurs du drapeau algérien ?',en:'What are the colors of the Algerian flag?',ar:'ما هي ألوان العلم الجزائري؟',answer:{fr:'Vert, blanc et rouge',en:'Green, white and red',ar:'أخضر وأبيض وأحمر'},wrong:[{fr:'Rouge et blanc',en:'Red and white',ar:'أحمر وأبيض'},{fr:'Vert et or',en:'Green and gold',ar:'أخضر وذهبي'},{fr:'Bleu, blanc, rouge',en:'Blue, white, red',ar:'أزرق وأبيض وأحمر'}]},
+  {fr:'Combien de pays partagent une frontière avec l’Algérie ?',en:'How many countries border Algeria?',ar:'كم دولة تشترك في حدود مع الجزائر؟',answer:{fr:'7',en:'7',ar:'7'},wrong:[{fr:'4',en:'4',ar:'4'},{fr:'5',en:'5',ar:'5'},{fr:'6',en:'6',ar:'6'}]},
+  {fr:'Quel est le plus long fleuve d’Algérie ?',en:'What is the longest river in Algeria?',ar:'ما هو أطول نهر في الجزائر؟',answer:{fr:'Le Chelif',en:'The Chelif',ar:'نهر الشلف'},wrong:[{fr:'La Soummam',en:'The Soummam',ar:'وادي الصومام'},{fr:'La Seybouse',en:'The Seybouse',ar:'وادي سيبوس'},{fr:'La Tafna',en:'The Tafna',ar:'وادي تافنة'}]}
 ];
 
 const ARAB_Q=[
@@ -838,6 +867,15 @@ const ARAB_Q=[
   {fr:'Quelle est la capitale de la Tunisie ?',en:'What is the capital of Tunisia?',ar:'ما هي عاصمة تونس؟',answer:{fr:'Tunis',en:'Tunis',ar:'تونس'},wrong:[{fr:'Sfax',en:'Sfax',ar:'صفاقس'},{fr:'Sousse',en:'Sousse',ar:'سوسة'},{fr:'Bizerte',en:'Bizerte',ar:'بنزرت'}]},
   {fr:'Quel fleuve traverse l’Égypte du sud au nord ?',en:'Which river crosses Egypt from south to north?',ar:'ما النهر الذي يعبر مصر من الجنوب إلى الشمال؟',answer:{fr:'Le Nil',en:'The Nile',ar:'النيل'},wrong:[{fr:'L’Euphrate',en:'The Euphrates',ar:'الفرات'},{fr:'Le Tigre',en:'The Tigris',ar:'دجلة'},{fr:'Le Jourdain',en:'The Jordan',ar:'الأردن'}]},
   {fr:'Quelle est la capitale du Maroc ?',en:'What is the capital of Morocco?',ar:'ما هي عاصمة المغرب؟',answer:{fr:'Rabat',en:'Rabat',ar:'الرباط'},wrong:[{fr:'Casablanca',en:'Casablanca',ar:'الدار البيضاء'},{fr:'Marrakech',en:'Marrakesh',ar:'مراكش'},{fr:'Fès',en:'Fez',ar:'فاس'}]}
+,
+  {fr:'Quelle est la capitale du Liban ?',en:'What is the capital of Lebanon?',ar:'ما هي عاصمة لبنان؟',answer:{fr:'Beyrouth',en:'Beirut',ar:'بيروت'},wrong:[{fr:'Tripoli',en:'Tripoli',ar:'طرابلس'},{fr:'Saïda',en:'Sidon',ar:'صيدا'},{fr:'Tyr',en:'Tyre',ar:'صور'}]},
+  {fr:'Quelle est la capitale de la Syrie ?',en:'What is the capital of Syria?',ar:'ما هي عاصمة سوريا؟',answer:{fr:'Damas',en:'Damascus',ar:'دمشق'},wrong:[{fr:'Alep',en:'Aleppo',ar:'حلب'},{fr:'Homs',en:'Homs',ar:'حمص'},{fr:'Lattaquié',en:'Latakia',ar:'اللاذقية'}]},
+  {fr:'Quelle est la capitale de l’Irak ?',en:'What is the capital of Iraq?',ar:'ما هي عاصمة العراق؟',answer:{fr:'Bagdad',en:'Baghdad',ar:'بغداد'},wrong:[{fr:'Bassora',en:'Basra',ar:'البصرة'},{fr:'Mossoul',en:'Mosul',ar:'الموصل'},{fr:'Erbil',en:'Erbil',ar:'أربيل'}]},
+  {fr:'Quelle est la capitale de la Jordanie ?',en:'What is the capital of Jordan?',ar:'ما هي عاصمة الأردن؟',answer:{fr:'Amman',en:'Amman',ar:'عمّان'},wrong:[{fr:'Aqaba',en:'Aqaba',ar:'العقبة'},{fr:'Irbid',en:'Irbid',ar:'إربد'},{fr:'Zarka',en:'Zarqa',ar:'الزرقاء'}]},
+  {fr:'Quelle est la capitale du Soudan ?',en:'What is the capital of Sudan?',ar:'ما هي عاصمة السودان؟',answer:{fr:'Khartoum',en:'Khartoum',ar:'الخرطوم'},wrong:[{fr:'Omdurman',en:'Omdurman',ar:'أم درمان'},{fr:'Port-Soudan',en:'Port Sudan',ar:'بورتسودان'},{fr:'Kassala',en:'Kassala',ar:'كسلا'}]},
+  {fr:'Quelle est la capitale de la Mauritanie ?',en:'What is the capital of Mauritania?',ar:'ما هي عاصمة موريتانيا؟',answer:{fr:'Nouakchott',en:'Nouakchott',ar:'نواكشوط'},wrong:[{fr:'Nouadhibou',en:'Nouadhibou',ar:'نواذيبو'},{fr:'Rosso',en:'Rosso',ar:'روصو'},{fr:'Kaédi',en:'Kaédi',ar:'كيهيدي'}]},
+  {fr:'Quel est le pays arabe le plus peuplé ?',en:'Which is the most populous Arab country?',ar:'ما هو أكثر بلد عربي سكاناً؟',answer:{fr:'L’Égypte',en:'Egypt',ar:'مصر'},wrong:[{fr:'L’Algérie',en:'Algeria',ar:'الجزائر'},{fr:'Le Soudan',en:'Sudan',ar:'السودان'},{fr:'L’Irak',en:'Iraq',ar:'العراق'}]},
+  {fr:'Quel fleuve traverse l’Irak ?',en:'Which river flows through Iraq?',ar:'ما النهر الذي يجري عبر العراق؟',answer:{fr:'Le Tigre',en:'The Tigris',ar:'دجلة'},wrong:[{fr:'Le Nil',en:'The Nile',ar:'النيل'},{fr:'Le Jourdain',en:'The Jordan',ar:'الأردن'},{fr:'Le Sénégal',en:'The Senegal',ar:'السنغال'}]}
 ];
 
 const MATH_Q=[
@@ -851,6 +889,13 @@ const MATH_Q=[
   {fr:'Combien de fuseaux horaires traverse la Russie ?',en:'How many time zones does Russia span?',ar:'كم عدد المناطق الزمنية التي تمتد عبرها روسيا؟',answer:{fr:'11',en:'11',ar:'11'},wrong:[{fr:'5',en:'5',ar:'5'},{fr:'8',en:'8',ar:'8'},{fr:'24',en:'24',ar:'24'}]},
   {fr:'Quelle est la plus haute montagne du monde ?',en:'What is the highest mountain in the world?',ar:'ما هو أعلى جبل في العالم؟',answer:{fr:'L’Everest (8 849 m)',en:'Everest (8,849 m)',ar:'إيفرست (8849 م)'},wrong:[{fr:'Le K2',en:'K2',ar:'كي 2'},{fr:'Le Mont Blanc',en:'Mont Blanc',ar:'مون بلان'},{fr:'Le Kilimandjaro',en:'Kilimanjaro',ar:'كليمنجارو'}]},
   {fr:'Combien y a-t-il de pays membres de la Ligue arabe ?',en:'How many member states does the Arab League have?',ar:'كم عدد الدول الأعضاء في جامعة الدول العربية؟',answer:{fr:'22',en:'22',ar:'22'},wrong:[{fr:'15',en:'15',ar:'15'},{fr:'18',en:'18',ar:'18'},{fr:'27',en:'27',ar:'27'}]}
+,
+  {fr:'Combien de pays compte le continent africain ?',en:'How many countries are in Africa?',ar:'كم عدد دول قارة أفريقيا؟',answer:{fr:'54',en:'54',ar:'54'},wrong:[{fr:'45',en:'45',ar:'45'},{fr:'60',en:'60',ar:'60'},{fr:'48',en:'48',ar:'48'}]},
+  {fr:'Quelle est environ la population mondiale ?',en:'What is the approximate world population?',ar:'كم يبلغ عدد سكان العالم تقريباً؟',answer:{fr:'8 milliards',en:'8 billion',ar:'8 مليارات'},wrong:[{fr:'5 milliards',en:'5 billion',ar:'5 مليارات'},{fr:'10 milliards',en:'10 billion',ar:'10 مليارات'},{fr:'3 milliards',en:'3 billion',ar:'3 مليارات'}]},
+  {fr:'Combien de minutes y a-t-il dans une heure ?',en:'How many minutes are in an hour?',ar:'كم دقيقة في الساعة؟',answer:{fr:'60',en:'60',ar:'60'},wrong:[{fr:'30',en:'30',ar:'30'},{fr:'100',en:'100',ar:'100'},{fr:'24',en:'24',ar:'24'}]},
+  {fr:'Quel est le plus grand désert froid du monde ?',en:'What is the largest cold desert in the world?',ar:'ما أكبر صحراء باردة في العالم؟',answer:{fr:'L’Antarctique',en:'Antarctica',ar:'القارة القطبية الجنوبية'},wrong:[{fr:'Le Sahara',en:'The Sahara',ar:'الصحراء الكبرى'},{fr:'Le Gobi',en:'The Gobi',ar:'غوبي'},{fr:'L’Arctique',en:'The Arctic',ar:'القطب الشمالي'}]},
+  {fr:'Combien d’étoiles compte le drapeau des États-Unis ?',en:'How many stars are on the US flag?',ar:'كم نجمة على علم الولايات المتحدة؟',answer:{fr:'50',en:'50',ar:'50'},wrong:[{fr:'48',en:'48',ar:'48'},{fr:'52',en:'52',ar:'52'},{fr:'13',en:'13',ar:'13'}]},
+  {fr:'Combien de joueurs compte une équipe de football sur le terrain ?',en:'How many players are on a football team on the field?',ar:'كم عدد لاعبي فريق كرة القدم في الملعب؟',answer:{fr:'11',en:'11',ar:'11'},wrong:[{fr:'9',en:'9',ar:'9'},{fr:'10',en:'10',ar:'10'},{fr:'12',en:'12',ar:'12'}]}
 ];
 
 const KIDS_3_5=[
@@ -862,6 +907,10 @@ const KIDS_3_5=[
   {fr:'Quel fruit est rouge 🍎 ?',en:'Which fruit is red 🍎?',ar:'أي فاكهة حمراء 🍎؟',answer:{fr:'La pomme',en:'Apple',ar:'التفاحة'},wrong:[{fr:'La banane',en:'Banana',ar:'الموزة'},{fr:'Le kiwi',en:'Kiwi',ar:'الكيوي'},{fr:'Le citron',en:'Lemon',ar:'الليمون'}]},
   {fr:'Quel animal vit dans l’eau 🐟 ?',en:'Which animal lives in water 🐟?',ar:'أي حيوان يعيش في الماء 🐟؟',answer:{fr:'Le poisson',en:'Fish',ar:'السمكة'},wrong:[{fr:'Le lapin',en:'Rabbit',ar:'الأرنب'},{fr:'L’oiseau',en:'Bird',ar:'الطائر'},{fr:'Le chat',en:'Cat',ar:'القطة'}]},
   {fr:'Combien font 1 + 1 ?',en:'What is 1 + 1?',ar:'كم يساوي 1 + 1؟',answer:{fr:'2',en:'2',ar:'2'},wrong:[{fr:'1',en:'1',ar:'1'},{fr:'3',en:'3',ar:'3'},{fr:'4',en:'4',ar:'4'}]}
+,
+  {fr:'Quelle lettre vient juste après le A ?',en:'Which letter comes right after A?',ar:'ما الحرف الذي يأتي بعد الألف (أ)؟',answer:{fr:'B',en:'B',ar:'ب'},wrong:[{fr:'C',en:'C',ar:'ت'},{fr:'D',en:'D',ar:'ث'},{fr:'Z',en:'Z',ar:'ي'}]},
+  {fr:'Combien de doigts y a-t-il sur une main ?',en:'How many fingers are on one hand?',ar:'كم إصبعاً في اليد الواحدة؟',answer:{fr:'5',en:'5',ar:'5'},wrong:[{fr:'4',en:'4',ar:'4'},{fr:'6',en:'6',ar:'6'},{fr:'10',en:'10',ar:'10'}]},
+  {fr:'Quel son fait la vache 🐄 ?',en:'What sound does the cow 🐄 make?',ar:'ما الصوت الذي تصدره البقرة 🐄؟',answer:{fr:'Meuh',en:'Moo',ar:'مووو'},wrong:[{fr:'Miaou',en:'Meow',ar:'مياو'},{fr:'Ouaf',en:'Woof',ar:'هاو'},{fr:'Cot cot',en:'Cluck',ar:'كاك'}]}
 ];
 
 const KIDS_6_8=[
@@ -874,6 +923,11 @@ const KIDS_6_8=[
   {fr:'Combien de couleurs y a-t-il dans un arc-en-ciel 🌈 ?',en:'How many colors are in a rainbow 🌈?',ar:'كم لوناً في قوس قزح 🌈؟',answer:{fr:'7',en:'7',ar:'7'},wrong:[{fr:'3',en:'3',ar:'3'},{fr:'5',en:'5',ar:'5'},{fr:'10',en:'10',ar:'10'}]},
   {fr:'Quel oiseau ne peut pas voler 🐧 ?',en:'Which bird cannot fly 🐧?',ar:'أي طائر لا يستطيع الطيران 🐧؟',answer:{fr:'Le pingouin',en:'Penguin',ar:'البطريق'},wrong:[{fr:'L’aigle',en:'Eagle',ar:'النسر'},{fr:'Le moineau',en:'Sparrow',ar:'العصفور'},{fr:'La colombe',en:'Dove',ar:'الحمامة'}]},
   {fr:'Combien font 5 + 3 ?',en:'What is 5 + 3?',ar:'كم يساوي 5 + 3؟',answer:{fr:'8',en:'8',ar:'8'},wrong:[{fr:'7',en:'7',ar:'7'},{fr:'9',en:'9',ar:'9'},{fr:'6',en:'6',ar:'6'}]}
+,
+  {fr:'Combien y a-t-il de saisons dans une année ?',en:'How many seasons are in a year?',ar:'كم عدد الفصول في السنة؟',answer:{fr:'4',en:'4',ar:'4'},wrong:[{fr:'2',en:'2',ar:'2'},{fr:'3',en:'3',ar:'3'},{fr:'5',en:'5',ar:'5'}]},
+  {fr:'De quelle couleur est l’herbe 🌱 ?',en:'What color is grass 🌱?',ar:'ما لون العشب 🌱؟',answer:{fr:'Vert',en:'Green',ar:'أخضر'},wrong:[{fr:'Bleu',en:'Blue',ar:'أزرق'},{fr:'Rouge',en:'Red',ar:'أحمر'},{fr:'Jaune',en:'Yellow',ar:'أصفر'}]},
+  {fr:'Combien de mois y a-t-il dans une année ?',en:'How many months are in a year?',ar:'كم عدد الأشهر في السنة؟',answer:{fr:'12',en:'12',ar:'12'},wrong:[{fr:'10',en:'10',ar:'10'},{fr:'7',en:'7',ar:'7'},{fr:'365',en:'365',ar:'365'}]},
+  {fr:'Quel est le contraire de « grand » ?',en:'What is the opposite of "big"?',ar:'ما عكس كلمة "كبير"؟',answer:{fr:'Petit',en:'Small',ar:'صغير'},wrong:[{fr:'Gros',en:'Fat',ar:'سمين'},{fr:'Long',en:'Long',ar:'طويل'},{fr:'Haut',en:'Tall',ar:'عالٍ'}]}
 ];
 
 const KIDS_9_12=[
@@ -885,6 +939,45 @@ const KIDS_9_12=[
   {fr:'Quelle est la capitale de l’Algérie ?',en:'What is the capital of Algeria?',ar:'ما عاصمة الجزائر؟',answer:{fr:'Alger',en:'Algiers',ar:'الجزائر'},wrong:[{fr:'Oran',en:'Oran',ar:'وهران'},{fr:'Tunis',en:'Tunis',ar:'تونس'},{fr:'Rabat',en:'Rabat',ar:'الرباط'}]},
   {fr:'Combien de planètes dans le système solaire ?',en:'How many planets in the solar system?',ar:'كم عدد كواكب المجموعة الشمسية؟',answer:{fr:'8',en:'8',ar:'8'},wrong:[{fr:'7',en:'7',ar:'7'},{fr:'9',en:'9',ar:'9'},{fr:'10',en:'10',ar:'10'}]},
   {fr:'Quel est le plus grand désert chaud du monde ?',en:'What is the largest hot desert?',ar:'ما أكبر صحراء حارة في العالم؟',answer:{fr:'Le Sahara',en:'The Sahara',ar:'الصحراء الكبرى'},wrong:[{fr:'Le Gobi',en:'Gobi',ar:'غوبي'},{fr:'Le Kalahari',en:'Kalahari',ar:'كالاهاري'},{fr:'L’Atacama',en:'Atacama',ar:'أتاكاما'}]}
+,
+  {fr:'Quel est le plus petit pays du monde ?',en:'What is the smallest country in the world?',ar:'ما أصغر دولة في العالم؟',answer:{fr:'Le Vatican',en:'Vatican City',ar:'الفاتيكان'},wrong:[{fr:'Monaco',en:'Monaco',ar:'موناكو'},{fr:'Malte',en:'Malta',ar:'مالطا'},{fr:'Singapour',en:'Singapore',ar:'سنغافورة'}]},
+  {fr:'Quelle planète est surnommée la planète rouge ?',en:'Which planet is called the Red Planet?',ar:'أي كوكب يُلقب بالكوكب الأحمر؟',answer:{fr:'Mars',en:'Mars',ar:'المريخ'},wrong:[{fr:'Vénus',en:'Venus',ar:'الزهرة'},{fr:'Jupiter',en:'Jupiter',ar:'المشتري'},{fr:'Saturne',en:'Saturn',ar:'زحل'}]},
+  {fr:'Quel organe pompe le sang dans le corps ?',en:'Which organ pumps blood through the body?',ar:'أي عضو يضخ الدم في الجسم؟',answer:{fr:'Le cœur',en:'The heart',ar:'القلب'},wrong:[{fr:'Le cerveau',en:'The brain',ar:'الدماغ'},{fr:'Les poumons',en:'The lungs',ar:'الرئتان'},{fr:'L’estomac',en:'The stomach',ar:'المعدة'}]},
+  {fr:'À quelle température l’eau gèle-t-elle ?',en:'At what temperature does water freeze?',ar:'عند أي درجة حرارة يتجمد الماء؟',answer:{fr:'0 °C',en:'0 °C',ar:'0 °م'},wrong:[{fr:'10 °C',en:'10 °C',ar:'10 °م'},{fr:'100 °C',en:'100 °C',ar:'100 °م'},{fr:'-50 °C',en:'-50 °C',ar:'-50 °م'}]}
+];
+
+// ===== KIDS LANGUAGE RULES (each bank shown in its own language) =====
+const KIDS_LANG_FR=[
+  {fr:'📖 Le pluriel de « chat » ?',en:'📖 Le pluriel de « chat » ?',ar:'📖 Le pluriel de « chat » ?',answer:{fr:'chats',en:'chats',ar:'chats'},wrong:[{fr:'chat',en:'chat',ar:'chat'},{fr:'chates',en:'chates',ar:'chates'},{fr:'chataux',en:'chataux',ar:'chataux'}]},
+  {fr:'📖 Le contraire de « grand » ?',en:'📖 Le contraire de « grand » ?',ar:'📖 Le contraire de « grand » ?',answer:{fr:'petit',en:'petit',ar:'petit'},wrong:[{fr:'gros',en:'gros',ar:'gros'},{fr:'long',en:'long',ar:'long'},{fr:'haut',en:'haut',ar:'haut'}]},
+  {fr:'📖 « une pomme » est… ?',en:'📖 « une pomme » est… ?',ar:'📖 « une pomme » est… ?',answer:{fr:'féminin',en:'féminin',ar:'féminin'},wrong:[{fr:'masculin',en:'masculin',ar:'masculin'},{fr:'pluriel',en:'pluriel',ar:'pluriel'},{fr:'un verbe',en:'un verbe',ar:'un verbe'}]},
+  {fr:'📖 Le pluriel de « cheval » ?',en:'📖 Le pluriel de « cheval » ?',ar:'📖 Le pluriel de « cheval » ?',answer:{fr:'chevaux',en:'chevaux',ar:'chevaux'},wrong:[{fr:'chevals',en:'chevals',ar:'chevals'},{fr:'chevales',en:'chevales',ar:'chevales'},{fr:'chevaus',en:'chevaus',ar:'chevaus'}]},
+  {fr:'📖 Dans « Le chien dort », le verbe est… ?',en:'📖 Dans « Le chien dort », le verbe est… ?',ar:'📖 Dans « Le chien dort », le verbe est… ?',answer:{fr:'dort',en:'dort',ar:'dort'},wrong:[{fr:'chien',en:'chien',ar:'chien'},{fr:'le',en:'le',ar:'le'},{fr:'dormir',en:'dormir',ar:'dormir'}]},
+  {fr:'📖 Quel article : « ___ soleil » ?',en:'📖 Quel article : « ___ soleil » ?',ar:'📖 Quel article : « ___ soleil » ?',answer:{fr:'le',en:'le',ar:'le'},wrong:[{fr:'la',en:'la',ar:'la'},{fr:'les',en:'les',ar:'les'},{fr:'une',en:'une',ar:'une'}]},
+  {fr:'📖 « Je ___ à l’école » (aller) ?',en:'📖 « Je ___ à l’école » (aller) ?',ar:'📖 « Je ___ à l’école » (aller) ?',answer:{fr:'vais',en:'vais',ar:'vais'},wrong:[{fr:'vas',en:'vas',ar:'vas'},{fr:'va',en:'va',ar:'va'},{fr:'allez',en:'allez',ar:'allez'}]},
+  {fr:'📖 Le féminin de « acteur » ?',en:'📖 Le féminin de « acteur » ?',ar:'📖 Le féminin de « acteur » ?',answer:{fr:'actrice',en:'actrice',ar:'actrice'},wrong:[{fr:'acteuse',en:'acteuse',ar:'acteuse'},{fr:'acteure',en:'acteure',ar:'acteure'},{fr:'actrisse',en:'actrisse',ar:'actrisse'}]}
+];
+
+const KIDS_LANG_AR=[
+  {fr:'📖 جمع كلمة «كتاب» ؟',en:'📖 جمع كلمة «كتاب» ؟',ar:'📖 جمع كلمة «كتاب» ؟',answer:{fr:'كُتُب',en:'كُتُب',ar:'كُتُب'},wrong:[{fr:'كتابات',en:'كتابات',ar:'كتابات'},{fr:'كاتب',en:'كاتب',ar:'كاتب'},{fr:'مكتبة',en:'مكتبة',ar:'مكتبة'}]},
+  {fr:'📖 عكس كلمة «كبير» ؟',en:'📖 عكس كلمة «كبير» ؟',ar:'📖 عكس كلمة «كبير» ؟',answer:{fr:'صغير',en:'صغير',ar:'صغير'},wrong:[{fr:'طويل',en:'طويل',ar:'طويل'},{fr:'واسع',en:'واسع',ar:'واسع'},{fr:'ثقيل',en:'ثقيل',ar:'ثقيل'}]},
+  {fr:'📖 مثنى كلمة «قلم» ؟',en:'📖 مثنى كلمة «قلم» ؟',ar:'📖 مثنى كلمة «قلم» ؟',answer:{fr:'قلمان',en:'قلمان',ar:'قلمان'},wrong:[{fr:'أقلام',en:'أقلام',ar:'أقلام'},{fr:'قلمات',en:'قلمات',ar:'قلمات'},{fr:'قلوم',en:'قلوم',ar:'قلوم'}]},
+  {fr:'📖 الفعل في جملة «يكتبُ الولدُ» ؟',en:'📖 الفعل في جملة «يكتبُ الولدُ» ؟',ar:'📖 الفعل في جملة «يكتبُ الولدُ» ؟',answer:{fr:'يكتب',en:'يكتب',ar:'يكتب'},wrong:[{fr:'الولد',en:'الولد',ar:'الولد'},{fr:'الـ',en:'الـ',ar:'الـ'},{fr:'كتاب',en:'كتاب',ar:'كتاب'}]},
+  {fr:'📖 جمع كلمة «بيت» ؟',en:'📖 جمع كلمة «بيت» ؟',ar:'📖 جمع كلمة «بيت» ؟',answer:{fr:'بيوت',en:'بيوت',ar:'بيوت'},wrong:[{fr:'بيتان',en:'بيتان',ar:'بيتان'},{fr:'بيتات',en:'بيتات',ar:'بيتات'},{fr:'أبيات',en:'أبيات',ar:'أبيات'}]},
+  {fr:'📖 كلمة «شمس» مذكر أم مؤنث ؟',en:'📖 كلمة «شمس» مذكر أم مؤنث ؟',ar:'📖 كلمة «شمس» مذكر أم مؤنث ؟',answer:{fr:'مؤنث',en:'مؤنث',ar:'مؤنث'},wrong:[{fr:'مذكر',en:'مذكر',ar:'مذكر'},{fr:'جمع',en:'جمع',ar:'جمع'},{fr:'فعل',en:'فعل',ar:'فعل'}]},
+  {fr:'📖 أداة التعريف في العربية ؟',en:'📖 أداة التعريف في العربية ؟',ar:'📖 أداة التعريف في العربية ؟',answer:{fr:'الـ',en:'الـ',ar:'الـ'},wrong:[{fr:'تاء',en:'تاء',ar:'تاء'},{fr:'واو',en:'واو',ar:'واو'},{fr:'همزة',en:'همزة',ar:'همزة'}]},
+  {fr:'📖 جمع كلمة «وردة» ؟',en:'📖 جمع كلمة «وردة» ؟',ar:'📖 جمع كلمة «وردة» ؟',answer:{fr:'ورود',en:'ورود',ar:'ورود'},wrong:[{fr:'ورديات',en:'ورديات',ar:'ورديات'},{fr:'وارد',en:'وارد',ar:'وارد'},{fr:'وردتان',en:'وردتان',ar:'وردتان'}]}
+];
+
+const KIDS_LANG_EN=[
+  {fr:'📖 Plural of "cat" ?',en:'📖 Plural of "cat" ?',ar:'📖 Plural of "cat" ?',answer:{fr:'cats',en:'cats',ar:'cats'},wrong:[{fr:'cat',en:'cat',ar:'cat'},{fr:'cates',en:'cates',ar:'cates'},{fr:'caties',en:'caties',ar:'caties'}]},
+  {fr:'📖 Opposite of "big" ?',en:'📖 Opposite of "big" ?',ar:'📖 Opposite of "big" ?',answer:{fr:'small',en:'small',ar:'small'},wrong:[{fr:'tall',en:'tall',ar:'tall'},{fr:'long',en:'long',ar:'long'},{fr:'fat',en:'fat',ar:'fat'}]},
+  {fr:'📖 Plural of "child" ?',en:'📖 Plural of "child" ?',ar:'📖 Plural of "child" ?',answer:{fr:'children',en:'children',ar:'children'},wrong:[{fr:'childs',en:'childs',ar:'childs'},{fr:'childes',en:'childes',ar:'childes'},{fr:'childrens',en:'childrens',ar:'childrens'}]},
+  {fr:'📖 Past tense of "go" ?',en:'📖 Past tense of "go" ?',ar:'📖 Past tense of "go" ?',answer:{fr:'went',en:'went',ar:'went'},wrong:[{fr:'goed',en:'goed',ar:'goed'},{fr:'gone',en:'gone',ar:'gone'},{fr:'going',en:'going',ar:'going'}]},
+  {fr:'📖 In "The dog runs", the verb is… ?',en:'📖 In "The dog runs", the verb is… ?',ar:'📖 In "The dog runs", the verb is… ?',answer:{fr:'runs',en:'runs',ar:'runs'},wrong:[{fr:'dog',en:'dog',ar:'dog'},{fr:'the',en:'the',ar:'the'},{fr:'running',en:'running',ar:'running'}]},
+  {fr:'📖 Article: "___ apple" ?',en:'📖 Article: "___ apple" ?',ar:'📖 Article: "___ apple" ?',answer:{fr:'an',en:'an',ar:'an'},wrong:[{fr:'a',en:'a',ar:'a'},{fr:'the',en:'the',ar:'the'},{fr:'one',en:'one',ar:'one'}]},
+  {fr:'📖 Plural of "mouse" ?',en:'📖 Plural of "mouse" ?',ar:'📖 Plural of "mouse" ?',answer:{fr:'mice',en:'mice',ar:'mice'},wrong:[{fr:'mouses',en:'mouses',ar:'mouses'},{fr:'mouse',en:'mouse',ar:'mouse'},{fr:'mices',en:'mices',ar:'mices'}]},
+  {fr:'📖 Opposite of "hot" ?',en:'📖 Opposite of "hot" ?',ar:'📖 Opposite of "hot" ?',answer:{fr:'cold',en:'cold',ar:'cold'},wrong:[{fr:'warm',en:'warm',ar:'warm'},{fr:'cool',en:'cool',ar:'cool'},{fr:'wet',en:'wet',ar:'wet'}]}
 ];
 
 const BADGES_DEF=[
@@ -1073,7 +1166,7 @@ function applyTranslations(){
     'cat-algeria-text':'algeria','cat-arab-text':'arab','cat-math-text':'math',
     'cat-duel-text':'duel','cat-kids-text':'kidsBtn',
     'kids-title':'kidsTitle','kids-desc':'kidsDesc','kids-back':'back',
-    'kids-35':'k35','kids-35d':'k35d','kids-68':'k68','kids-68d':'k68d','kids-912':'k912','kids-912d':'k912d',
+    'kids-35':'k35','kids-35d':'k35d','kids-68':'k68','kids-68d':'k68d','kids-912':'k912','kids-912d':'k912d','kids-lang-title':'kidsLang',
     'cat-select-title-text':'catTitle',
     'cat-select-desc-text':'catDesc','play-btn-text':'play',
     'replay-btn-text':'replay','share-btn':'shareBtn','result-title-text':'results',
@@ -1081,7 +1174,7 @@ function applyTranslations(){
     'badges-title':'badges','badges-unlocked-label':'badgesUnlocked',
     'back-home-btn':'backHome','dash-streak-label':'streak',
     'dash-games-label':'games','training-label':'training',
-    'fact-next-btn':'next','duel-setup-title-text':'duelSetupTitle',
+    'fact-next-btn':'next','haptic-label':'haptic','duel-setup-title-text':'duelSetupTitle',
     'duel-p1-lbl':'duelP1','duel-p2-lbl':'duelP2',
     'duel-start-btn-text':'duelStart','duel-result-title-text':'duelResult',
     'quests-title-text':'quests','quests-reset-label':'questsReset',
@@ -1296,7 +1389,9 @@ function generateForCat(cat){
       const ans=q[ak]||q.answerFr;
       const others=shuffle(MONUMENTS.filter(m=>m!==q));
       const opts=shuffle([ans,others[0][ak]||others[0].answerFr,others[1][ak]||others[1].answerFr,others[2][ak]||others[2].answerFr]);
-      return{display:q[lang]||q.fr,type:'text',answer:ans,options:opts,meta:q}
+      const name=q[lang]||q.fr;
+      if(q.img)return{display:'img/monuments/'+q.img,type:'image',name:name,answer:ans,options:opts,meta:q};
+      return{display:name,type:'text',answer:ans,options:opts,meta:q}
     });
   }
   if(cat==='continents'){
@@ -1309,7 +1404,7 @@ function generateForCat(cat){
       return{display:getName(q),type:'text',answer:locMap[correct],options:opts,meta:q}
     });
   }
-  const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q,kids_3_5:KIDS_3_5,kids_6_8:KIDS_6_8,kids_9_12:KIDS_9_12};
+  const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q,kids_3_5:KIDS_3_5,kids_6_8:KIDS_6_8,kids_9_12:KIDS_9_12,kids_lang_fr:KIDS_LANG_FR,kids_lang_ar:KIDS_LANG_AR,kids_lang_en:KIDS_LANG_EN};
   const bank=BANKS[cat]||HISTORY;
   return shuffle([...bank]).slice(0,Math.min(count,bank.length)).map(q=>{
     const ans=q.answer[lang]||q.answer.fr;
@@ -1342,6 +1437,13 @@ function showQuestion(){
   const textEl=document.getElementById('text-question');
   if(q.type==='flag'){
     flagEl.textContent=q.display;flagEl.classList.remove('hidden');textEl.classList.add('hidden');
+  }else if(q.type==='image'){
+    flagEl.classList.remove('hidden');textEl.classList.add('hidden');flagEl.innerHTML='';
+    var im=document.createElement('img');
+    im.src=q.display;im.alt=q.name||'';
+    im.style.cssText='height:130px;width:auto;margin:0 auto;display:block';
+    im.onerror=function(){flagEl.textContent=q.name||''};
+    flagEl.appendChild(im);
   }else{
     flagEl.classList.add('hidden');textEl.classList.remove('hidden');textEl.textContent=q.display;
   }
@@ -1815,6 +1917,7 @@ function init(){
     if(!userData.isPremium)showAdBanner();
   }
   applyTranslations();
+  var ht=document.getElementById('haptic-toggle');if(ht)ht.checked=hapticOn;
   lucide.createIcons();
 }
 init();

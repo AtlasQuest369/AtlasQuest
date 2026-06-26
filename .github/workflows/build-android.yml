@@ -36,6 +36,7 @@ jobs:
           cp icons/icon-192.png www/icons/ || true
           cp icons/icon-512.png www/icons/ || true
           cp icons/icon-maskable-512.png www/icons/ || true
+          cp -r img www/ || true
 
       - name: Write Capacitor config
         run: |
