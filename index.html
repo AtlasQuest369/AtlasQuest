@@ -762,24 +762,24 @@ const FLAGS=[
 ];
 
 const MONUMENTS=[
-  {fr:'Tour Eiffel',en:'Eiffel Tower',ar:'برج إيفل',answerFr:'France',answerEn:'France',answerAr:'فرنسا'},
-  {fr:'Colisée',en:'Colosseum',ar:'الكولوسيوم',answerFr:'Italie',answerEn:'Italy',answerAr:'إيطاليا'},
-  {fr:'Taj Mahal',en:'Taj Mahal',ar:'تاج محل',answerFr:'Inde',answerEn:'India',answerAr:'الهند'},
+  {fr:'Tour Eiffel',en:'Eiffel Tower',ar:'برج إيفل',answerFr:'France',answerEn:'France',answerAr:'فرنسا',img:'eiffel.svg'},
+  {fr:'Colisée',en:'Colosseum',ar:'الكولوسيوم',answerFr:'Italie',answerEn:'Italy',answerAr:'إيطاليا',img:'colosseum.svg'},
+  {fr:'Taj Mahal',en:'Taj Mahal',ar:'تاج محل',answerFr:'Inde',answerEn:'India',answerAr:'الهند',img:'taj.svg'},
   {fr:'Grande Muraille',en:'Great Wall',ar:'سور الصين العظيم',answerFr:'Chine',answerEn:'China',answerAr:'الصين'},
-  {fr:'Statue de la Liberté',en:'Statue of Liberty',ar:'تمثال الحرية',answerFr:'États-Unis',answerEn:'United States',answerAr:'الولايات المتحدة'},
-  {fr:'Big Ben',en:'Big Ben',ar:'بيغ بن',answerFr:'Royaume-Uni',answerEn:'United Kingdom',answerAr:'المملكة المتحدة'},
-  {fr:'Pyramides de Gizeh',en:'Pyramids of Giza',ar:'أهرامات الجيزة',answerFr:'Égypte',answerEn:'Egypt',answerAr:'مصر'},
+  {fr:'Statue de la Liberté',en:'Statue of Liberty',ar:'تمثال الحرية',answerFr:'États-Unis',answerEn:'United States',answerAr:'الولايات المتحدة',img:'liberty.svg'},
+  {fr:'Big Ben',en:'Big Ben',ar:'بيغ بن',answerFr:'Royaume-Uni',answerEn:'United Kingdom',answerAr:'المملكة المتحدة',img:'bigben.svg'},
+  {fr:'Pyramides de Gizeh',en:'Pyramids of Giza',ar:'أهرامات الجيزة',answerFr:'Égypte',answerEn:'Egypt',answerAr:'مصر',img:'pyramids.svg'},
   {fr:'Sagrada Família',en:'Sagrada Família',ar:'ساغرادا فاميليا',answerFr:'Espagne',answerEn:'Spain',answerAr:'إسبانيا'},
-  {fr:'Opéra de Sydney',en:'Sydney Opera House',ar:'دار أوبرا سيدني',answerFr:'Australie',answerEn:'Australia',answerAr:'أستراليا'},
-  {fr:'Christ Rédempteur',en:'Christ the Redeemer',ar:'المسيح الفادي',answerFr:'Brésil',answerEn:'Brazil',answerAr:'البرازيل'},
-  {fr:'Mont Fuji',en:'Mount Fuji',ar:'جبل فوجي',answerFr:'Japon',answerEn:'Japan',answerAr:'اليابان'},
+  {fr:'Opéra de Sydney',en:'Sydney Opera House',ar:'دار أوبرا سيدني',answerFr:'Australie',answerEn:'Australia',answerAr:'أستراليا',img:'sydney.svg'},
+  {fr:'Christ Rédempteur',en:'Christ the Redeemer',ar:'المسيح الفادي',answerFr:'Brésil',answerEn:'Brazil',answerAr:'البرازيل',img:'christ.svg'},
+  {fr:'Mont Fuji',en:'Mount Fuji',ar:'جبل فوجي',answerFr:'Japon',answerEn:'Japan',answerAr:'اليابان',img:'fuji.svg'},
   {fr:'Machu Picchu',en:'Machu Picchu',ar:'ماتشو بيتشو',answerFr:'Pérou',answerEn:'Peru',answerAr:'بيرو'},
   {fr:'Acropole',en:'Acropolis',ar:'الأكروبوليس',answerFr:'Grèce',answerEn:'Greece',answerAr:'اليونان'},
   {fr:'Petra',en:'Petra',ar:'البتراء',answerFr:'Jordanie',answerEn:'Jordan',answerAr:'الأردن'},
-  {fr:'Burj Khalifa',en:'Burj Khalifa',ar:'برج خليفة',answerFr:'Émirats arabes unis',answerEn:'UAE',answerAr:'الإمارات'},
-  {fr:'Dôme du Rocher',en:'Dome of the Rock',ar:'قبة الصخرة',answerFr:'Palestine',answerEn:'Palestine',answerAr:'فلسطين'},
+  {fr:'Burj Khalifa',en:'Burj Khalifa',ar:'برج خليفة',answerFr:'Émirats arabes unis',answerEn:'UAE',answerAr:'الإمارات',img:'burj.svg'},
+  {fr:'Dôme du Rocher',en:'Dome of the Rock',ar:'قبة الصخرة',answerFr:'Palestine',answerEn:'Palestine',answerAr:'فلسطين',img:'dome.svg'},
   {fr:'Cathédrale Notre-Dame',en:'Notre-Dame',ar:'نوتردام',answerFr:'France',answerEn:'France',answerAr:'فرنسا'},
-  {fr:'Tour de Pise',en:'Leaning Tower of Pisa',ar:'برج بيزا المائل',answerFr:'Italie',answerEn:'Italy',answerAr:'إيطاليا'},
+  {fr:'Tour de Pise',en:'Leaning Tower of Pisa',ar:'برج بيزا المائل',answerFr:'Italie',answerEn:'Italy',answerAr:'إيطاليا',img:'pisa.svg'},
   {fr:'Château de Versailles',en:'Palace of Versailles',ar:'قصر فرساي',answerFr:'France',answerEn:'France',answerAr:'فرنسا'},
   {fr:'Alhambra',en:'Alhambra',ar:'الحمراء',answerFr:'Espagne',answerEn:'Spain',answerAr:'إسبانيا'},
   {fr:'Mosquée Bleue',en:'Blue Mosque',ar:'المسجد الأزرق',answerFr:'Turquie',answerEn:'Turkey',answerAr:'تركيا'},
@@ -1382,7 +1382,9 @@ function generateForCat(cat){
       const ans=q[ak]||q.answerFr;
       const others=shuffle(MONUMENTS.filter(m=>m!==q));
       const opts=shuffle([ans,others[0][ak]||others[0].answerFr,others[1][ak]||others[1].answerFr,others[2][ak]||others[2].answerFr]);
-      return{display:q[lang]||q.fr,type:'text',answer:ans,options:opts,meta:q}
+      const name=q[lang]||q.fr;
+      if(q.img)return{display:'img/monuments/'+q.img,type:'image',name:name,answer:ans,options:opts,meta:q};
+      return{display:name,type:'text',answer:ans,options:opts,meta:q}
     });
   }
   if(cat==='continents'){
@@ -1428,6 +1430,13 @@ function showQuestion(){
   const textEl=document.getElementById('text-question');
   if(q.type==='flag'){
     flagEl.textContent=q.display;flagEl.classList.remove('hidden');textEl.classList.add('hidden');
+  }else if(q.type==='image'){
+    flagEl.classList.remove('hidden');textEl.classList.add('hidden');flagEl.innerHTML='';
+    var im=document.createElement('img');
+    im.src=q.display;im.alt=q.name||'';
+    im.style.cssText='height:130px;width:auto;margin:0 auto;display:block';
+    im.onerror=function(){flagEl.textContent=q.name||''};
+    flagEl.appendChild(im);
   }else{
     flagEl.classList.add('hidden');textEl.classList.remove('hidden');textEl.textContent=q.display;
   }
