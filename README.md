@@ -19,7 +19,7 @@ Un seul fichier autonome — pas de backend, pas de base de données. Tout tourn
 | `icons/` | Icônes PWA / Android (192, 512, maskable) |
 | `.github/workflows/` | Pipeline d'automatisation de l'APK (voir ci-dessous) |
 
-Stack : Tailwind CSS (CDN), Lucide icons (CDN), Google Fonts (DM Sans / Playfair / Cairo).
+Stack : **Tailwind CSS auto-hébergé** (build purgé inliné, ~11 Ko, aucune dépendance CDN au runtime), **icônes Lucide en SVG inline** (ISC). Google Fonts (DM Sans / Playfair / Cairo) chargées via `<link>` avec repli sur les polices système — l'app se lance et s'affiche correctement même si ce CDN est bloqué/coupé.
 Stockage : `localStorage`, clé unique `atlasquest_v2`, encodée en base64 (anti-triche léger, pas un chiffrement réel).
 
 ---
