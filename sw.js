@@ -1,7 +1,8 @@
-const CACHE_NAME = 'atlasquest-v2';
+const CACHE_NAME = 'atlasquest-v3';
 const ASSETS = [
   './',
   './index.html',
+  './worldmap.js',
   './manifest.json',
   './privacy.html',
   './terms.html'

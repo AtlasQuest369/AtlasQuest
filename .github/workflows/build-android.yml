@@ -29,6 +29,7 @@ jobs:
         run: |
           mkdir -p www/icons
           cp index.html www/
+          cp worldmap.js www/ || true
           cp manifest.json www/ || true
           cp sw.js www/ || true
           cp privacy.html www/ || true
