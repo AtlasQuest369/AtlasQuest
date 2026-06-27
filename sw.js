@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlasquest-v3';
+const CACHE_NAME = 'atlasquest-v4';
 const ASSETS = [
   './',
   './index.html',
