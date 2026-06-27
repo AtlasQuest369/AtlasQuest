@@ -12,6 +12,7 @@ Un seul fichier autonome — pas de backend, pas de base de données. Tout tourn
 | Fichier | Rôle |
 |---|---|
 | `index.html` | **L'application complète** (HTML + CSS + JS en un seul fichier). Source de vérité unique. |
+| `worldmap.js` | Données de la **carte du monde embarquée** (polygones des pays, ~110 Ko, aucune dépendance réseau). Voir crédits ci-dessous. |
 | `manifest.json` | Manifeste PWA (installable sur Android) |
 | `sw.js` | Service worker (mode hors-ligne + installation) |
 | `privacy.html` / `terms.html` | Pages légales dédiées (URL requises par le Play Store) |
@@ -64,6 +65,18 @@ Aucun PC requis. Deux workflows manuels (onglet **Actions** du dépôt) :
 2. Créer l'app → titre, description, captures, icône 512×512, **URL de politique de confidentialité** (utiliser la page `privacy.html` hébergée sur GitHub Pages)
 3. Production → Nouvelle release → uploader le fichier `.aab`
 4. Questionnaire de classification → Soumettre. Revue : 1–3 jours.
+
+---
+
+## 🗺️ Puzzle : carte du monde embarquée
+
+La rubrique **🧩 Puzzle** propose deux modes :
+- **Continents** — repère le bon continent (facile, idéal débutants/enfants).
+- **Pays sur la carte** — localise le pays sur une **vraie carte du monde** (zoom par région : Monde / Afrique / Europe / Asie / Amériques). La détection du tap est tolérante (test du pays touché + plus proche centroïde) pour rester jouable sur mobile, même pour les petits pays.
+
+La carte est **100 % embarquée** (`worldmap.js`, aucun CDN) : elle fonctionne hors-ligne et ne peut pas « échouer à charger ».
+
+**Crédit (obligatoire, licence CC BY 4.0) :** données de la carte dérivées de [`@svg-maps/world`](https://github.com/VictorCazanave/svg-maps) © Victor Cazanave & contributeurs, simplifiées (Douglas-Peucker) pour l'intégration hors-ligne. Le Sahara occidental et la Palestine y sont **préservés comme entités distinctes**, conformément à la doctrine éditoriale (résolutions de l'ONU + positions de l'Algérie).
 
 ---
 
