@@ -345,8 +345,16 @@
       <span class="text-xs opacity-60" id="puzzle-find">Trouve :</span>
       <div class="font-bold text-lg" id="puzzle-target">—</div>
     </div>
-    <div id="world-map" style="width:100%;height:48vh;background:rgba(255,255,255,.03);border-radius:12px"></div>
-    <p id="puzzle-fallback" class="hidden text-sm text-center opacity-70 px-4">🌍 La carte n'a pas pu se charger (connexion requise). Réessaie en ligne.</p>
+    <div class="w-full rounded-xl p-2" style="background:rgba(255,255,255,.03)">
+      <svg viewBox="0 0 300 175" style="width:100%;height:auto;max-height:52vh;touch-action:manipulation" xmlns="http://www.w3.org/2000/svg">
+        <g onclick="pzPick('NorthAmerica')" style="cursor:pointer"><ellipse id="pzr-na" cx="58" cy="48" rx="44" ry="34" fill="#2e2e4a" stroke="#0f0f1a" stroke-width="1.5"/><text id="pz-na" x="58" y="51" text-anchor="middle" font-size="11" fill="#fff" font-family="sans-serif">N. Am.</text></g>
+        <g onclick="pzPick('SouthAmerica')" style="cursor:pointer"><ellipse id="pzr-sa" cx="92" cy="135" rx="26" ry="35" fill="#2e2e4a" stroke="#0f0f1a" stroke-width="1.5"/><text id="pz-sa" x="92" y="138" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif">S. Am.</text></g>
+        <g onclick="pzPick('Europe')" style="cursor:pointer"><ellipse id="pzr-eu" cx="160" cy="42" rx="27" ry="21" fill="#2e2e4a" stroke="#0f0f1a" stroke-width="1.5"/><text id="pz-eu" x="160" y="45" text-anchor="middle" font-size="10" fill="#fff" font-family="sans-serif">Europe</text></g>
+        <g onclick="pzPick('Africa')" style="cursor:pointer"><ellipse id="pzr-af" cx="170" cy="112" rx="33" ry="41" fill="#2e2e4a" stroke="#0f0f1a" stroke-width="1.5"/><text id="pz-af" x="170" y="115" text-anchor="middle" font-size="11" fill="#fff" font-family="sans-serif">Afrique</text></g>
+        <g onclick="pzPick('Asia')" style="cursor:pointer"><ellipse id="pzr-as" cx="240" cy="56" rx="53" ry="37" fill="#2e2e4a" stroke="#0f0f1a" stroke-width="1.5"/><text id="pz-as" x="240" y="59" text-anchor="middle" font-size="12" fill="#fff" font-family="sans-serif">Asie</text></g>
+        <g onclick="pzPick('Oceania')" style="cursor:pointer"><ellipse id="pzr-oc" cx="262" cy="142" rx="28" ry="20" fill="#2e2e4a" stroke="#0f0f1a" stroke-width="1.5"/><text id="pz-oc" x="262" y="145" text-anchor="middle" font-size="9" fill="#fff" font-family="sans-serif">Océanie</text></g>
+      </svg>
+    </div>
     <button class="opacity-50 text-sm underline" onclick="closePuzzle()" id="puzzle-back">← Retour</button>
   </section>
 
@@ -703,9 +711,9 @@ function playLevelUp(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone
 
 // ===== TRANSLATIONS =====
 const T={
-  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',haptic:'Vibrations',sound:'Son',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',kidsBtn:'Espace Enfants',kidsTitle:'Espace Enfants',kidsDesc:'Choisis ton âge',k35:'3–5 ans',k35d:'Couleurs, animaux, formes',k68:'6–8 ans',k68d:'Nature, animaux, monde',k912:'9–12 ans',k912d:'Géographie, sciences faciles',kidsLang:'📖 Règles de langue',puzzleBtn:'Puzzle Carte 🌍',puzzleTitle:'🧩 Localise le pays',puzzleFind:'Trouve :',shareBtn:'📤 Partager mon score',shareMsg:'🌍 J\'ai eu {s}/{t} au quiz AtlasQuest ! Tu fais mieux ? 👇',shareCopied:'✅ Lien copié ! Colle-le sur WhatsApp/Insta',toastLife:'❤️ +1 Vie gagnée !',toastPremium:'✅ Premium activé ! Profite de l\'expérience complète 👑',toastShield:'🛡️ Bouclier activé ! Erreur protégée',toastAnswer:'Réponse :',toastQuestDone:'Quête complète !',toastError:'Erreur',toastNoGems:'❌ Gems insuffisantes !',toastBought:'acheté !',toastDemo:'💎 Démo — achat bientôt disponible !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
-  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',haptic:'Vibration',sound:'Sound',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',kidsBtn:'Kids Zone',kidsTitle:'Kids Zone',kidsDesc:'Choose your age',k35:'3–5 yrs',k35d:'Colors, animals, shapes',k68:'6–8 yrs',k68d:'Nature, animals, world',k912:'9–12 yrs',k912d:'Geography, easy science',kidsLang:'📖 Language rules',puzzleBtn:'Map Puzzle 🌍',puzzleTitle:'🧩 Locate the country',puzzleFind:'Find:',shareBtn:'📤 Share my score',shareMsg:'🌍 I scored {s}/{t} on the AtlasQuest quiz! Can you beat me? 👇',shareCopied:'✅ Link copied! Paste it on WhatsApp/Insta',toastLife:'❤️ +1 Life earned!',toastPremium:'✅ Premium activated! Enjoy the full experience 👑',toastShield:'🛡️ Shield active! Mistake protected',toastAnswer:'Answer:',toastQuestDone:'Quest complete!',toastError:'Error',toastNoGems:'❌ Not enough gems!',toastBought:'purchased!',toastDemo:'💎 Demo — purchases coming soon!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
-  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',haptic:'الاهتزاز',sound:'الصوت',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',kidsBtn:'ركن الأطفال',kidsTitle:'ركن الأطفال',kidsDesc:'اختر عمرك',k35:'3–5 سنوات',k35d:'ألوان وحيوانات وأشكال',k68:'6–8 سنوات',k68d:'طبيعة وحيوانات وعالم',k912:'9–12 سنة',k912d:'جغرافيا وعلوم سهلة',kidsLang:'📖 قواعد اللغة',puzzleBtn:'بازل الخريطة 🌍',puzzleTitle:'🧩 حدّد موقع البلد',puzzleFind:'جِد:',shareBtn:'📤 شارك نتيجتي',shareMsg:'🌍 حصلت على {s}/{t} في اختبار AtlasQuest! هل تتفوق عليّ؟ 👇',shareCopied:'✅ تم نسخ الرابط! الصقه على واتساب/إنستغرام',toastLife:'❤️ +1 حياة!',toastPremium:'✅ تم تفعيل بريميوم! استمتع بالتجربة الكاملة 👑',toastShield:'🛡️ الدرع مُفعّل! تم تفادي الخطأ',toastAnswer:'الإجابة:',toastQuestDone:'اكتملت المهمة!',toastError:'خطأ',toastNoGems:'❌ جواهر غير كافية!',toastBought:'تم شراؤه!',toastDemo:'💎 تجريبي — الشراء قريباً!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
+  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',haptic:'Vibrations',sound:'Son',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',kidsBtn:'Espace Enfants',kidsTitle:'Espace Enfants',kidsDesc:'Choisis ton âge',k35:'3–5 ans',k35d:'Couleurs, animaux, formes',k68:'6–8 ans',k68d:'Nature, animaux, monde',k912:'9–12 ans',k912d:'Géographie, sciences faciles',kidsLang:'📖 Règles de langue',puzzleBtn:'Puzzle Carte 🌍',puzzleTitle:'🧩 Sur quel continent ?',puzzleFind:'Pays :',shareBtn:'📤 Partager mon score',shareMsg:'🌍 J\'ai eu {s}/{t} au quiz AtlasQuest ! Tu fais mieux ? 👇',shareCopied:'✅ Lien copié ! Colle-le sur WhatsApp/Insta',toastLife:'❤️ +1 Vie gagnée !',toastPremium:'✅ Premium activé ! Profite de l\'expérience complète 👑',toastShield:'🛡️ Bouclier activé ! Erreur protégée',toastAnswer:'Réponse :',toastQuestDone:'Quête complète !',toastError:'Erreur',toastNoGems:'❌ Gems insuffisantes !',toastBought:'acheté !',toastDemo:'💎 Démo — achat bientôt disponible !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
+  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',haptic:'Vibration',sound:'Sound',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',kidsBtn:'Kids Zone',kidsTitle:'Kids Zone',kidsDesc:'Choose your age',k35:'3–5 yrs',k35d:'Colors, animals, shapes',k68:'6–8 yrs',k68d:'Nature, animals, world',k912:'9–12 yrs',k912d:'Geography, easy science',kidsLang:'📖 Language rules',puzzleBtn:'Map Puzzle 🌍',puzzleTitle:'🧩 Which continent?',puzzleFind:'Country:',shareBtn:'📤 Share my score',shareMsg:'🌍 I scored {s}/{t} on the AtlasQuest quiz! Can you beat me? 👇',shareCopied:'✅ Link copied! Paste it on WhatsApp/Insta',toastLife:'❤️ +1 Life earned!',toastPremium:'✅ Premium activated! Enjoy the full experience 👑',toastShield:'🛡️ Shield active! Mistake protected',toastAnswer:'Answer:',toastQuestDone:'Quest complete!',toastError:'Error',toastNoGems:'❌ Not enough gems!',toastBought:'purchased!',toastDemo:'💎 Demo — purchases coming soon!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
+  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',haptic:'الاهتزاز',sound:'الصوت',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',kidsBtn:'ركن الأطفال',kidsTitle:'ركن الأطفال',kidsDesc:'اختر عمرك',k35:'3–5 سنوات',k35d:'ألوان وحيوانات وأشكال',k68:'6–8 سنوات',k68d:'طبيعة وحيوانات وعالم',k912:'9–12 سنة',k912d:'جغرافيا وعلوم سهلة',kidsLang:'📖 قواعد اللغة',puzzleBtn:'بازل الخريطة 🌍',puzzleTitle:'🧩 في أي قارة؟',puzzleFind:'البلد:',shareBtn:'📤 شارك نتيجتي',shareMsg:'🌍 حصلت على {s}/{t} في اختبار AtlasQuest! هل تتفوق عليّ؟ 👇',shareCopied:'✅ تم نسخ الرابط! الصقه على واتساب/إنستغرام',toastLife:'❤️ +1 حياة!',toastPremium:'✅ تم تفعيل بريميوم! استمتع بالتجربة الكاملة 👑',toastShield:'🛡️ الدرع مُفعّل! تم تفادي الخطأ',toastAnswer:'الإجابة:',toastQuestDone:'اكتملت المهمة!',toastError:'خطأ',toastNoGems:'❌ جواهر غير كافية!',toastBought:'تم شراؤه!',toastDemo:'💎 تجريبي — الشراء قريباً!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
 };
 
 // ===== QUIZ DATA =====
@@ -1260,85 +1268,45 @@ function selectCategory(cat){kidsMode=false;category=cat;switchView('view-catego
 function openKids(){kidsMode=false;switchView('view-kids')}
 function startKids(cat){kidsMode=true;category=cat;difficulty='easy';startQuiz(false)}
 
-// ===== PUZZLE MAP (interactive world map — beta) =====
-var PUZZLE_COUNTRIES=[
- {iso:'DZ',fr:'Algérie',en:'Algeria',ar:'الجزائر'},{iso:'MA',fr:'Maroc',en:'Morocco',ar:'المغرب'},
- {iso:'TN',fr:'Tunisie',en:'Tunisia',ar:'تونس'},{iso:'EG',fr:'Égypte',en:'Egypt',ar:'مصر'},
- {iso:'FR',fr:'France',en:'France',ar:'فرنسا'},{iso:'ES',fr:'Espagne',en:'Spain',ar:'إسبانيا'},
- {iso:'IT',fr:'Italie',en:'Italy',ar:'إيطاليا'},{iso:'DE',fr:'Allemagne',en:'Germany',ar:'ألمانيا'},
- {iso:'GB',fr:'Royaume-Uni',en:'United Kingdom',ar:'المملكة المتحدة'},{iso:'US',fr:'États-Unis',en:'United States',ar:'الولايات المتحدة'},
- {iso:'BR',fr:'Brésil',en:'Brazil',ar:'البرازيل'},{iso:'CN',fr:'Chine',en:'China',ar:'الصين'},
- {iso:'JP',fr:'Japon',en:'Japan',ar:'اليابان'},{iso:'IN',fr:'Inde',en:'India',ar:'الهند'},
- {iso:'RU',fr:'Russie',en:'Russia',ar:'روسيا'},{iso:'CA',fr:'Canada',en:'Canada',ar:'كندا'},
- {iso:'AU',fr:'Australie',en:'Australia',ar:'أستراليا'},{iso:'SA',fr:'Arabie Saoudite',en:'Saudi Arabia',ar:'السعودية'},
- {iso:'TR',fr:'Turquie',en:'Turkey',ar:'تركيا'},{iso:'ZA',fr:'Afrique du Sud',en:'South Africa',ar:'جنوب أفريقيا'},
- {iso:'NG',fr:'Nigeria',en:'Nigeria',ar:'نيجيريا'},{iso:'MX',fr:'Mexique',en:'Mexico',ar:'المكسيك'},
- {iso:'AR',fr:'Argentine',en:'Argentina',ar:'الأرجنتين'},{iso:'SE',fr:'Suède',en:'Sweden',ar:'السويد'},
- {iso:'GR',fr:'Grèce',en:'Greece',ar:'اليونان'},{iso:'PT',fr:'Portugal',en:'Portugal',ar:'البرتغال'},
- {iso:'IR',fr:'Iran',en:'Iran',ar:'إيران'},{iso:'ID',fr:'Indonésie',en:'Indonesia',ar:'إندونيسيا'}
-];
-var pzMap=null,pzTarget=null,pzScore=0,pzRound=0,pzUsed=[],pzTotal=10,pzLock=false;
+// ===== PUZZLE MAP (self-contained — tap the right continent) =====
+var pzTarget=null,pzScore=0,pzRound=0,pzUsed=[],pzTotal=10,pzLock=false;
+var PZ_IDS={NorthAmerica:'na',SouthAmerica:'sa',Europe:'eu',Africa:'af',Asia:'as',Oceania:'oc'};
 function openPuzzle(){
   switchView('view-puzzle');
-  document.getElementById('puzzle-fallback').classList.add('hidden');
-  loadPuzzleLib(function(ok){
-    if(!ok){document.getElementById('puzzle-fallback').classList.remove('hidden');return;}
-    initPuzzleMap();
-    if(!pzMap)return;
-    pzScore=0;pzRound=0;pzUsed=[];
-    document.getElementById('puzzle-score').textContent='0';
-    startPuzzleRound();
-  });
+  var m=contNameMap[lang]||contNameMap.fr;
+  pzLbl('pz-na',m.NorthAmerica);pzLbl('pz-sa',m.SouthAmerica);pzLbl('pz-eu',m.Europe);
+  pzLbl('pz-af',m.Africa);pzLbl('pz-as',m.Asia);pzLbl('pz-oc',m.Oceania);
+  pzScore=0;pzRound=0;pzUsed=[];
+  document.getElementById('puzzle-score').textContent='0';
+  startPuzzleRound();
 }
+function pzLbl(id,t){var e=document.getElementById(id);if(e)e.textContent=t;}
 function closePuzzle(){switchView('view-dashboard')}
-function loadPuzzleLib(cb){
-  if(window.jsVectorMap){cb(true);return;}
-  var base='https://cdn.jsdelivr.net/npm/jsvectormap@1.6.0/dist/';
-  var css=document.createElement('link');css.rel='stylesheet';css.href=base+'css/jsvectormap.min.css';document.head.appendChild(css);
-  var s1=document.createElement('script');s1.src=base+'js/jsvectormap.min.js';
-  s1.onload=function(){
-    var s2=document.createElement('script');s2.src=base+'maps/world.js';
-    s2.onload=function(){cb(!!window.jsVectorMap)};
-    s2.onerror=function(){cb(false)};
-    document.body.appendChild(s2);
-  };
-  s1.onerror=function(){cb(false)};
-  document.body.appendChild(s1);
-}
-function initPuzzleMap(){
-  if(pzMap)return;
-  try{
-    pzMap=new jsVectorMap({
-      selector:'#world-map',map:'world',
-      zoomOnScroll:true,zoomButtons:true,backgroundColor:'transparent',
-      regionStyle:{initial:{fill:'#3a3a5a',stroke:'#0f0f1a','stroke-width':0.4},hover:{fill:'#a78bfa'},selected:{fill:'#10b981'}},
-      onRegionClick:function(e,code){checkPuzzle(code)}
-    });
-  }catch(err){document.getElementById('puzzle-fallback').classList.remove('hidden');}
-}
+function pzClear(){for(var k in PZ_IDS){var r=document.getElementById('pzr-'+PZ_IDS[k]);if(r)r.setAttribute('fill','#2e2e4a');}}
 function startPuzzleRound(){
   if(pzRound>=pzTotal){endPuzzle();return;}
-  pzLock=false;
-  var pool=PUZZLE_COUNTRIES.filter(function(c){return pzUsed.indexOf(c.iso)<0});
-  if(!pool.length){pzUsed=[];pool=PUZZLE_COUNTRIES.slice();}
+  pzLock=false;pzClear();
+  var pool=FLAGS.filter(function(c){return pzUsed.indexOf(c.flag)<0});
+  if(!pool.length){pzUsed=[];pool=FLAGS.slice();}
   pzTarget=pool[Math.floor(Math.random()*pool.length)];
-  pzUsed.push(pzTarget.iso);
+  pzUsed.push(pzTarget.flag);
   pzRound++;
   document.getElementById('puzzle-progress').textContent=pzRound;
-  document.getElementById('puzzle-target').textContent=pzTarget[lang]||pzTarget.fr;
-  try{if(pzMap&&pzMap.clearSelectedRegions)pzMap.clearSelectedRegions()}catch(e){}
+  document.getElementById('puzzle-target').textContent=pzTarget.flag+' '+getName(pzTarget);
 }
-function checkPuzzle(code){
+function pzPick(cont){
   if(pzLock||!pzTarget)return;
-  code=(code||'').toUpperCase();
-  if(code===pzTarget.iso){
+  var r=document.getElementById('pzr-'+PZ_IDS[cont]);
+  if(cont===pzTarget.continent){
     pzLock=true;haptic(12);playCorrect();pzScore++;
     document.getElementById('puzzle-score').textContent=pzScore;
-    try{if(pzMap&&pzMap.setSelectedRegions)pzMap.setSelectedRegions([code])}catch(e){}
-    showToast('✅ '+(pzTarget[lang]||pzTarget.fr),'green');
-    setTimeout(startPuzzleRound,900);
+    if(r)r.setAttribute('fill','#10b981');
+    showToast('✅ '+getName(pzTarget),'green');
+    setTimeout(startPuzzleRound,800);
   }else{
-    haptic(45);playWrong();showToast('❌','red');
+    haptic(45);playWrong();
+    if(r){r.setAttribute('fill','#ef4444');setTimeout(function(){if(!pzLock)r.setAttribute('fill','#2e2e4a')},450);}
+    showToast('❌','red');
   }
 }
 function endPuzzle(){
