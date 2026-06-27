@@ -846,7 +846,7 @@ const FLAGS=[
   {flag:'🇦🇹',fr:'Autriche',en:'Austria',ar:'النمسا',capFr:'Vienne',capEn:'Vienna',capAr:'فيينا',continent:'Europe'},
   {flag:'🇮🇪',fr:'Irlande',en:'Ireland',ar:'أيرلندا',capFr:'Dublin',capEn:'Dublin',capAr:'دبلن',continent:'Europe'},
   {flag:'🇨🇿',fr:'Tchéquie',en:'Czech Republic',ar:'جمهورية التشيك',capFr:'Prague',capEn:'Prague',capAr:'براغ',continent:'Europe'},
-  {flag:'🇵🇸',fr:'Palestine',en:'Palestine',ar:'فلسطين',capFr:'Ramallah',capEn:'Ramallah',capAr:'رام الله',continent:'Asia'},
+  {flag:'🇵🇸',fr:'Palestine',en:'Palestine',ar:'فلسطين',capFr:'Al-Qods (Jérusalem)',capEn:'Al-Quds (Jerusalem)',capAr:'القدس',continent:'Asia'},
   {flag:'🇳🇪',fr:'Niger',en:'Niger',ar:'النيجر',capFr:'Niamey',capEn:'Niamey',capAr:'نيامي',continent:'Africa'},
   {flag:'🇿🇼',fr:'Zimbabwe',en:'Zimbabwe',ar:'زيمبابوي',capFr:'Harare',capEn:'Harare',capAr:'هراري',continent:'Africa'},
   {flag:'🇷🇸',fr:'Serbie',en:'Serbia',ar:'صربيا',capFr:'Belgrade',capEn:'Belgrade',capAr:'بلغراد',continent:'Europe'},
@@ -955,7 +955,7 @@ const ALGERIA_Q=[
 
 const ARAB_Q=[
   {fr:'Quelle est la capitale de l’Égypte ?',en:'What is the capital of Egypt?',ar:'ما هي عاصمة مصر؟',answer:{fr:'Le Caire',en:'Cairo',ar:'القاهرة'},wrong:[{fr:'Alexandrie',en:'Alexandria',ar:'الإسكندرية'},{fr:'Gizeh',en:'Giza',ar:'الجيزة'},{fr:'Louxor',en:'Luxor',ar:'الأقصر'}]},
-  {fr:'Quelle est la capitale administrative de la Palestine ?',en:'What is the administrative capital of Palestine?',ar:'ما هي العاصمة الإدارية لفلسطين؟',answer:{fr:'Ramallah',en:'Ramallah',ar:'رام الله'},wrong:[{fr:'Gaza',en:'Gaza',ar:'غزة'},{fr:'Naplouse',en:'Nablus',ar:'نابلس'},{fr:'Hébron',en:'Hebron',ar:'الخليل'}]},
+  {fr:'Quelle est la capitale de l’État de Palestine ?',en:'What is the capital of the State of Palestine?',ar:'ما هي عاصمة دولة فلسطين؟',answer:{fr:'Al-Qods (Jérusalem)',en:'Al-Quds (Jerusalem)',ar:'القدس'},wrong:[{fr:'Ramallah',en:'Ramallah',ar:'رام الله'},{fr:'Gaza',en:'Gaza',ar:'غزة'},{fr:'Naplouse',en:'Nablus',ar:'نابلس'}]},
   {fr:'Quelle ville sainte est la capitale revendiquée de l’État de Palestine ?',en:'Which holy city is the claimed capital of the State of Palestine?',ar:'ما المدينة المقدسة التي تُعدّ العاصمة المعلنة لدولة فلسطين؟',answer:{fr:'Al-Qods (Jérusalem-Est)',en:'Al-Quds (East Jerusalem)',ar:'القدس'},wrong:[{fr:'Ramallah',en:'Ramallah',ar:'رام الله'},{fr:'Amman',en:'Amman',ar:'عمّان'},{fr:'Beyrouth',en:'Beirut',ar:'بيروت'}]},
   {fr:'Quelle est la capitale de l’Arabie Saoudite ?',en:'What is the capital of Saudi Arabia?',ar:'ما هي عاصمة السعودية؟',answer:{fr:'Riyad',en:'Riyadh',ar:'الرياض'},wrong:[{fr:'Djeddah',en:'Jeddah',ar:'جدة'},{fr:'La Mecque',en:'Mecca',ar:'مكة'},{fr:'Médine',en:'Medina',ar:'المدينة'}]},
   {fr:'Quelle est la capitale des Émirats arabes unis ?',en:'What is the capital of the United Arab Emirates?',ar:'ما هي عاصمة الإمارات العربية المتحدة؟',answer:{fr:'Abu Dhabi',en:'Abu Dhabi',ar:'أبوظبي'},wrong:[{fr:'Dubaï',en:'Dubai',ar:'دبي'},{fr:'Charjah',en:'Sharjah',ar:'الشارقة'},{fr:'Ajman',en:'Ajman',ar:'عجمان'}]},
@@ -1391,7 +1391,7 @@ var WM_REGIONS=[
 ];
 var WM_VIEW={world:'0 0 1010 666',Africa:'405 338 238 250',Europe:'404 176 222 214',Asia:'560 285 322 226',Americas:'58 128 300 524'};
 var wmReady=false,wmRegion='Africa',wmTarget=null,wmScore=0,wmRound=0,wmUsed=[],wmTotal=10,wmLock=false;
-var wmPool=[],wmPoolISO=[],wmCentroid={},wmFlagByISO={},wmISOofFlag={};
+var wmPool=[],wmPoolISO=[],wmCentroid={},wmBBox={},wmFlagByISO={},wmISOofFlag={};
 var wmStartTime=0,wmTimerId=null,wmElapsed=0;
 
 function wmFmtTime(s){var m=Math.floor(s/60),x=s%60;return m+':'+(x<10?'0':'')+x;}
@@ -1411,8 +1411,9 @@ function wmInit(){
   FLAGS.forEach(function(f){var iso=wmEmojiISO(f.flag);if(iso&&WORLD_MAP.countries[iso]){wmISOofFlag[f.flag]=iso;wmFlagByISO[iso]=f;}});
   for(var iso in WORLD_MAP.countries){
     var nums=WORLD_MAP.countries[iso].d.match(/-?\d+/g);if(!nums)continue;
-    var sx=0,sy=0,n=0;for(var i=0;i+1<nums.length;i+=2){sx+=+nums[i];sy+=+nums[i+1];n++;}
-    if(n)wmCentroid[iso]=[sx/n,sy/n];
+    var sx=0,sy=0,n=0,minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
+    for(var i=0;i+1<nums.length;i+=2){var x=+nums[i],y=+nums[i+1];sx+=x;sy+=y;n++;if(x<minx)minx=x;if(x>maxx)maxx=x;if(y<miny)miny=y;if(y>maxy)maxy=y;}
+    if(n){wmCentroid[iso]=[sx/n,sy/n];wmBBox[iso]={w:maxx-minx,h:maxy-miny,cx:(minx+maxx)/2,cy:(miny+maxy)/2};}
   }
   var svg=document.getElementById('wm-svg');var html='';
   for(var id in WORLD_MAP.countries){html+='<path id="wmc-'+id+'" d="'+WORLD_MAP.countries[id].d+'" fill="#20223a" stroke="#0f0f1a" stroke-width="0.4"/>';}
@@ -1443,6 +1444,7 @@ function wmSelectRegion(key){
   wmTotal=Math.min(10,wmPool.length);
   document.getElementById('wm-total').textContent=wmTotal;
   document.getElementById('wm-svg').setAttribute('viewBox',WM_VIEW[key]||WORLD_MAP.viewBox);
+  wmBuildMarkers();
   wmPaintBoard();wmRenderRegions();
   wmScore=0;wmRound=0;wmUsed=[];
   document.getElementById('wm-score').textContent='0';
@@ -1450,8 +1452,27 @@ function wmSelectRegion(key){
   wmNextRound();
 }
 
+function wmBuildMarkers(){
+  var svg=document.getElementById('wm-svg');
+  var old=document.getElementById('wm-markers');if(old)old.parentNode.removeChild(old);
+  var vb=(svg.getAttribute('viewBox')||'0 0 1010 666').split(/\s+/).map(Number);
+  var vbw=vb[2]||1010, r=Math.max(1.2,vbw*0.013), thresh=vbw*0.03;
+  var ns='http://www.w3.org/2000/svg';
+  var g=document.createElementNS(ns,'g');g.setAttribute('id','wm-markers');
+  wmPoolISO.forEach(function(iso){
+    var bb=wmBBox[iso];if(!bb)return;
+    if(Math.max(bb.w,bb.h)<thresh){
+      var c=document.createElementNS(ns,'circle');
+      c.setAttribute('id','wmm-'+iso);c.setAttribute('cx',bb.cx);c.setAttribute('cy',bb.cy);c.setAttribute('r',r);
+      c.setAttribute('fill','#3b4a8a');c.setAttribute('stroke','#cdd6ff');c.setAttribute('stroke-width',r*0.3);
+      g.appendChild(c);
+    }
+  });
+  svg.appendChild(g);
+}
 function wmPaintBoard(){
   for(var id in WORLD_MAP.countries){var el=document.getElementById('wmc-'+id);if(el)el.setAttribute('fill',wmPoolISO.indexOf(id)>=0?'#3b4a8a':'#20223a');}
+  var g=document.getElementById('wm-markers');if(g){var ch=g.childNodes;for(var i=0;i<ch.length;i++)ch[i].setAttribute('fill','#3b4a8a');}
 }
 
 function wmNextRound(){
@@ -1469,7 +1490,7 @@ function wmNextRound(){
 function wmTap(evt){
   if(wmLock||!wmTarget||!wmPoolISO.length)return;
   var pick=null,el=evt.target;
-  if(el&&el.id&&el.id.indexOf('wmc-')===0){var iso=el.id.slice(4);if(wmPoolISO.indexOf(iso)>=0)pick=iso;}
+  if(el&&el.id&&(el.id.indexOf('wmc-')===0||el.id.indexOf('wmm-')===0)){var iso=el.id.slice(4);if(wmPoolISO.indexOf(iso)>=0)pick=iso;}
   if(!pick){
     var svg=document.getElementById('wm-svg');
     try{var pt=svg.createSVGPoint();pt.x=evt.clientX;pt.y=evt.clientY;var sp=pt.matrixTransform(svg.getScreenCTM().inverse());
@@ -1480,16 +1501,17 @@ function wmTap(evt){
 }
 
 function wmEval(iso){
-  var el=document.getElementById('wmc-'+iso);
+  var el=document.getElementById('wmc-'+iso),mk=document.getElementById('wmm-'+iso);
   if(iso===wmTarget.iso){
     wmLock=true;haptic(12);playCorrect();wmScore++;
     document.getElementById('wm-score').textContent=wmScore;
-    if(el)el.setAttribute('fill','#10b981');
+    if(el)el.setAttribute('fill','#10b981');if(mk)mk.setAttribute('fill','#10b981');
     showToast('✅ '+getName(wmTarget.f),'green');
     setTimeout(wmNextRound,750);
   }else{
     haptic(45);playWrong();
-    if(el){el.setAttribute('fill','#ef4444');setTimeout(function(){if(!wmLock){var e2=document.getElementById('wmc-'+iso);if(e2)e2.setAttribute('fill',wmPoolISO.indexOf(iso)>=0?'#3b4a8a':'#20223a');}},480);}
+    if(el)el.setAttribute('fill','#ef4444');if(mk)mk.setAttribute('fill','#ef4444');
+    setTimeout(function(){if(!wmLock){var e2=document.getElementById('wmc-'+iso);if(e2)e2.setAttribute('fill',wmPoolISO.indexOf(iso)>=0?'#3b4a8a':'#20223a');var m2=document.getElementById('wmm-'+iso);if(m2)m2.setAttribute('fill','#3b4a8a');}},480);
     var tapped=wmFlagByISO[iso];
     showToast('❌ '+(tapped?getName(tapped):''),'red');
   }
@@ -2053,8 +2075,9 @@ function buyGems(n,price){
 // ===== DUEL =====
 function startDuelSetup(){switchView('view-duel-setup');document.getElementById('duel-p1-input').value='';document.getElementById('duel-p2-input').value=''}
 function startDuel(){
-  const p1=document.getElementById('duel-p1-input').value.trim()||'Joueur 1';
-  const p2=document.getElementById('duel-p2-input').value.trim()||'Joueur 2';
+  const clean=s=>s.replace(/[<>&"']/g,'').slice(0,20);
+  const p1=clean(document.getElementById('duel-p1-input').value.trim())||'Joueur 1';
+  const p2=clean(document.getElementById('duel-p2-input').value.trim())||'Joueur 2';
   duelPlayers={p1,p2};duelScores={p1:0,p2:0};duelCurrent=0;
   questions=generateQuestions();current=0;
   switchView('view-duel-quiz');showDuelQuestion();
