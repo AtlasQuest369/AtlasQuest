@@ -83,7 +83,7 @@ La carte est **100 % embarquée** (`worldmap.js`, aucun CDN) : elle fonctionne h
 ## Notes géopolitiques (à ne jamais régresser)
 
 Le contenu suit les positions officielles de la République Algérienne et les résolutions de l'ONU :
-- **Palestine** incluse (🇵🇸, capitale administrative Ramallah ; Al-Qods comme capitale revendiquée). **Israël n'est pas un pays jouable.**
+- **Palestine** incluse (🇵🇸, capitale **Al-Qods / Jérusalem**). **Israël n'est pas un pays jouable.**
 - **Sahara occidental** présenté comme territoire distinct (non rattaché au Maroc).
 - **Algérie : 69 wilayas.** Russie classée en Europe. « Washington D.C. ».
 
