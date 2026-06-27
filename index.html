@@ -1538,7 +1538,7 @@ function wmInit(){
     if(n){wmCentroid[iso]=[sx/n,sy/n];wmBBox[iso]={w:maxx-minx,h:maxy-miny,cx:(minx+maxx)/2,cy:(miny+maxy)/2};}
   }
   var svg=document.getElementById('wm-svg');var html='';
-  for(var id in WORLD_MAP.countries){html+='<path id="wmc-'+id+'" d="'+WORLD_MAP.countries[id].d+'" fill="#20223a" stroke="#0f0f1a" stroke-width="0.4"/>';}
+  for(var id in WORLD_MAP.countries){html+='<path id="wmc-'+id+'" d="'+WORLD_MAP.countries[id].d+'" fill="#20223a" stroke="#5b6699" stroke-width="0.7" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>';}
   svg.innerHTML=html;
   svg.addEventListener('pointerdown',wmDown);
   svg.addEventListener('pointermove',wmMove,{passive:false});
@@ -1602,6 +1602,7 @@ function wmUp(e){
   var remaining=wmPtrList().length;
   if(remaining===0){
     if(!wmGestMoved&&quick)wmSelectAt(e.clientX,e.clientY,tgt);
+    else if(wmGestMoved)wmBuildMarkers(); // rebuild markers for the new zoom level
     wmTapStart=null;wmPinchD=0;
   }else if(remaining===1){wmPinchD=0;wmGestMoved=true;}
 }
@@ -1663,7 +1664,9 @@ function wmBuildMarkers(){
   var svg=document.getElementById('wm-svg');
   var old=document.getElementById('wm-markers');if(old)old.parentNode.removeChild(old);
   var vb=(svg.getAttribute('viewBox')||'0 0 1010 666').split(/\s+/).map(Number);
-  var vbw=vb[2]||1010, r=Math.max(1.2,vbw*0.013), thresh=vbw*0.03;
+  var vbw=vb[2]||1010;
+  if(vbw>520)return; // world / near-world view: keep clean (pinch to zoom -> markers appear)
+  var r=Math.max(1.2,vbw*0.013), thresh=vbw*0.04;
   var ns='http://www.w3.org/2000/svg';
   var g=document.createElementNS(ns,'g');g.setAttribute('id','wm-markers');
   wmPoolISO.forEach(function(iso){
@@ -2435,9 +2438,11 @@ function init(){
   applyTranslations();
   var ht=document.getElementById('haptic-toggle');if(ht)ht.checked=hapticOn;
   var st=document.getElementById('sound-toggle');if(st)st.checked=soundOn;
-  lucide.createIcons();
+  try{if(window.lucide&&lucide.createIcons)lucide.createIcons();}catch(e){}
 }
 init();
+// Render icons once Lucide's CDN finishes loading (it may arrive after init on slow networks)
+window.addEventListener('load',function(){try{if(window.lucide&&lucide.createIcons)lucide.createIcons();}catch(e){}});
 
 // ===== PWA: register service worker (offline + installable) =====
 if('serviceWorker' in navigator){
