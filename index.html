@@ -433,18 +433,33 @@
     <h3 class="font-bold w-full text-sm opacity-70 mt-4 text-center" id="kids-lang-title">📖 Règles de langue</h3>
     <div class="w-full grid grid-cols-3 gap-2">
       <button onclick="startKids('kids_lang_fr')" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(255,255,255,.04));border:1.5px solid rgba(59,130,246,.4)"><div class="text-2xl">🇫🇷</div><div class="text-xs font-bold mt-1">Français</div></button>
-      <button onclick="startKids('kids_lang_ar')" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(34,197,94,.18),rgba(255,255,255,.04));border:1.5px solid rgba(34,197,94,.4)"><div class="text-2xl">🇸🇦</div><div class="text-xs font-bold mt-1">العربية</div></button>
+      <button id="kids-lang-ar-btn" onclick="startKids('kids_lang_ar')" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(34,197,94,.18),rgba(255,255,255,.04));border:1.5px solid rgba(34,197,94,.4)"><div class="text-2xl">🇸🇦</div><div class="text-xs font-bold mt-1">العربية</div></button>
       <button onclick="startKids('kids_lang_en')" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(244,114,182,.18),rgba(255,255,255,.04));border:1.5px solid rgba(244,114,182,.4)"><div class="text-2xl">🇬🇧</div><div class="text-xs font-bold mt-1">English</div></button>
     </div>
     <h3 class="font-bold w-full text-sm opacity-70 mt-4 text-center" id="kids-prog-title">📚 المنهاج الجزائري — اللغة العربية</h3>
-    <div class="w-full grid grid-cols-2 gap-2" id="kids-subj-sel"></div>
+    <div class="w-full grid grid-cols-3 gap-2" id="kids-subj-sel"></div>
     <div class="w-full grid grid-cols-4 gap-2" id="kids-year-sel"></div>
     <div class="w-full grid grid-cols-3 gap-2 mt-1">
       <button onclick="kidsStartTerm(1)" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(255,255,255,.04));border:1.5px solid rgba(34,197,94,.4)"><div class="text-2xl">١</div><div class="text-xs font-bold mt-1" id="kids-t1">الفصل 1</div><div class="text-[9px] opacity-60" id="kids-t1d"></div></button>
       <button onclick="kidsStartTerm(2)" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(250,204,21,.2),rgba(255,255,255,.04));border:1.5px solid rgba(250,204,21,.4)"><div class="text-2xl">٢</div><div class="text-xs font-bold mt-1" id="kids-t2">الفصل 2</div><div class="text-[9px] opacity-60" id="kids-t2d"></div></button>
       <button onclick="kidsStartTerm(3)" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(0,229,255,.18),rgba(255,255,255,.04));border:1.5px solid rgba(0,229,255,.4)"><div class="text-2xl">٣</div><div class="text-xs font-bold mt-1" id="kids-t3">الفصل 3</div><div class="text-[9px] opacity-60" id="kids-t3d"></div></button>
     </div>
+    <button onclick="openMatch()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(167,139,250,.2),rgba(255,255,255,.04));border:1.5px solid rgba(167,139,250,.45)"><span class="text-xl">🧩</span><span class="font-bold text-sm" id="kids-match-btn">Associer (paires)</span></button>
     <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')" id="kids-back">← Retour</button>
+  </section>
+
+  <!-- MATCH (associer / طابق) -->
+  <section id="view-match" class="view flex-col items-center gap-3 max-w-md mx-auto w-full fade-up">
+    <h2 class="playfair font-bold text-2xl mt-6" style="color:var(--purple)" id="mt-title">🧩 طابق</h2>
+    <div class="w-full flex justify-between items-center text-sm">
+      <span class="opacity-70"><span id="mt-progress">0/5</span></span>
+      <span class="font-bold" id="mt-subj" style="color:var(--cyan)"></span>
+    </div>
+    <div class="w-full grid grid-cols-2 gap-3">
+      <div id="mt-left" class="flex flex-col gap-2"></div>
+      <div id="mt-right" class="flex flex-col gap-2"></div>
+    </div>
+    <button class="opacity-50 text-sm underline mt-2" onclick="openKids()" id="mt-back">← Retour</button>
   </section>
 
   <!-- LESSON (mini-cours before exercises) -->
@@ -452,7 +467,7 @@
     <div class="text-4xl mt-6">📘</div>
     <div class="text-xs opacity-60" id="lesson-crumb">—</div>
     <h2 class="playfair font-bold text-2xl text-center" style="color:var(--gold)" id="lesson-title">الدرس</h2>
-    <button onclick="speakLesson()" class="rounded-full px-4 py-1.5 text-xs font-bold" style="background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.4);color:var(--cyan)" id="lesson-listen">🔊 <span>استمع</span></button>
+    <button onclick="speakLesson()" class="rounded-full px-4 py-1.5 text-xs font-bold" style="background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.4);color:var(--cyan)" id="lesson-listen">🔊 <span id="lesson-listen-lbl">Écouter</span></button>
     <p class="text-sm opacity-80 text-center" id="lesson-intro"></p>
     <div class="w-full rounded-2xl p-4" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.25)">
       <ul class="list-disc list-inside space-y-2 text-sm" id="lesson-points" style="line-height:1.8"></ul>
@@ -815,9 +830,9 @@ function playLevelUp(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone
 
 // ===== TRANSLATIONS =====
 const T={
-  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',haptic:'Vibrations',sound:'Son',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',kidsBtn:'Espace Enfants',kidsTitle:'Espace Enfants',kidsDesc:'Choisis ton âge',k35:'3–5 ans',k35d:'Couleurs, animaux, formes',k68:'6–8 ans',k68d:'Nature, animaux, monde',k912:'9–12 ans',k912d:'Géographie, sciences faciles',kidsLang:'📖 Règles de langue',kidsProg:'📚 Programme algérien',kT1:'Trimestre 1',kT1d:'Lettres & voyelles',kT2:'Trimestre 2',kT2d:'Allongement & chadda',kT3:'Trimestre 3',kT3d:'Tanwin & tâ',puzzleBtn:'Puzzle Carte 🌍',puzzleTitle:'🧩 Sur quel continent ?',puzzleFind:'Pays :',pzHubTitle:'Mode Puzzle',pzHubDesc:'Choisis un mode de jeu',pzCountry:'Pays sur la carte',pzCountryD:'Localise le pays sur la vraie carte',pzCont:'Continents',pzContD:'Trouve le bon continent (facile)',wmTitle:'🌍 Trouve le pays',wmFind:'Trouve :',wmResultTitle:'Partie terminée',wmLScore:'Score',wmTime:'Temps',wmReplayBtn:'🔄 Rejouer',wmMenuBtn:'Menu',wmShareMsg:'🌍 J\'ai trouvé {s}/{t} pays ({r}) en {time} sur AtlasQuest ! Tu fais mieux ? 👇',wmRotate:'Tourne ton téléphone · pince pour zoomer',lessonStart:'Commencer les exercices →',resPerfect:'Parfait ! 🎉',listen:'Écouter',resGood:'Bien joué ! 👍',resTry:'Continue ! 💪',resKeep:'On réessaie ! 🙌',lessonExamples:'💡 Exemples',shareBtn:'📤 Partager mon score',shareMsg:'🌍 J\'ai eu {s}/{t} au quiz AtlasQuest ! Tu fais mieux ? 👇',shareCopied:'✅ Lien copié ! Colle-le sur WhatsApp/Insta',toastLife:'❤️ +1 Vie gagnée !',toastPremium:'✅ Premium activé ! Profite de l\'expérience complète 👑',toastShield:'🛡️ Bouclier activé ! Erreur protégée',toastAnswer:'Réponse :',toastQuestDone:'Quête complète !',toastError:'Erreur',toastNoGems:'❌ Gems insuffisantes !',toastBought:'acheté !',toastDemo:'💎 Démo — achat bientôt disponible !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
-  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',haptic:'Vibration',sound:'Sound',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',kidsBtn:'Kids Zone',kidsTitle:'Kids Zone',kidsDesc:'Choose your age',k35:'3–5 yrs',k35d:'Colors, animals, shapes',k68:'6–8 yrs',k68d:'Nature, animals, world',k912:'9–12 yrs',k912d:'Geography, easy science',kidsLang:'📖 Language rules',kidsProg:'📚 Algerian curriculum',kT1:'Term 1',kT1d:'Letters & vowels',kT2:'Term 2',kT2d:'Long vowels & shadda',kT3:'Term 3',kT3d:'Tanwin & tâ marbuta',puzzleBtn:'Map Puzzle 🌍',puzzleTitle:'🧩 Which continent?',puzzleFind:'Country:',pzHubTitle:'Puzzle Mode',pzHubDesc:'Choose a game mode',pzCountry:'Country on the map',pzCountryD:'Locate the country on the real map',pzCont:'Continents',pzContD:'Find the right continent (easy)',wmTitle:'🌍 Find the country',wmFind:'Find:',wmResultTitle:'Game over',wmLScore:'Score',wmTime:'Time',wmReplayBtn:'🔄 Replay',wmMenuBtn:'Menu',wmShareMsg:'🌍 I found {s}/{t} countries ({r}) in {time} on AtlasQuest! Can you beat me? 👇',wmRotate:'Rotate your phone · pinch to zoom',lessonStart:'Start exercises →',resPerfect:'Perfect! 🎉',listen:'Listen',resGood:'Well done! 👍',resTry:'Keep going! 💪',resKeep:'Try again! 🙌',lessonExamples:'💡 Examples',shareBtn:'📤 Share my score',shareMsg:'🌍 I scored {s}/{t} on the AtlasQuest quiz! Can you beat me? 👇',shareCopied:'✅ Link copied! Paste it on WhatsApp/Insta',toastLife:'❤️ +1 Life earned!',toastPremium:'✅ Premium activated! Enjoy the full experience 👑',toastShield:'🛡️ Shield active! Mistake protected',toastAnswer:'Answer:',toastQuestDone:'Quest complete!',toastError:'Error',toastNoGems:'❌ Not enough gems!',toastBought:'purchased!',toastDemo:'💎 Demo — purchases coming soon!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
-  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',haptic:'الاهتزاز',sound:'الصوت',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',kidsBtn:'ركن الأطفال',kidsTitle:'ركن الأطفال',kidsDesc:'اختر عمرك',k35:'3–5 سنوات',k35d:'ألوان وحيوانات وأشكال',k68:'6–8 سنوات',k68d:'طبيعة وحيوانات وعالم',k912:'9–12 سنة',k912d:'جغرافيا وعلوم سهلة',kidsLang:'📖 قواعد اللغة',kidsProg:'📚 المنهاج الجزائري',kT1:'الفصل 1',kT1d:'الحروف والحركات',kT2:'الفصل 2',kT2d:'المدّ والشدّة',kT3:'الفصل 3',kT3d:'التنوين والتاء',puzzleBtn:'بازل الخريطة 🌍',puzzleTitle:'🧩 في أي قارة؟',puzzleFind:'البلد:',pzHubTitle:'وضع البازل',pzHubDesc:'اختر نمط اللعب',pzCountry:'البلد على الخريطة',pzCountryD:'حدّد موقع البلد على الخريطة الحقيقية',pzCont:'القارات',pzContD:'جد القارة الصحيحة (سهل)',wmTitle:'🌍 جد البلد',wmFind:'جد:',wmResultTitle:'انتهت الجولة',wmLScore:'النتيجة',wmTime:'الوقت',wmReplayBtn:'🔄 إعادة',wmMenuBtn:'القائمة',wmShareMsg:'🌍 وجدت {s}/{t} دولة ({r}) في {time} على AtlasQuest! هل تتفوق عليّ؟ 👇',wmRotate:'أدِر هاتفك · اقرص للتكبير',lessonStart:'ابدأ التمارين →',resPerfect:'ممتاز! 🎉',listen:'استمع',resGood:'أحسنت! 👍',resTry:'واصل! 💪',resKeep:'حاول مجددًا! 🙌',lessonExamples:'💡 أمثلة',shareBtn:'📤 شارك نتيجتي',shareMsg:'🌍 حصلت على {s}/{t} في اختبار AtlasQuest! هل تتفوق عليّ؟ 👇',shareCopied:'✅ تم نسخ الرابط! الصقه على واتساب/إنستغرام',toastLife:'❤️ +1 حياة!',toastPremium:'✅ تم تفعيل بريميوم! استمتع بالتجربة الكاملة 👑',toastShield:'🛡️ الدرع مُفعّل! تم تفادي الخطأ',toastAnswer:'الإجابة:',toastQuestDone:'اكتملت المهمة!',toastError:'خطأ',toastNoGems:'❌ جواهر غير كافية!',toastBought:'تم شراؤه!',toastDemo:'💎 تجريبي — الشراء قريباً!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
+  fr:{subtitle:'Explore le monde en jouant 🌍',play:'Jouer',replay:'Rejouer',easy:'Facile',normal:'Normal',expert:'Expert',xpEarned:'XP gagnés',correct:'Bonnes rép.',maxStreak:'Série max',accuracy:'Précision',games:'Parties',streak:'Série',flags:'Drapeaux',capitals:'Capitales',monuments:'Monuments',history:'Histoire',continents:'Continents',culture:'Culture G.',algeria:'Algérie',arab:'Monde Arabe',math:'Chiffres',daily:'DÉFI DU JOUR',dailyTitle:'15 questions • Mode Expert',catTitle:'Choisir une catégorie',catDesc:'Sélectionne un mode et une difficulté',home:'Accueil',categories:'Catégories',profile:'Profil',profileTitle:'Mon Profil',results:'Résultats',backHome:'← Accueil',totalXp:'XP Total',totalGames:'Parties',bestStreak:'Meilleure série',avgAccuracy:'Précision moy.',catHeading:'Catégories',level:'Niveau',badges:'Badges',badgesUnlocked:'🏆 Badges débloqués',rank:'Rang',leaderboard:'Classement',shop:'Shop',shopDesc:'Boutique',training:'Mode Entraînement',haptic:'Vibrations',sound:'Son',next:'Suivant →',onboardStart:'C\'est parti !',lbPromo:'Top 3 promus à la ligue supérieure 🚀',premFeat:'Sans pub · Vies illimitées · Contenu exclusif · Certificats',premThen:'Puis 4.99€/3 mois · Annulable à tout moment',premBtn:'Passer Premium ✨',itemsTitle:'🎮 Objets',gemsTitle:'💎 Packs de Gems',popular:'POPULAIRE',questsReset:'Réinitialisation dans',footAbout:'À propos',footPrivacy:'Confidentialité',footTerms:'CGU',back:'← Retour',catStats:'📊 Statistiques par catégorie',adLabel:'Publicité Google',noLivesTitle:'Plus de vies !',noLivesDesc:'Tu as utilisé toutes tes vies aujourd\'hui.',watchAd:'📺 Regarder une pub (+1 ❤️)',comeBack:'Revenir demain',adPlaying:'Publicité en cours…',adWatchEnd:'Regarde jusqu\'à la fin pour gagner +1 ❤️',levelUpTitle:'Niveau supérieur !',levelUpBtn:'Super ! 🚀',cancel:'← Annuler',backMenu:'Retour au menu',kidsBtn:'Espace Enfants',kidsTitle:'Espace Enfants',kidsDesc:'Choisis ton âge',k35:'3–5 ans',k35d:'Couleurs, animaux, formes',k68:'6–8 ans',k68d:'Nature, animaux, monde',k912:'9–12 ans',k912d:'Géographie, sciences faciles',kidsLang:'📖 Règles de langue',kidsProg:'📚 Programme algérien',kT1:'Trimestre 1',kT1d:'Lettres & voyelles',kT2:'Trimestre 2',kT2d:'Allongement & chadda',kT3:'Trimestre 3',kT3d:'Tanwin & tâ',puzzleBtn:'Puzzle Carte 🌍',puzzleTitle:'🧩 Sur quel continent ?',puzzleFind:'Pays :',pzHubTitle:'Mode Puzzle',pzHubDesc:'Choisis un mode de jeu',pzCountry:'Pays sur la carte',pzCountryD:'Localise le pays sur la vraie carte',pzCont:'Continents',pzContD:'Trouve le bon continent (facile)',wmTitle:'🌍 Trouve le pays',wmFind:'Trouve :',wmResultTitle:'Partie terminée',wmLScore:'Score',wmTime:'Temps',wmReplayBtn:'🔄 Rejouer',wmMenuBtn:'Menu',wmShareMsg:'🌍 J\'ai trouvé {s}/{t} pays ({r}) en {time} sur AtlasQuest ! Tu fais mieux ? 👇',wmRotate:'Tourne ton téléphone · pince pour zoomer',lessonStart:'Commencer les exercices →',resPerfect:'Parfait ! 🎉',listen:'Écouter',matchBtn:'Associer (paires)',matchTitle:'🧩 Associer',resGood:'Bien joué ! 👍',resTry:'Continue ! 💪',resKeep:'On réessaie ! 🙌',lessonExamples:'💡 Exemples',shareBtn:'📤 Partager mon score',shareMsg:'🌍 J\'ai eu {s}/{t} au quiz AtlasQuest ! Tu fais mieux ? 👇',shareCopied:'✅ Lien copié ! Colle-le sur WhatsApp/Insta',toastLife:'❤️ +1 Vie gagnée !',toastPremium:'✅ Premium activé ! Profite de l\'expérience complète 👑',toastShield:'🛡️ Bouclier activé ! Erreur protégée',toastAnswer:'Réponse :',toastQuestDone:'Quête complète !',toastError:'Erreur',toastNoGems:'❌ Gems insuffisantes !',toastBought:'acheté !',toastDemo:'💎 Démo — achat bientôt disponible !',you:'Toi',duel:'Mode Duel',duelSetupTitle:'Mode Duel : 2 Joueurs',duelP1:'Nom Joueur 1',duelP2:'Nom Joueur 2',duelStart:'Commencer',duelResult:'Résultats du Duel',quests:'Quêtes',tabHome:'Accueil',tabLb:'Classement',tabQuests:'Quêtes',tabShop:'Shop',tabProfile:'Profil'},
+  en:{subtitle:'Explore the world by playing 🌍',play:'Play',replay:'Play Again',easy:'Easy',normal:'Normal',expert:'Expert',xpEarned:'XP earned',correct:'Correct',maxStreak:'Max streak',accuracy:'Accuracy',games:'Games',streak:'Streak',flags:'Flags',capitals:'Capitals',monuments:'Monuments',history:'History',continents:'Continents',culture:'General',algeria:'Algeria',arab:'Arab World',math:'Numbers',daily:'DAILY CHALLENGE',dailyTitle:'15 questions • Expert Mode',catTitle:'Choose a category',catDesc:'Select mode and difficulty',home:'Home',categories:'Categories',profile:'Profile',profileTitle:'My Profile',results:'Results',backHome:'← Home',totalXp:'Total XP',totalGames:'Games',bestStreak:'Best streak',avgAccuracy:'Avg. accuracy',catHeading:'Categories',level:'Level',badges:'Badges',badgesUnlocked:'🏆 Badges unlocked',rank:'Rank',leaderboard:'Leaderboard',shop:'Shop',shopDesc:'Store',training:'Training Mode',haptic:'Vibration',sound:'Sound',next:'Next →',onboardStart:'Let\'s go!',lbPromo:'Top 3 promoted to the higher league 🚀',premFeat:'Ad-free · Unlimited lives · Exclusive content · Certificates',premThen:'Then €4.99/3 months · Cancel anytime',premBtn:'Upgrade to Premium ✨',itemsTitle:'🎮 Items',gemsTitle:'💎 Gem Packages',popular:'POPULAR',questsReset:'Reset in',footAbout:'About',footPrivacy:'Privacy',footTerms:'Terms',back:'← Back',catStats:'📊 Stats by category',adLabel:'Google Ad',noLivesTitle:'Out of lives!',noLivesDesc:'You\'ve used all your lives today.',watchAd:'📺 Watch an ad (+1 ❤️)',comeBack:'Come back tomorrow',adPlaying:'Ad playing…',adWatchEnd:'Watch to the end to earn +1 ❤️',levelUpTitle:'Level up!',levelUpBtn:'Awesome! 🚀',cancel:'← Cancel',backMenu:'Back to menu',kidsBtn:'Kids Zone',kidsTitle:'Kids Zone',kidsDesc:'Choose your age',k35:'3–5 yrs',k35d:'Colors, animals, shapes',k68:'6–8 yrs',k68d:'Nature, animals, world',k912:'9–12 yrs',k912d:'Geography, easy science',kidsLang:'📖 Language rules',kidsProg:'📚 Algerian curriculum',kT1:'Term 1',kT1d:'Letters & vowels',kT2:'Term 2',kT2d:'Long vowels & shadda',kT3:'Term 3',kT3d:'Tanwin & tâ marbuta',puzzleBtn:'Map Puzzle 🌍',puzzleTitle:'🧩 Which continent?',puzzleFind:'Country:',pzHubTitle:'Puzzle Mode',pzHubDesc:'Choose a game mode',pzCountry:'Country on the map',pzCountryD:'Locate the country on the real map',pzCont:'Continents',pzContD:'Find the right continent (easy)',wmTitle:'🌍 Find the country',wmFind:'Find:',wmResultTitle:'Game over',wmLScore:'Score',wmTime:'Time',wmReplayBtn:'🔄 Replay',wmMenuBtn:'Menu',wmShareMsg:'🌍 I found {s}/{t} countries ({r}) in {time} on AtlasQuest! Can you beat me? 👇',wmRotate:'Rotate your phone · pinch to zoom',lessonStart:'Start exercises →',resPerfect:'Perfect! 🎉',listen:'Listen',matchBtn:'Match pairs',matchTitle:'🧩 Match',resGood:'Well done! 👍',resTry:'Keep going! 💪',resKeep:'Try again! 🙌',lessonExamples:'💡 Examples',shareBtn:'📤 Share my score',shareMsg:'🌍 I scored {s}/{t} on the AtlasQuest quiz! Can you beat me? 👇',shareCopied:'✅ Link copied! Paste it on WhatsApp/Insta',toastLife:'❤️ +1 Life earned!',toastPremium:'✅ Premium activated! Enjoy the full experience 👑',toastShield:'🛡️ Shield active! Mistake protected',toastAnswer:'Answer:',toastQuestDone:'Quest complete!',toastError:'Error',toastNoGems:'❌ Not enough gems!',toastBought:'purchased!',toastDemo:'💎 Demo — purchases coming soon!',you:'You',duel:'Duel Mode',duelSetupTitle:'Duel Mode: 2 Players',duelP1:'Player 1 Name',duelP2:'Player 2 Name',duelStart:'Start',duelResult:'Duel Results',quests:'Quests',tabHome:'Home',tabLb:'Ranking',tabQuests:'Quests',tabShop:'Shop',tabProfile:'Profile'},
+  ar:{subtitle:'استكشف العالم باللعب 🌍',play:'إلعب',replay:'إعادة',easy:'سهل',normal:'عادي',expert:'خبير',xpEarned:'نقاط',correct:'إجابات صحيحة',maxStreak:'أفضل سلسلة',accuracy:'الدقة',games:'ألعاب',streak:'سلسلة',flags:'أعلام',capitals:'عواصم',monuments:'معالم',history:'تاريخ',continents:'قارات',culture:'ثقافة',algeria:'الجزائر',arab:'العالم العربي',math:'أرقام',daily:'تحدي اليوم',dailyTitle:'15 سؤال • وضع خبير',catTitle:'اختر فئة',catDesc:'حدد الوضع والصعوبة',home:'الرئيسية',categories:'الفئات',profile:'الملف',profileTitle:'ملفي',results:'النتائج',backHome:'← الرئيسية',totalXp:'مجموع النقاط',totalGames:'ألعاب',bestStreak:'أفضل سلسلة',avgAccuracy:'متوسط الدقة',catHeading:'الفئات',level:'المستوى',badges:'الشارات',badgesUnlocked:'🏆 شارات جديدة',rank:'الرتبة',leaderboard:'الترتيب',shop:'المتجر',shopDesc:'المتجر',training:'وضع التدريب',haptic:'الاهتزاز',sound:'الصوت',next:'التالي →',onboardStart:'هيا بنا!',lbPromo:'أفضل 3 يترقّون إلى الدوري الأعلى 🚀',premFeat:'بدون إعلانات · حيوات غير محدودة · محتوى حصري · شهادات',premThen:'ثم 4.99€/3 أشهر · يمكن الإلغاء في أي وقت',premBtn:'الترقية إلى بريميوم ✨',itemsTitle:'🎮 العناصر',gemsTitle:'💎 حزم الجواهر',popular:'الأكثر رواجاً',questsReset:'إعادة التعيين خلال',footAbout:'حول',footPrivacy:'الخصوصية',footTerms:'الشروط',back:'← رجوع',catStats:'📊 إحصائيات حسب الفئة',adLabel:'إعلان Google',noLivesTitle:'لا حيوات!',noLivesDesc:'لقد استخدمت كل حيواتك اليوم.',watchAd:'📺 شاهد إعلاناً (+1 ❤️)',comeBack:'عُد غداً',adPlaying:'الإعلان قيد التشغيل…',adWatchEnd:'شاهد حتى النهاية لتربح +1 ❤️',levelUpTitle:'مستوى أعلى!',levelUpBtn:'رائع! 🚀',cancel:'← إلغاء',backMenu:'العودة إلى القائمة',kidsBtn:'ركن الأطفال',kidsTitle:'ركن الأطفال',kidsDesc:'اختر عمرك',k35:'3–5 سنوات',k35d:'ألوان وحيوانات وأشكال',k68:'6–8 سنوات',k68d:'طبيعة وحيوانات وعالم',k912:'9–12 سنة',k912d:'جغرافيا وعلوم سهلة',kidsLang:'📖 قواعد اللغة',kidsProg:'📚 المنهاج الجزائري',kT1:'الفصل 1',kT1d:'الحروف والحركات',kT2:'الفصل 2',kT2d:'المدّ والشدّة',kT3:'الفصل 3',kT3d:'التنوين والتاء',puzzleBtn:'بازل الخريطة 🌍',puzzleTitle:'🧩 في أي قارة؟',puzzleFind:'البلد:',pzHubTitle:'وضع البازل',pzHubDesc:'اختر نمط اللعب',pzCountry:'البلد على الخريطة',pzCountryD:'حدّد موقع البلد على الخريطة الحقيقية',pzCont:'القارات',pzContD:'جد القارة الصحيحة (سهل)',wmTitle:'🌍 جد البلد',wmFind:'جد:',wmResultTitle:'انتهت الجولة',wmLScore:'النتيجة',wmTime:'الوقت',wmReplayBtn:'🔄 إعادة',wmMenuBtn:'القائمة',wmShareMsg:'🌍 وجدت {s}/{t} دولة ({r}) في {time} على AtlasQuest! هل تتفوق عليّ؟ 👇',wmRotate:'أدِر هاتفك · اقرص للتكبير',lessonStart:'ابدأ التمارين →',resPerfect:'ممتاز! 🎉',listen:'استمع',matchBtn:'طابق الأزواج',matchTitle:'🧩 طابق',resGood:'أحسنت! 👍',resTry:'واصل! 💪',resKeep:'حاول مجددًا! 🙌',lessonExamples:'💡 أمثلة',shareBtn:'📤 شارك نتيجتي',shareMsg:'🌍 حصلت على {s}/{t} في اختبار AtlasQuest! هل تتفوق عليّ؟ 👇',shareCopied:'✅ تم نسخ الرابط! الصقه على واتساب/إنستغرام',toastLife:'❤️ +1 حياة!',toastPremium:'✅ تم تفعيل بريميوم! استمتع بالتجربة الكاملة 👑',toastShield:'🛡️ الدرع مُفعّل! تم تفادي الخطأ',toastAnswer:'الإجابة:',toastQuestDone:'اكتملت المهمة!',toastError:'خطأ',toastNoGems:'❌ جواهر غير كافية!',toastBought:'تم شراؤه!',toastDemo:'💎 تجريبي — الشراء قريباً!',you:'أنت',duel:'وضع الدويل',duelSetupTitle:'وضع الدويل: لاعبان',duelP1:'اسم اللاعب 1',duelP2:'اسم اللاعب 2',duelStart:'ابدأ',duelResult:'نتائج الدويل',quests:'المهام',tabHome:'الرئيسية',tabLb:'الترتيب',tabQuests:'المهام',tabShop:'المتجر',tabProfile:'الملف'}
 };
 
 // ===== QUIZ DATA =====
@@ -1570,6 +1585,400 @@ const MATH_S4T3=[
   {fr:'🔢 محيط المربّع = ؟',en:'🔢 محيط المربّع = ؟',ar:'🔢 محيط المربّع = ؟',answer:{fr:'الضلع × 4',en:'الضلع × 4',ar:'الضلع × 4'},wrong:[{fr:'الضلع × الضلع',en:'الضلع × الضلع',ar:'الضلع × الضلع'},{fr:'الضلع + 4',en:'الضلع + 4',ar:'الضلع + 4'},{fr:'2 × الضلع',en:'2 × الضلع',ar:'2 × الضلع'}]}
 ];
 
+// ===== Science / إيقاظ علمي — التربية العلمية (Algerian primary curriculum) =====
+function sciQ(q,a,w1,w2,w3){return {fr:'🔬 '+q,en:'🔬 '+q,ar:'🔬 '+q,answer:{fr:a,en:a,ar:a},wrong:[{fr:w1,en:w1,ar:w1},{fr:w2,en:w2,ar:w2},{fr:w3,en:w3,ar:w3}]};}
+const SCI_S1_T1=[
+  sciQ('كم عدد حواسّ الإنسان؟','خمس','ثلاث','أربع','ستّ'),
+  sciQ('نرى الأشياء بواسطة؟','العينين','الأذنين','الأنف','اللسان'),
+  sciQ('نسمع الأصوات بواسطة؟','الأذنين','العينين','اليد','الأنف'),
+  sciQ('نشمّ الروائح بواسطة؟','الأنف','اللسان','العين','الأذن'),
+  sciQ('نتذوّق الطعام بواسطة؟','اللسان','الأنف','الأذن','اليد'),
+  sciQ('نلمس الأشياء بواسطة؟','الجلد','العين','الأذن','الأنف'),
+  sciQ('نعرف الحلو والمالح بحاسّة؟','التذوّق','الشمّ','السمع','البصر'),
+  sciQ('نرى الألوان بحاسّة؟','البصر','السمع','الشمّ','اللمس'),
+  sciQ('رائحة الوردة نعرفها بحاسّة؟','الشمّ','التذوّق','السمع','البصر'),
+  sciQ('نعرف أنّ الجسم خشن أو ناعم بحاسّة؟','اللمس','البصر','السمع','الشمّ')
+];
+const SCI_S1_T2=[
+  sciQ('متى نغسل أيدينا؟','قبل الأكل وبعد المرحاض','عند النوم فقط','أبدًا','مرّة في الشهر'),
+  sciQ('بماذا ننظّف أسناننا؟','الفرشاة والمعجون','الماء فقط','المنديل','لا شيء'),
+  sciQ('كم مرّة ننظّف أسناننا في اليوم؟','مرّتين على الأقلّ','مرّة في الأسبوع','أبدًا','مرّة في الشهر'),
+  sciQ('بأيّ عضو نمشي؟','الرِّجلان','اليدان','العينان','الأذنان'),
+  sciQ('بأيّ عضو نمسك الأشياء؟','اليدان','الرِّجلان','الأنف','الأذن'),
+  sciQ('للحفاظ على الصحّة نأكل؟','غذاءً متنوّعًا','الحلويات فقط','الشيبس فقط','لا نأكل'),
+  sciQ('النظافة من؟','الإيمان','الكسل','المرض','التعب'),
+  sciQ('نستحمّ للمحافظة على؟','نظافة الجسم','الجوع','النعاس','اللعب'),
+  sciQ('نقصّ الأظافر حتى لا؟','تتجمّع فيها الأوساخ','يطول الشعر','نكبر بسرعة','ننام'),
+  sciQ('قبل أكل الفواكه يجب؟','غسلها جيّدًا','رميها','عصرها فقط','تجفيفها')
+];
+const SCI_S1_T3=[
+  sciQ('النبتة تحتاج لتنمو إلى؟','الماء والضوء','الظلام فقط','الحلوى','الضجيج'),
+  sciQ('الجزء الذي يثبّت النبتة في الأرض؟','الجذر','الورقة','الزهرة','الثمرة'),
+  sciQ('حيوان يعيش في الماء؟','السمكة','القطّة','الدجاجة','الأرنب'),
+  sciQ('حيوان يطير؟','العصفور','السمكة','الحصان','الأفعى'),
+  sciQ('الحيوان الذي يقول «مياو»؟','القطّة','الكلب','البقرة','الديك'),
+  sciQ('حيوان يعطينا الحليب؟','البقرة','الدجاجة','السمكة','النحلة'),
+  sciQ('حشرة تصنع العسل؟','النحلة','الذبابة','النملة','الفراشة'),
+  sciQ('الدجاجة تعطينا؟','البيض','الحليب','الصوف','العسل'),
+  sciQ('النبتة تأخذ الماء من الأرض بواسطة؟','الجذور','الأوراق','الزهرة','الساق'),
+  sciQ('الجزء الملوّن الجميل في النبتة؟','الزهرة','الجذر','الساق','التراب')
+];
+const SCI_S2_T1=[
+  sciQ('الكائن الحيّ؟','يتنفّس وينمو','جماد لا يتحرّك','حجر','كرسي'),
+  sciQ('أيّ ممّا يلي كائن حيّ؟','الشجرة','الحجر','الطاولة','السيّارة'),
+  sciQ('أيّ ممّا يلي جماد؟','الحجر','القطّة','الطفل','الشجرة'),
+  sciQ('الكائنات الحيّة تحتاج إلى؟','الغذاء والماء والهواء','الضجيج','البلاستيك','التلفاز'),
+  sciQ('الإنسان والحيوان والنبات كلّها؟','كائنات حيّة','جمادات','أحجار','ألعاب'),
+  sciQ('كِبَر الكائن الحيّ يُسمّى؟','النموّ','التوقّف','الجمود','النوم'),
+  sciQ('التكاثر يعني؟','إنجاب صغار جديدة','الموت','النوم','الأكل'),
+  sciQ('النبات يصنع غذاءه بمساعدة؟','ضوء الشمس','الظلام','البرد','الضجيج'),
+  sciQ('أين يعيش السمك؟','في الماء','في الصحراء','في الهواء','تحت الأرض'),
+  sciQ('الحيوان الذي يعيش في البيت معنا؟','الحيوان الأليف','الحيوان المفترس','الوحش','الديناصور')
+];
+const SCI_S2_T2=[
+  sciQ('الماء النقيّ لونه؟','بلا لون (شفّاف)','أحمر','أزرق','أسود'),
+  sciQ('نشرب الماء لأنّه؟','ضروري للحياة','لذيذ فقط','ملوّن','حلو'),
+  sciQ('الهواء؟','موجود حولنا ولا نراه','ملوّن','صلب','نأكله'),
+  sciQ('نحتاج الهواء من أجل؟','التنفّس','الأكل','الشرب','النوم'),
+  sciQ('الماء يتجمّد فيصبح؟','ثلجًا','بخارًا','هواءً','ترابًا'),
+  sciQ('عند تسخين الماء يتحوّل إلى؟','بخار','ثلج','حجر','تراب'),
+  sciQ('من أين نشرب ماءً صالحًا؟','الحنفية والينابيع النظيفة','البِرَك الملوّثة','المجاري','الوحل'),
+  sciQ('يجب ألّا نُبذّر؟','الماء','اللعب','النوم','الكلام'),
+  sciQ('مخلوقات الماء تتنفّس بواسطة؟','الغلاصم (الخياشيم)','الأنف','الرئتين','الأذنين'),
+  sciQ('الرياح هي؟','هواء متحرّك','ماء متحرّك','تراب','نار')
+];
+const SCI_S2_T3=[
+  sciQ('كم عدد فصول السنة؟','أربعة','ثلاثة','خمسة','اثنان'),
+  sciQ('الفصل الحارّ هو؟','الصيف','الشتاء','الخريف','الربيع'),
+  sciQ('الفصل البارد كثير المطر؟','الشتاء','الصيف','الربيع','الخريف'),
+  sciQ('في أيّ فصل تتساقط أوراق الأشجار؟','الخريف','الصيف','الربيع','الشتاء'),
+  sciQ('الفصل الذي تتفتّح فيه الأزهار؟','الربيع','الشتاء','الصيف','الخريف'),
+  sciQ('الغذاء الصحّي يحتوي على؟','الخضر والفواكه','الحلويات فقط','المشروبات الغازيّة','الشيبس'),
+  sciQ('أيّ ممّا يلي فاكهة؟','التفّاحة','الجزر','البطاطا','الخبز'),
+  sciQ('أيّ ممّا يلي خضرة؟','الجزر','الموز','التفّاح','البرتقال'),
+  sciQ('نشرب الحليب فهو مفيد لـ؟','العظام والأسنان','السيّارة','النبات','الحجر'),
+  sciQ('الإفراط في الحلويات يسبّب؟','تسوّس الأسنان','القوّة','الذكاء','الطول')
+];
+const SCI_S3_T1=[
+  sciQ('الأغذية البانية للجسم مثل؟','اللحم والبيض والحليب','السكّر','الزيت','الحلوى'),
+  sciQ('الأغذية الطاقيّة مثل؟','الخبز والعجائن','الماء','الملح فقط','الخسّ فقط'),
+  sciQ('الأغذية الوقائيّة هي؟','الخضر والفواكه','اللحوم','الزيوت','السكّر'),
+  sciQ('الوجبة الأهمّ لبداية اليوم؟','الفطور','العشاء فقط','لا وجبة','الحلوى'),
+  sciQ('نقص الغذاء يسبّب؟','سوء التغذية والضعف','القوّة','الطول السريع','الذكاء'),
+  sciQ('أيّ غذاء غنيّ بالكالسيوم؟','الحليب','الخبز','الزيت','السكّر'),
+  sciQ('شرب الماء الكافي يساعد على؟','عمل الجسم بشكل سليم','السمنة','المرض','التعب'),
+  sciQ('الغذاء المتوازن يعني؟','تنوّع الأغذية','نوعًا واحدًا فقط','الحلويات','عدم الأكل'),
+  sciQ('الفيتامينات نجدها كثيرًا في؟','الفواكه والخضر','اللحم فقط','السكّر','الزيت'),
+  sciQ('الإكثار من الدسم والسكّر يؤدّي إلى؟','السمنة والأمراض','الصحّة المثاليّة','النشاط الدائم','الطول')
+];
+const SCI_S3_T2=[
+  sciQ('أجزاء النبتة الأساسيّة؟','الجذر والساق والأوراق','العين والأذن','الأجنحة','الزعانف'),
+  sciQ('الجزء الذي يحمل الأوراق والأزهار؟','الساق','الجذر','الثمرة','البذرة'),
+  sciQ('النبتة تبدأ من؟','البذرة','الثمرة الناضجة','الورقة','الجذر فقط'),
+  sciQ('لتنبت البذرة تحتاج إلى؟','ماء وهواء وحرارة','ظلام دائم','ملح','ضجيج'),
+  sciQ('النبات الأخضر يصنع غذاءه في؟','الأوراق','الجذر','الثمرة','البذرة'),
+  sciQ('عملية صنع الغذاء بالضوء تُسمّى؟','التركيب الضوئي','التنفّس','الهضم','النموّ'),
+  sciQ('الجزء الذي يمتصّ الماء والأملاح؟','الجذر','الزهرة','الورقة','الثمرة'),
+  sciQ('بعد التلقيح تتحوّل الزهرة إلى؟','ثمرة','جذر','ساق','ورقة'),
+  sciQ('النبات الأخضر يطرح نهارًا غاز؟','الأكسجين','ثاني أكسيد الكربون فقط','الدخان','البخار'),
+  sciQ('نحافظ على النباتات لأنّها تعطينا؟','الغذاء والأكسجين','الضجيج','التلوّث','النفايات')
+];
+const SCI_S3_T3=[
+  sciQ('كم حالة للماء؟','ثلاث','واحدة','اثنتان','أربع'),
+  sciQ('الماء في حالته الصلبة؟','الجليد','البخار','المطر','الندى'),
+  sciQ('الماء في حالته الغازيّة؟','بخار الماء','الجليد','الثلج','الصقيع'),
+  sciQ('عند تبريد الماء بشدّة يتحوّل إلى؟','جليد','بخار','غاز','تراب'),
+  sciQ('عند غليان الماء يتصاعد؟','بخار','جليد','دخان','ثلج'),
+  sciQ('تحوّل الماء إلى بخار يُسمّى؟','التبخّر','التجمّد','الانصهار','التكاثف'),
+  sciQ('تحوّل البخار إلى ماء يُسمّى؟','التكاثف','التبخّر','التجمّد','الغليان'),
+  sciQ('دورة الماء تشمل؟','التبخّر والتكاثف والتساقط','الأكل','النوم','اللعب'),
+  sciQ('المطر يتكوّن في؟','السُّحُب','باطن الأرض','البحر مباشرة','النار'),
+  sciQ('نوفّر الماء بـ؟','إغلاق الحنفية عند عدم الحاجة','تركها مفتوحة','اللعب بها','سكبها')
+];
+const SCI_S4_T1=[
+  sciQ('يدعم جسم الإنسان ويحميه؟','الهيكل العظمي','الجلد فقط','الشعر','الأظافر'),
+  sciQ('عدد عظام الإنسان البالغ تقريبًا؟','206','50','600','12'),
+  sciQ('العظم الذي يحمي الدماغ؟','الجمجمة','القفص الصدري','العمود الفقري','الحوض'),
+  sciQ('العمود الفقري يساعدنا على؟','الوقوف منتصبين','المضغ','الرؤية','السمع'),
+  sciQ('القفص الصدري يحمي؟','القلب والرئتين','الدماغ','المعدة','الكبد فقط'),
+  sciQ('عدد الأسنان اللبنيّة عند الطفل؟','20','32','10','28'),
+  sciQ('السنّ الذي يقطع الطعام؟','القاطعة','الرحى','الناب','اللثة'),
+  sciQ('الأسنان التي تطحن الطعام؟','الأرحاء','القواطع','الأنياب','اللسان'),
+  sciQ('لحماية الأسنان نتجنّب؟','الإكثار من الحلويات','شرب الحليب','أكل الخضر','التفريش'),
+  sciQ('يلتقي عظمان عند؟','المفصل','العضلة','الجلد','الشعر')
+];
+const SCI_S4_T2=[
+  sciQ('عضو التنفّس الرئيسي؟','الرئتان','المعدة','الكبد','القلب'),
+  sciQ('نأخذ عند الشهيق غاز؟','الأكسجين','ثاني أكسيد الكربون','النيتروجين','الدخان'),
+  sciQ('نُخرج عند الزفير غاز؟','ثاني أكسيد الكربون','الأكسجين','البخار فقط','الهواء النقي'),
+  sciQ('يبدأ هضم الطعام في؟','الفم','المعدة','الأمعاء','الكبد'),
+  sciQ('الأسنان واللعاب يساعدان على؟','مضغ الطعام وتليينه','التنفّس','الرؤية','السمع'),
+  sciQ('الطعام بعد البلع يصل إلى؟','المعدة','الرئة','القلب','الدماغ'),
+  sciQ('امتصاص الغذاء يتمّ في؟','الأمعاء الدقيقة','الفم','المريء','الرئة'),
+  sciQ('القلب يضخّ؟','الدم','الهواء','الطعام','الماء فقط'),
+  sciQ('الدم ينقل الأكسجين والغذاء إلى؟','كلّ أعضاء الجسم','القلب فقط','الرئة فقط','الجلد فقط'),
+  sciQ('لنتنفّس هواءً نقيًّا يجب؟','الابتعاد عن التدخين والتلوّث','الجلوس قرب الدخان','إغلاق النوافذ دائمًا','عدم الخروج أبدًا')
+];
+const SCI_S4_T3=[
+  sciQ('كم حالة للمادّة؟','ثلاث','حالتان','واحدة','أربع'),
+  sciQ('مثال على مادّة صلبة؟','الحجر','الماء','الهواء','البخار'),
+  sciQ('مثال على مادّة سائلة؟','الماء','الحجر','الخشب','الحديد'),
+  sciQ('مثال على مادّة غازيّة؟','الهواء','الحديد','الخشب','الجليد'),
+  sciQ('لحماية البيئة يجب؟','عدم رمي النفايات','قطع الأشجار','تلويث الماء','حرق البلاستيك'),
+  sciQ('إعادة استعمال الورق والبلاستيك تُسمّى؟','الرسكلة (التدوير)','التلويث','الحرق','الرمي'),
+  sciQ('مصدر الطاقة الطبيعي والنظيف؟','الشمس','الفحم','البنزين','البلاستيك'),
+  sciQ('التلوّث يضرّ بـ؟','الإنسان والحيوان والنبات','الحجارة فقط','لا شيء','الآلات فقط'),
+  sciQ('نغرس الأشجار لأنّها؟','تنقّي الهواء','تلوّث الهواء','تستهلك الأكسجين','تضرّنا'),
+  sciQ('التيّار الكهربائي خطير لذا؟','لا نلمس الأسلاك المكشوفة','نلعب بالمقابس','نلمسها مبلّلين','نقطعها باليد')
+];
+
+// ===== Language courses — French (FR version only) & English (EN version only) =====
+function langQ(pfx,q,a,w1,w2,w3){return {fr:pfx+' '+q,en:pfx+' '+q,ar:pfx+' '+q,answer:{fr:a,en:a,ar:a},wrong:[{fr:w1,en:w1,ar:w1},{fr:w2,en:w2,ar:w2},{fr:w3,en:w3,ar:w3}]};}
+function frQ(q,a,w1,w2,w3){return langQ('🇫🇷',q,a,w1,w2,w3);}
+function enQ(q,a,w1,w2,w3){return langQ('🇬🇧',q,a,w1,w2,w3);}
+// ---- French ----
+const FR_S1_T1=[
+  frQ('Combien de lettres compte l’alphabet français ?','26','28','24','30'),
+  frQ('Combien y a-t-il de voyelles (a, e, i, o, u, y) ?','6','5','4','7'),
+  frQ('La lettre « B » est une…','consonne','voyelle','accent','chiffre'),
+  frQ('Quelle lettre est une voyelle ?','A','B','M','S'),
+  frQ('Le mot « ami » commence par la lettre ?','a','m','i','b'),
+  frQ('« é » est une voyelle avec un…','accent','chiffre','point','trait'),
+  frQ('Dans quel mot entend-on le son « ch » ?','chat','table','porte','livre'),
+  frQ('Combien de syllabes dans « ba-na-ne » ?','3','2','1','4')
+];
+const FR_S1_T2=[
+  frQ('Le matin, pour saluer on dit ?','Bonjour','Bonne nuit','Au revoir','Merci'),
+  frQ('Pour remercier, on dit ?','Merci','Pardon','Salut','Bonsoir'),
+  frQ('« Comment t’appelles-tu ? » On répond ?','Je m’appelle Ali','J’ai faim','Il pleut','Au revoir'),
+  frQ('Pour dire au revoir, on dit ?','Au revoir','Bonjour','Merci','Oui'),
+  frQ('« Ça va ? » Réponse polie ?','Ça va bien, merci','Un livre','Trois','Lundi'),
+  frQ('Le soir, on salue en disant ?','Bonsoir','Bonjour','À midi','Merci'),
+  frQ('Le mot poli pour demander quelque chose ?','s’il te plaît','au revoir','bonsoir','merci'),
+  frQ('« Enchanté » se dit quand on…','rencontre quelqu’un','mange','dort','compte')
+];
+const FR_S1_T3=[
+  frQ('Le chiffre « 3 » s’écrit en lettres ?','trois','troi','troix','tois'),
+  frQ('« 10 » s’écrit en lettres ?','dix','dis','dixe','dize'),
+  frQ('La couleur du ciel par beau temps ?','bleu','rouge','vert','noir'),
+  frQ('La couleur de l’herbe ?','vert','bleu','jaune','gris'),
+  frQ('« cinq + deux » = ?','sept','six','huit','cinq'),
+  frQ('La couleur d’une banane ?','jaune','bleu','violet','gris'),
+  frQ('Combien font « deux + trois » ?','cinq','quatre','six','sept'),
+  frQ('« rouge », « bleu », « vert » sont des…','couleurs','nombres','animaux','lettres')
+];
+const FR_S2_T1=[
+  frQ('Article défini masculin singulier ?','le','la','les','une'),
+  frQ('Article défini féminin singulier ?','la','le','un','des'),
+  frQ('« ___ soleil » : quel article ?','le','la','les','une'),
+  frQ('« ___ lune » : quel article ?','la','le','un','des'),
+  frQ('Article indéfini féminin singulier ?','une','un','le','des'),
+  frQ('Pluriel de « le » et « la » ?','les','un','une','à'),
+  frQ('« ___ enfants jouent » : article pluriel ?','les','la','le','une'),
+  frQ('Devant une voyelle, « le ami » devient ?','l’ami','la ami','les ami','un ami')
+];
+const FR_S2_T2=[
+  frQ('Le pluriel de « chat » ?','chats','chat','chates','chatz'),
+  frQ('Le pluriel de « cheval » ?','chevaux','chevals','chevales','chevaus'),
+  frQ('Le féminin de « ami » ?','amie','ami','amis','amine'),
+  frQ('Le féminin de « grand » ?','grande','grand','grandes','grandi'),
+  frQ('« un journal » au pluriel ?','des journaux','des journals','des journale','des journaus'),
+  frQ('Le féminin de « acteur » ?','actrice','acteure','acteuse','acteresse'),
+  frQ('Le pluriel de « bijou » ?','bijoux','bijous','bijoues','bijour'),
+  frQ('Le féminin de « le maître » ?','la maîtresse','le maîtresse','la maître','les maître')
+];
+const FR_S2_T3=[
+  frQ('« Je ___ content. » (être)','suis','es','est','sont'),
+  frQ('« Tu ___ un livre. » (avoir)','as','ai','a','avons'),
+  frQ('« Il ___ à l’école. » (être)','est','es','suis','sont'),
+  frQ('« Nous ___ des amis. » (avoir)','avons','ont','avez','as'),
+  frQ('« Vous ___ gentils. » (être)','êtes','est','sont','es'),
+  frQ('« Ils ___ faim. » (avoir)','ont','as','a','avons'),
+  frQ('« J’___ huit ans. » (avoir)','ai','suis','es','a'),
+  frQ('« Elle ___ une amie. » (être)','est','a','es','ont')
+];
+const FR_S3_T1=[
+  frQ('« parler » : « je ___ »','parle','parles','parlent','parler'),
+  frQ('« manger » : « nous ___ »','mangeons','mangons','mangez','mange'),
+  frQ('« jouer » : « ils ___ »','jouent','joue','joues','jouons'),
+  frQ('« chanter » : « tu ___ »','chantes','chante','chantez','chantent'),
+  frQ('« aimer » : « vous ___ »','aimez','aime','aimes','aiment'),
+  frQ('Terminaison de « il/elle » pour les verbes en -er ?','-e','-es','-ons','-ent'),
+  frQ('« regarder » : « elle ___ la télé »','regarde','regardes','regardent','regarder'),
+  frQ('Les verbes en -er sont du ___ groupe ?','premier','deuxième','troisième','quatrième')
+];
+const FR_S3_T2=[
+  frQ('La négation se forme avec ?','ne … pas','très … bien','plus … que','ou … ou'),
+  frQ('« Je mange » à la forme négative ?','Je ne mange pas','Je mange pas de','Je ne mange','Pas je mange'),
+  frQ('Pronom personnel de la 1re personne du singulier ?','je','tu','il','nous'),
+  frQ('Pronom de la 3e personne du pluriel (masculin) ?','ils','elle','vous','on'),
+  frQ('« Tu as un stylo » au négatif ?','Tu n’as pas de stylo','Tu as pas un','Tu n’as un','Tu pas as'),
+  frQ('Le pronom qui remplace « Marie » ?','elle','il','ils','nous'),
+  frQ('Le pronom qui remplace « Paul et moi » ?','nous','vous','ils','elles'),
+  frQ('« Il ne dort ___ » : complète la négation.','pas','très','bien','beaucoup')
+];
+const FR_S3_T3=[
+  frQ('Le frère de mon père est mon…','oncle','cousin','neveu','grand-père'),
+  frQ('La maman de ma maman est ma…','grand-mère','tante','sœur','cousine'),
+  frQ('À l’école, on écrit avec un…','stylo','marteau','ballon','couteau'),
+  frQ('On lit dans un…','livre','verre','lit','sac'),
+  frQ('La personne qui enseigne est…','l’enseignant','le boulanger','le médecin','le facteur'),
+  frQ('Le fils de mon oncle est mon…','cousin','frère','père','voisin'),
+  frQ('On range nos affaires d’école dans un…','cartable','four','lavabo','garage'),
+  frQ('La salle où l’on étudie s’appelle la…','classe','cuisine','chambre','cave')
+];
+const FR_S4_T1=[
+  frQ('Le passé composé se forme avec un auxiliaire + ?','le participe passé','l’infinitif','le présent','l’adverbe'),
+  frQ('Les deux auxiliaires sont ?','être et avoir','aller et venir','faire et dire','voir et savoir'),
+  frQ('« manger » au passé composé (j’…) ?','j’ai mangé','je mange','je mangeais','je mangerai'),
+  frQ('« aller » au passé composé (il…) ?','il est allé','il a allé','il va','il allait'),
+  frQ('Participe passé de « finir » ?','fini','finir','finissant','finu'),
+  frQ('Participe passé de « prendre » ?','pris','prendu','prie','prendé'),
+  frQ('« Nous ___ joué » : quel auxiliaire ?','avons','sommes','êtes','ont'),
+  frQ('Le passé composé exprime une action…','passée et terminée','future','présente','qui dure toujours')
+];
+const FR_S4_T2=[
+  frQ('Le futur simple de « parler » (je…) ?','je parlerai','je parlais','je parle','j’ai parlé'),
+  frQ('L’imparfait de « être » (il…) ?','il était','il est','il sera','il a été'),
+  frQ('« manger » au futur (nous…) ?','nous mangerons','nous mangeons','nous mangions','nous avons mangé'),
+  frQ('L’imparfait exprime une action…','habituelle dans le passé','future','soudaine à venir','qui n’a pas eu lieu'),
+  frQ('Terminaison du futur pour « tu » ?','-ras','-rai','-rons','-rez'),
+  frQ('« avoir » à l’imparfait (j’…) ?','j’avais','j’ai','j’aurai','j’eus'),
+  frQ('« finir » au futur (ils…) ?','ils finiront','ils finissaient','ils finissent','ils ont fini'),
+  frQ('Quel temps : « Hier, il pleuvait. » ?','l’imparfait','le futur','le présent','le passé composé')
+];
+const FR_S4_T3=[
+  frQ('« a » ou « à » : « Il va ___ l’école. »','à','a','as','at'),
+  frQ('« et » ou « est » : « Il ___ grand. »','est','et','ait','ai'),
+  frQ('« son » ou « sont » : « Ils ___ contents. »','sont','son','sons','sond'),
+  frQ('« ces » ou « ses » : « ___ livres sont à moi. »','ses','ces','c’est','sait'),
+  frQ('Le pluriel de « un beau jardin » ?','de beaux jardins','des beau jardins','des beaux jardin','de beau jardin'),
+  frQ('On met une majuscule…','au début d’une phrase','au milieu','jamais','à chaque mot'),
+  frQ('À la fin d’une phrase, on met…','un point','une virgule','deux-points','rien'),
+  frQ('Le contraire de « grand » ?','petit','gros','long','haut')
+];
+// ---- English ----
+const EN_S1_T1=[
+  enQ('How many letters are in the English alphabet?','26','24','28','30'),
+  enQ('How many vowels are there (a, e, i, o, u)?','5','6','4','7'),
+  enQ('Which one is a vowel?','A','B','C','D'),
+  enQ('The word “apple” starts with the letter…','a','p','l','e'),
+  enQ('“B” is a…','consonant','vowel','number','accent'),
+  enQ('Which letter comes after “C”?','D','B','E','A'),
+  enQ('The word “sun” begins with the sound…','/s/','/m/','/t/','/b/'),
+  enQ('How many syllables are in “ba-na-na”?','3','2','1','4')
+];
+const EN_S1_T2=[
+  enQ('In the morning, you greet by saying…','Good morning','Good night','Goodbye','Thanks'),
+  enQ('To thank someone you say…','Thank you','Sorry','Please','Goodbye'),
+  enQ('“What is your name?” Answer:','My name is Ali','I am fine','I am ten','See you'),
+  enQ('To say goodbye you say…','Goodbye','Hello','Please','Yes'),
+  enQ('“How are you?” Polite answer:','I’m fine, thank you','A book','Three','Monday'),
+  enQ('In the evening you say…','Good evening','Good morning','Goodbye','Thanks'),
+  enQ('The polite word to ask for something is…','please','goodbye','sorry','hello'),
+  enQ('“Nice to meet ___.”','you','me','it','he')
+];
+const EN_S1_T3=[
+  enQ('The number “3” in words is…','three','tree','free','thri'),
+  enQ('“10” in words is…','ten','tem','tenn','teen'),
+  enQ('The color of the sky on a clear day?','blue','red','green','black'),
+  enQ('The color of grass?','green','blue','yellow','grey'),
+  enQ('“5 + 2” = ?','seven','six','eight','five'),
+  enQ('The color of a banana?','yellow','blue','purple','grey'),
+  enQ('“two + three” = ?','five','four','six','seven'),
+  enQ('Red, blue and green are…','colors','numbers','animals','letters')
+];
+const EN_S2_T1=[
+  enQ('We use “an” before a word starting with a…','vowel sound','consonant','number','capital'),
+  enQ('“___ apple”','an','a','some','this'),
+  enQ('“___ book”','a','an','two','this'),
+  enQ('The definite article is…','the','a','an','one'),
+  enQ('“I saw ___ elephant.”','an','a','some','this'),
+  enQ('“She is ___ teacher.”','a','an','the','some'),
+  enQ('“___ sun is hot.”','The','A','An','One'),
+  enQ('“___ hour” (silent h)','an','a','the','some')
+];
+const EN_S2_T2=[
+  enQ('Plural of “cat”?','cats','cat','cates','catz'),
+  enQ('Plural of “box”?','boxes','boxs','boxies','box'),
+  enQ('Plural of “baby”?','babies','babys','babis','babyes'),
+  enQ('Plural of “child”?','children','childs','childes','childrens'),
+  enQ('“___ book here.” (near)','This','That','Those','Them'),
+  enQ('“___ books there.” (far, plural)','Those','This','These','That'),
+  enQ('Plural of “man”?','men','mans','mens','manes'),
+  enQ('Plural of “foot”?','feet','foots','feets','footes')
+];
+const EN_S2_T3=[
+  enQ('“I ___ happy.”','am','is','are','be'),
+  enQ('“She ___ a book.” (have)','has','have','haves','having'),
+  enQ('“They ___ students.”','are','is','am','be'),
+  enQ('“He ___ at school.”','is','are','am','be'),
+  enQ('“We ___ friends.” (have)','have','has','having','had'),
+  enQ('“You ___ kind.”','are','is','am','be'),
+  enQ('“It ___ a cat.”','is','are','am','be'),
+  enQ('“I ___ two brothers.” (have)','have','has','am','are')
+];
+const EN_S3_T1=[
+  enQ('“She ___ to school.” (go)','goes','go','going','gone'),
+  enQ('“I ___ football.” (play)','play','plays','playing','played'),
+  enQ('“He ___ milk.” (drink)','drinks','drink','drank','drinking'),
+  enQ('We add “-s” to the verb with…','he / she / it','I','we','they'),
+  enQ('“They ___ in Algiers.” (live)','live','lives','living','lived'),
+  enQ('“Does she like tea?” Short answer (yes):','Yes, she does','Yes, she do','Yes, she is','Yes, she likes'),
+  enQ('“I ___ not like coffee.”','do','does','am','is'),
+  enQ('In “He watches TV”, the base verb is…','watch','watches','watched','watching')
+];
+const EN_S3_T2=[
+  enQ('Subject pronoun for one girl?','she','he','it','they'),
+  enQ('Subject pronoun for “Tom and I”?','we','they','you','he'),
+  enQ('Question word for a place?','where','when','who','why'),
+  enQ('Question word for a time?','when','where','what','how'),
+  enQ('“___ is your teacher?” (person)','Who','What','Where','When'),
+  enQ('The object pronoun for “I” is…','me','my','mine','I'),
+  enQ('“___ you like pizza?”','Do','Does','Is','Are'),
+  enQ('The pronoun that replaces “the dog” is…','it','he','she','they')
+];
+const EN_S3_T3=[
+  enQ('Your father’s brother is your…','uncle','cousin','nephew','grandfather'),
+  enQ('Your mother’s mother is your…','grandmother','aunt','sister','niece'),
+  enQ('You write with a…','pen','spoon','ball','hammer'),
+  enQ('You read a…','book','glass','bed','bag'),
+  enQ('The person who teaches is the…','teacher','baker','doctor','driver'),
+  enQ('Your uncle’s son is your…','cousin','brother','father','neighbor'),
+  enQ('You carry your books in a…','schoolbag','fridge','oven','garage'),
+  enQ('The room where you study is the…','classroom','kitchen','bathroom','garden')
+];
+const EN_S4_T1=[
+  enQ('Past simple of “play”?','played','playd','plaied','plays'),
+  enQ('Past simple of “go”?','went','goed','gone','goes'),
+  enQ('Past simple of “eat”?','ate','eated','eat','eaten'),
+  enQ('“She ___ to school yesterday.” (walk)','walked','walks','walking','walk'),
+  enQ('Past simple of “have”?','had','haved','has','having'),
+  enQ('“___ you see the film?” (past)','Did','Do','Does','Was'),
+  enQ('Past of “be” with “they”?','were','was','are','been'),
+  enQ('Regular past verbs end in…','-ed','-ing','-s','-en')
+];
+const EN_S4_T2=[
+  enQ('Future with “will”: “I ___ help you.”','will','am','was','did'),
+  enQ('“She is ___ now.” (read)','reading','read','reads','readed'),
+  enQ('Present continuous = be + verb + …','-ing','-ed','-s','-en'),
+  enQ('“They ___ going to play.”','are','is','am','was'),
+  enQ('“I ___ play tomorrow.” (will)','will','did','was','am'),
+  enQ('“He is ___ football.” (play)','playing','plays','played','play'),
+  enQ('The negative of “will” is…','won’t','willn’t','don’t','isn’t'),
+  enQ('“We are ___ TV.” (watch)','watching','watch','watched','watches')
+];
+const EN_S4_T3=[
+  enQ('“___ house is big.” (possessive)','Their','There','They’re','Theyre'),
+  enQ('Which is the correct spelling?','beautiful','beutiful','beautifull','butiful'),
+  enQ('“___ my friend.” (you are)','You’re','Your','Yours','Youre'),
+  enQ('A sentence begins with a…','capital letter','small letter','number','comma'),
+  enQ('A sentence usually ends with a…','full stop (.)','comma','colon','nothing'),
+  enQ('Which is the correct spelling?','because','becuase','becouse','becase'),
+  enQ('The opposite of “big” is…','small','tall','long','high'),
+  enQ('Plural of “city”?','cities','citys','cityes','ciities')
+];
+
 var LESSONS={'ar_s1_t1':{t:'الحروف والحركات',i:'نتعرّف على الحروف وحركاتها الأربع.',p:['اللغة العربية فيها 28 حرفًا.','الحركات أربع: الفَتْحة (ـَ)، الضَّمَّة (ـُ)، الكَسْرة (ـِ)، السُّكون (ـْ).','الفتحة فوق الحرف، والكسرة تحته، والضمة (واو صغيرة) فوقه.','السُّكون دائرة صغيرة تعني توقّفًا.'],e:['بَ = الباء بالفتحة','دِ = الدال بالكسرة']},
 'ar_s1_t2':{t:'المدّ والشدّة',i:'نتعلّم إطالة الصوت وتشديد الحرف.',p:['حروف المدّ ثلاثة: ا، و، ي.','المدّ يجعل الصوت طويلًا.','الشَّدّة (ـّ) تعني تكرار الحرف (نطقه مرتين).'],e:['بَا، نُو، فِي = مدّ','جَدّ = الدال مشدَّدة']},
 'ar_s1_t3':{t:'التنوين والتاء',i:'نتعرّف على التنوين وأنواع التاء.',p:['التنوين نون ساكنة في آخر الكلمة تُنطق ولا تُكتب.','أنواعه: تنوين الفتح (ـً)، الضم (ـٌ)، الكسر (ـٍ).','التاء المربوطة (ة) في آخر الأسماء، والمفتوحة (ت).'],e:['كتابٌ، بيتٍ، قلمًا','مدرسة (مربوطة) — بنت (مفتوحة)']},
@@ -1593,7 +2002,19 @@ var LESSONS={'ar_s1_t1':{t:'الحروف والحركات',i:'نتعرّف عل�
 'math_s3_t3':{t:'المحيط والقياس',i:'نحسب المحيط ونعرف وحدات القياس.',p:['محيط الشكل = مجموع أطوال أضلاعه. محيط المربّع = الضلع × 4.','الزاوية القائمة = 90°.','1 كغ = 1000 غ، و1 لتر = 1000 مل.'],e:['محيط مربّع ضلعه 5 = 20','الزاوية القائمة = 90°']},
 'math_s4_t1':{t:'الأعداد الكبيرة',i:'نقرأ الأعداد الكبيرة ونجري العمليات.',p:['نقرأ الآلاف ومئات الألوف والمليون.','العمليات الأربع: + − × ÷.'],e:['1000000 = مليون','⁦250 × 4 = 1000⁩']},
 'math_s4_t2':{t:'الكسور والعشرية',i:'نقارن الكسور والأعداد العشرية.',p:['نقارن الكسور: ⁦½ > ¼⁩.','الأعداد العشرية: 0,5 = ½ و0,25 = ¼.'],e:['⁦¾ + ¼ = 1⁩','0,5 = ½']},
-'math_s4_t3':{t:'المساحة والهندسة',i:'نحسب المساحة ونتعرّف على الهندسة.',p:['مساحة المستطيل = الطول × العرض. ومساحة المربّع = الضلع × الضلع.','المتعامدان يصنعان زاوية قائمة، والمتوازيان لا يلتقيان.','التناسب: كلّما زاد العدد زاد الثمن.'],e:['مساحة مربّع ضلعه 5 = 25','قلم بـ20 دج ← 3 أقلام بـ60 دج']}};
+'math_s4_t3':{t:'المساحة والهندسة',i:'نحسب المساحة ونتعرّف على الهندسة.',p:['مساحة المستطيل = الطول × العرض. ومساحة المربّع = الضلع × الضلع.','المتعامدان يصنعان زاوية قائمة، والمتوازيان لا يلتقيان.','التناسب: كلّما زاد العدد زاد الثمن.'],e:['مساحة مربّع ضلعه 5 = 25','قلم بـ20 دج ← 3 أقلام بـ60 دج']},
+'sci_s1_t1':{t:'حواسّي الخمسة',i:'نتعرّف على حواسّنا الخمس وفائدة كلّ واحدة.',p:['البصر بالعينين لنرى الألوان والأشكال.','السمع بالأذنين لنسمع الأصوات.','الشمّ بالأنف، والتذوّق باللسان.','اللمس بالجلد لنعرف الخشن والناعم.'],e:['👁️ العين ← نرى','👂 الأذن ← نسمع','👅 اللسان ← نتذوّق']},
+'sci_s1_t2':{t:'جسم الإنسان والنظافة',i:'نحافظ على نظافة جسمنا وصحّتنا.',p:['نغسل أيدينا قبل الأكل وبعد المرحاض.','ننظّف أسناننا مرّتين في اليوم.','نستحمّ ونقصّ أظافرنا.','نأكل غذاءً متنوّعًا.'],e:['🪥 تنظيف الأسنان صباحًا ومساءً','🧼 غسل اليدين بالماء والصابون']},
+'sci_s1_t3':{t:'النبات والحيوان',i:'نكتشف النباتات والحيوانات من حولنا.',p:['النبتة تحتاج ماءً وضوءًا لتنمو.','الجذر يثبّت النبتة ويمتصّ الماء.','من الحيوانات ما يطير ويسبح ويمشي.','بعضها يعطينا الحليب والبيض والعسل.'],e:['🐟 السمكة تسبح','🐝 النحلة تصنع العسل','🌹 الزهرة جزء ملوّن']},
+'sci_s2_t1':{t:'الكائنات الحيّة',i:'نميّز بين الكائن الحيّ والجماد.',p:['الكائن الحيّ يتنفّس ويتغذّى وينمو ويتكاثر.','الإنسان والحيوان والنبات كائنات حيّة.','الحجر والكرسي جمادات.','الكائن الحيّ يحتاج ماءً وغذاءً وهواءً.'],e:['🌳 الشجرة كائن حيّ','🪨 الحجر جماد']},
+'sci_s2_t2':{t:'الماء والهواء',i:'الماء والهواء ضروريّان للحياة.',p:['الماء النقيّ شفّاف بلا لون ولا رائحة.','نتنفّس الهواء ولا نراه.','الماء يتجمّد ثلجًا ويتبخّر بخارًا.','نحافظ على الماء ولا نبذّره.'],e:['❄️ ماء بارد جدًّا ← ثلج','♨️ ماء ساخن ← بخار']},
+'sci_s2_t3':{t:'الفصول والغذاء',i:'فصول السنة الأربعة والغذاء الصحّي.',p:['الفصول أربعة: الربيع، الصيف، الخريف، الشتاء.','الغذاء الصحّي فيه خضر وفواكه.','نقلّل من الحلويات والمشروبات الغازيّة.','نشرب الحليب لعظام وأسنان قويّة.'],e:['🍎 التفّاحة فاكهة','🥕 الجزر خضرة','🍂 الخريف تتساقط فيه الأوراق']},
+'sci_s3_t1':{t:'تغذية الإنسان',i:'أصناف الأغذية ودورها في الجسم.',p:['أغذية بانية: لحم، بيض، حليب.','أغذية طاقيّة: خبز، أرزّ، عجائن.','أغذية وقائيّة: خضر وفواكه.','الغذاء المتوازن يجمع بينها.'],e:['🥚 البيض غذاء بانٍ','🍞 الخبز غذاء طاقيّ','🥦 الخضر غذاء وقائيّ']},
+'sci_s3_t2':{t:'النبات: النموّ والأجزاء',i:'أجزاء النبتة وكيف تنمو وتصنع غذاءها.',p:['أجزاء النبتة: الجذر، الساق، الأوراق، الزهرة.','تنبت البذرة بالماء والهواء والحرارة.','الأوراق تصنع الغذاء بالضوء (التركيب الضوئي).','بعد التلقيح تصير الزهرة ثمرة.'],e:['🌱 البذرة ← نبتة','🍃 الورقة تصنع الغذاء','🌸 الزهرة ← ثمرة']},
+'sci_s3_t3':{t:'الماء وحالاته',i:'حالات الماء الثلاث ودورته في الطبيعة.',p:['حالات الماء: صلبة (جليد)، سائلة (ماء)، غازيّة (بخار).','التبخّر: ماء ← بخار، والتكاثف: بخار ← ماء.','التجمّد: ماء ← جليد.','دورة الماء: تبخّر، تكاثف، تساقط.'],e:['🧊 جليد (صلب)','💧 ماء (سائل)','☁️ بخار يتكاثف ← مطر']},
+'sci_s4_t1':{t:'الهيكل والأسنان',i:'الهيكل العظمي يحمي الجسم، والأسنان تمضغ الطعام.',p:['الهيكل العظمي يدعم الجسم ويحميه (≈206 عظمة).','الجمجمة تحمي الدماغ، والقفص الصدري يحمي القلب والرئتين.','الأسنان: قواطع تقطع، أنياب تمزّق، أرحاء تطحن.','نحمي أسناننا بالتفريش وتقليل الحلويات.'],e:['💀 الجمجمة تحمي الدماغ','🦷 الأرحاء تطحن الطعام']},
+'sci_s4_t2':{t:'الهضم والتنفّس',i:'كيف يتنفّس الجسم ويهضم الطعام.',p:['نتنفّس بالرئتين: شهيق أكسجين، زفير ثاني أكسيد الكربون.','الهضم يبدأ في الفم ثمّ المعدة ثمّ الأمعاء.','الأمعاء الدقيقة تمتصّ الغذاء.','القلب يضخّ الدم لينقل الأكسجين والغذاء.'],e:['🫁 الرئتان للتنفّس','🦷 الفم يبدأ الهضم','❤️ القلب يضخّ الدم']},
+'sci_s4_t3':{t:'المادّة والبيئة',i:'حالات المادّة وكيف نحمي بيئتنا.',p:['المادّة ثلاث حالات: صلبة، سائلة، غازيّة.','نحمي البيئة: لا نرمي النفايات ونعيد التدوير.','الشمس مصدر طاقة نظيف.','نغرس الأشجار فهي تنقّي الهواء.'],e:['🪨 صلب · 💧 سائل · 💨 غاز','♻️ الرسكلة','🌳 الأشجار تنقّي الهواء']}};
 
 const BADGES_DEF=[
   {id:'first_quiz',emoji:'🎮',fr:'Premier quiz',en:'First Quiz',ar:'أول اختبار',check:d=>d.quizzes_completed>=1},
@@ -1690,6 +2111,79 @@ var TF={'ar_s1_t1':[{fr:'⚖️ عدد حروف اللغة العربية 28 ح�
 'math_s4_t1':[{fr:'⚖️ العدد 1000000 يساوي مليونًا.',en:'⚖️ العدد 1000000 يساوي مليونًا.',ar:'⚖️ العدد 1000000 يساوي مليونًا.',answer:{fr:'صح',en:'صح',ar:'صح'},wrong:[{fr:'خطأ',en:'خطأ',ar:'خطأ'}]},{fr:'⚖️ ⁦250 × 4 = 900⁩',en:'⚖️ ⁦250 × 4 = 900⁩',ar:'⚖️ ⁦250 × 4 = 900⁩',answer:{fr:'خطأ',en:'خطأ',ar:'خطأ'},wrong:[{fr:'صح',en:'صح',ar:'صح'}]}],
 'math_s4_t2':[{fr:'⚖️ ⁦½ > ¼⁩',en:'⚖️ ⁦½ > ¼⁩',ar:'⚖️ ⁦½ > ¼⁩',answer:{fr:'صح',en:'صح',ar:'صح'},wrong:[{fr:'خطأ',en:'خطأ',ar:'خطأ'}]},{fr:'⚖️ العدد العشري 0,5 يساوي ¼.',en:'⚖️ العدد العشري 0,5 يساوي ¼.',ar:'⚖️ العدد العشري 0,5 يساوي ¼.',answer:{fr:'خطأ',en:'خطأ',ar:'خطأ'},wrong:[{fr:'صح',en:'صح',ar:'صح'}]}],
 'math_s4_t3':[{fr:'⚖️ مساحة المستطيل = الطول × العرض.',en:'⚖️ مساحة المستطيل = الطول × العرض.',ar:'⚖️ مساحة المستطيل = الطول × العرض.',answer:{fr:'صح',en:'صح',ar:'صح'},wrong:[{fr:'خطأ',en:'خطأ',ar:'خطأ'}]},{fr:'⚖️ المستقيمان المتوازيان يلتقيان.',en:'⚖️ المستقيمان المتوازيان يلتقيان.',ar:'⚖️ المستقيمان المتوازيان يلتقيان.',answer:{fr:'خطأ',en:'خطأ',ar:'خطأ'},wrong:[{fr:'صح',en:'صح',ar:'صح'}]}]};
+// Science True/False — mixed into the science pools
+(function(){function s(q,ok){var a=ok?'صح':'خطأ',b=ok?'خطأ':'صح';return {fr:'⚖️ '+q,en:'⚖️ '+q,ar:'⚖️ '+q,answer:{fr:a,en:a,ar:a},wrong:[{fr:b,en:b,ar:b}]};}
+TF['sci_s1_t1']=[s('للإنسان خمس حواسّ.',true),s('نسمع بالأنف.',false),s('نتذوّق الطعام باللسان.',true)];
+TF['sci_s1_t2']=[s('نغسل أيدينا قبل الأكل.',true),s('ننظّف أسناننا مرّة في السنة.',false),s('النظافة من الإيمان.',true)];
+TF['sci_s1_t3']=[s('النحلة تصنع العسل.',true),s('السمكة تطير في السماء.',false),s('الجذر يثبّت النبتة في الأرض.',true)];
+TF['sci_s2_t1']=[s('الحجر كائن حيّ.',false),s('الشجرة كائن حيّ.',true),s('الكائن الحيّ يتنفّس وينمو.',true)];
+TF['sci_s2_t2']=[s('الماء النقيّ بلا لون.',true),s('نتنفّس الماء.',false),s('الماء يتجمّد فيصير ثلجًا.',true)];
+TF['sci_s2_t3']=[s('عدد فصول السنة أربعة.',true),s('الصيف فصل بارد.',false),s('الخضر والفواكه غذاء صحّي.',true)];
+TF['sci_s3_t1']=[s('الحليب غنيّ بالكالسيوم.',true),s('الإكثار من الحلويات مفيد للأسنان.',false),s('الغذاء المتوازن متنوّع.',true)];
+TF['sci_s3_t2']=[s('النبات الأخضر يصنع غذاءه في الأوراق.',true),s('النبتة تبدأ من الثمرة الناضجة.',false),s('الجذر يمتصّ الماء والأملاح.',true)];
+TF['sci_s3_t3']=[s('للماء ثلاث حالات.',true),s('التبخّر هو تحوّل البخار إلى جليد.',false),s('المطر يتكوّن في السُّحُب.',true)];
+TF['sci_s4_t1']=[s('الجمجمة تحمي الدماغ.',true),s('عدد الأسنان اللبنيّة 32.',false),s('القفص الصدري يحمي القلب والرئتين.',true)];
+TF['sci_s4_t2']=[s('نتنفّس بالرئتين.',true),s('يبدأ هضم الطعام في المعدة.',false),s('القلب يضخّ الدم.',true)];
+TF['sci_s4_t3']=[s('للمادّة ثلاث حالات.',true),s('غرس الأشجار يلوّث الهواء.',false),s('الشمس مصدر طاقة نظيف.',true)];
+})();
+
+// ===== French (FR) & English (EN) courses: lessons, matching pairs, true/false =====
+(function(){
+  function L(t,i,p,e){return {t:t,i:i,p:p,e:e};}
+  // --- French lessons ---
+  LESSONS['fr_s1_t1']=L('L’alphabet & les sons','L’alphabet français compte 26 lettres.',['6 voyelles : a, e, i, o, u, y.','Les 20 autres lettres sont des consonnes.','Les accents se mettent surtout sur le « e » : é, è, ê.'],['é → accent aigu','« ch » se lit comme dans « chat »']);
+  LESSONS['fr_s1_t2']=L('Saluer & se présenter','On apprend à dire bonjour et à se présenter.',['Le matin : « Bonjour ». Le soir : « Bonsoir ».','« Comment t’appelles-tu ? » → « Je m’appelle… ».','On dit « merci », « s’il te plaît », « au revoir ».'],['— Bonjour ! Comment ça va ?','— Ça va bien, merci !']);
+  LESSONS['fr_s1_t3']=L('Les nombres & les couleurs','On compte et on nomme les couleurs.',['Les nombres : un, deux, trois, … dix.','Les couleurs : rouge, bleu, vert, jaune…','On accorde la couleur avec le nom.'],['3 → trois','Le ciel est bleu, l’herbe est verte.']);
+  LESSONS['fr_s2_t1']=L('Les articles','Les petits mots placés devant le nom.',['Articles définis : le, la, les.','Articles indéfinis : un, une, des.','Devant une voyelle : « le ami » → « l’ami ».'],['le soleil, la lune, les étoiles','un livre, une pomme, des amis']);
+  LESSONS['fr_s2_t2']=L('Le genre & le pluriel','Masculin/féminin et singulier/pluriel.',['En général, le pluriel prend un « -s ».','-al devient -aux : cheval → chevaux.','Le féminin prend souvent un « -e » : grand → grande.'],['un chat → des chats','un cheval → des chevaux']);
+  LESSONS['fr_s2_t3']=L('« Être » et « avoir »','Deux verbes très importants au présent.',['Être : je suis, tu es, il est, nous sommes, vous êtes, ils sont.','Avoir : j’ai, tu as, il a, nous avons, vous avez, ils ont.'],['Je suis content.','J’ai huit ans.']);
+  LESSONS['fr_s3_t1']=L('Les verbes en -er (présent)','Le 1er groupe au présent.',['Terminaisons : -e, -es, -e, -ons, -ez, -ent.','je parle, tu parles, il parle…','nous parlons, vous parlez, ils parlent.'],['jouer → je joue','manger → nous mangeons']);
+  LESSONS['fr_s3_t2']=L('Pronoms & négation','Qui fait l’action, et comment dire « non ».',['Pronoms : je, tu, il/elle, nous, vous, ils/elles.','La négation : ne … pas.','« Je mange » → « Je ne mange pas ».'],['elle = Marie','Il ne dort pas.']);
+  LESSONS['fr_s3_t3']=L('Vocabulaire : famille & école','Les mots de tous les jours.',['La famille : père, mère, oncle, tante, cousin…','L’école : stylo, livre, cartable, classe.','L’enseignant (le maître) nous apprend.'],['Le frère de papa = mon oncle','On écrit avec un stylo.']);
+  LESSONS['fr_s4_t1']=L('Le passé composé','Pour parler d’une action terminée.',['auxiliaire (être ou avoir) + participe passé.','j’ai mangé, il est allé.','Participes : finir → fini, prendre → pris.'],['Hier, j’ai joué.','Elle est allée à l’école.']);
+  LESSONS['fr_s4_t2']=L('Le futur & l’imparfait','Deux temps utiles.',['Futur : je parlerai, tu parleras, ils parleront.','Imparfait : action habituelle dans le passé (il était, j’avais).','« Hier, il pleuvait » = imparfait.'],['Demain, je jouerai.','Avant, il était petit.']);
+  LESSONS['fr_s4_t3']=L('Orthographe & compréhension','Bien écrire les petits mots.',['a (avoir) / à (préposition).','et (= plus) / est (verbe être).','son / sont, ces / ses.'],['Il va à l’école.','Il est grand et fort.']);
+  // --- English lessons ---
+  LESSONS['en_s1_t1']=L('The alphabet & sounds','The English alphabet has 26 letters.',['5 vowels: a, e, i, o, u.','The other 21 letters are consonants.','We use “an” before a vowel sound.'],['A, B, C, D…','sun → /s/ sound']);
+  LESSONS['en_s1_t2']=L('Greetings & introducing','Say hello and introduce yourself.',['Morning: “Good morning”. Evening: “Good evening”.','“What is your name?” → “My name is…”.','Use “please”, “thank you”, “goodbye”.'],['— Hello! How are you?','— I’m fine, thank you!']);
+  LESSONS['en_s1_t3']=L('Numbers & colors','Count and name colors.',['Numbers: one, two, three … ten.','Colors: red, blue, green, yellow…','The sky is blue, the grass is green.'],['3 → three','5 + 2 = seven']);
+  LESSONS['en_s2_t1']=L('Articles: a / an / the','Small words before a noun.',['“a” before a consonant sound: a book.','“an” before a vowel sound: an apple.','“the” is the definite article.'],['a cat, an egg','the sun']);
+  LESSONS['en_s2_t2']=L('Plurals & this/that','One or many; near or far.',['Most plurals add “-s”: cat → cats.','-x, -s, -ch add “-es”: box → boxes.','Irregular: child → children, foot → feet.'],['baby → babies','man → men']);
+  LESSONS['en_s2_t3']=L('“To be” & “to have”','Two key verbs.',['be: I am, you/we/they are, he/she/it is.','have: I/you/we/they have, he/she/it has.'],['I am happy.','She has a book.']);
+  LESSONS['en_s3_t1']=L('The present simple','Daily actions and habits.',['Add “-s” with he/she/it: he plays.','I/you/we/they: play, go, live.','Questions: Do you…? Does she…?'],['She goes to school.','Do you like pizza?']);
+  LESSONS['en_s3_t2']=L('Pronouns & questions','Who, and how to ask.',['Subject: I, you, he, she, it, we, they.','Object: me, you, him, her, it, us, them.','Question words: who, what, where, when.'],['Tom and I = we','Where is your teacher?']);
+  LESSONS['en_s3_t3']=L('Vocabulary: family & school','Everyday words.',['Family: father, mother, uncle, aunt, cousin.','School: pen, book, schoolbag, classroom.','The teacher helps us learn.'],['Dad’s brother = my uncle','I read a book.']);
+  LESSONS['en_s4_t1']=L('The past simple','Finished past actions.',['Regular verbs add “-ed”: play → played.','Irregular: go → went, eat → ate, have → had.','Questions: Did you…?'],['I played football.','She went home.']);
+  LESSONS['en_s4_t2']=L('Future & continuous','will / going to / -ing.',['Future: I will help. / I am going to play.','Present continuous: be + verb-ing.','Negative of will: won’t.'],['I will help you.','She is reading now.']);
+  LESSONS['en_s4_t3']=L('Spelling & reading','Tricky little words.',['their / there / they’re.','your / you’re.','Capital letter at the start; full stop at the end.'],['Their house is big.','You’re my friend.']);
+  // --- True / False ---
+  function sf(q,ok){var a=ok?'Vrai':'Faux',b=ok?'Faux':'Vrai';return {fr:'⚖️ '+q,en:'⚖️ '+q,ar:'⚖️ '+q,answer:{fr:a,en:a,ar:a},wrong:[{fr:b,en:b,ar:b}]};}
+  function se(q,ok){var a=ok?'True':'False',b=ok?'False':'True';return {fr:'⚖️ '+q,en:'⚖️ '+q,ar:'⚖️ '+q,answer:{fr:a,en:a,ar:a},wrong:[{fr:b,en:b,ar:b}]};}
+  TF['fr_s1_t1']=[sf('L’alphabet français a 26 lettres.',true),sf('« B » est une voyelle.',false)];
+  TF['fr_s1_t2']=[sf('« Merci » sert à remercier.',true),sf('Le soir, on dit « Bonjour ».',false)];
+  TF['fr_s1_t3']=[sf('L’herbe est verte.',true),sf('« 10 » s’écrit « dis ».',false)];
+  TF['fr_s2_t1']=[sf('« le » est un article défini.',true),sf('Devant une voyelle, « le » reste « le ».',false)];
+  TF['fr_s2_t2']=[sf('Le pluriel de « cheval » est « chevaux ».',true),sf('Le féminin de « grand » est « grand ».',false)];
+  TF['fr_s2_t3']=[sf('« Je suis » vient du verbe « être ».',true),sf('« Ils ont » vient du verbe « être ».',false)];
+  TF['fr_s3_t1']=[sf('Les verbes en -er sont du 1er groupe.',true),sf('On dit « nous parle ».',false)];
+  TF['fr_s3_t2']=[sf('La négation est « ne … pas ».',true),sf('« elle » remplace « Paul ».',false)];
+  TF['fr_s3_t3']=[sf('Le frère de mon père est mon oncle.',true),sf('On lit avec un marteau.',false)];
+  TF['fr_s4_t1']=[sf('Le passé composé utilise « être » ou « avoir ».',true),sf('Le participe passé de « finir » est « finir ».',false)];
+  TF['fr_s4_t2']=[sf('« Hier, il pleuvait » est à l’imparfait.',true),sf('« je parlerai » est au passé.',false)];
+  TF['fr_s4_t3']=[sf('« Il va à l’école » : on écrit « à ».',true),sf('« Il et grand » est correct.',false)];
+  TF['en_s1_t1']=[se('The English alphabet has 26 letters.',true),se('“A” is a consonant.',false)];
+  TF['en_s1_t2']=[se('“Thank you” is used to thank someone.',true),se('In the morning we say “Good night”.',false)];
+  TF['en_s1_t3']=[se('Grass is green.',true),se('“three” is written “tree”.',false)];
+  TF['en_s2_t1']=[se('We say “an apple”.',true),se('We say “a apple”.',false)];
+  TF['en_s2_t2']=[se('The plural of “child” is “children”.',true),se('The plural of “foot” is “foots”.',false)];
+  TF['en_s2_t3']=[se('“She has a book” is correct.',true),se('“They is students” is correct.',false)];
+  TF['en_s3_t1']=[se('“She goes to school” is correct.',true),se('We add “-s” with “I”.',false)];
+  TF['en_s3_t2']=[se('“Where” asks about a place.',true),se('“we” replaces “the dog”.',false)];
+  TF['en_s3_t3']=[se('A teacher helps us learn.',true),se('You read a glass.',false)];
+  TF['en_s4_t1']=[se('The past of “go” is “went”.',true),se('The past of “play” is “plaid”.',false)];
+  TF['en_s4_t2']=[se('Present continuous uses verb + -ing.',true),se('The negative of “will” is “willn’t”.',false)];
+  TF['en_s4_t3']=[se('A sentence starts with a capital letter.',true),se('“Your” means “you are”.',false)];
+})();
 
 const AD_CONTENTS={
   fr:['📱 Télécharge AtlasQuest Pro — Quiz illimités !','🌍 Découvrez nos cartes géographiques interactives','📚 Cours de géographie en ligne — 30 jours gratuits'],
@@ -1794,6 +2288,9 @@ function setLang(l){
   });
   if(userData){userData.preferred_language=l;saveData(userData)}
   applyTranslations();
+  // The Kids curriculum depends on the language — refresh it if it's open.
+  var kv=document.getElementById('view-kids');
+  if(kv&&kv.classList.contains('active')&&typeof openKids==='function')openKids();
 }
 
 function applyTranslations(){
@@ -1811,7 +2308,7 @@ function applyTranslations(){
     'wm-rotate-txt':'wmRotate',
     'wmres-title':'wmResultTitle','wmres-l-score':'wmLScore','wmres-l-pct':'accuracy','wmres-l-time':'wmTime','wmres-share':'shareBtn','wmres-replay':'wmReplayBtn','wmres-back':'wmMenuBtn',
     'kids-title':'kidsTitle','kids-desc':'kidsDesc','kids-back':'back',
-    'kids-35':'k35','kids-35d':'k35d','kids-68':'k68','kids-68d':'k68d','kids-912':'k912','kids-912d':'k912d','kids-lang-title':'kidsLang','kids-t1':'kT1','kids-t2':'kT2','kids-t3':'kT3','lesson-start':'lessonStart','lesson-ex-label':'lessonExamples','lesson-back':'back','listen-lbl':'listen',
+    'kids-35':'k35','kids-35d':'k35d','kids-68':'k68','kids-68d':'k68d','kids-912':'k912','kids-912d':'k912d','kids-lang-title':'kidsLang','kids-t1':'kT1','kids-t2':'kT2','kids-t3':'kT3','lesson-start':'lessonStart','lesson-ex-label':'lessonExamples','lesson-back':'back','listen-lbl':'listen','lesson-listen-lbl':'listen','kids-match-btn':'matchBtn','mt-title':'matchTitle','mt-back':'back',
     'cat-select-title-text':'catTitle',
     'cat-select-desc-text':'catDesc','play-btn-text':'play',
     'replay-btn-text':'replay','share-btn':'shareBtn','result-title-text':'results',
@@ -1876,16 +2373,39 @@ function switchView(id){
 }
 
 function selectCategory(cat){kidsMode=false;category=cat;switchView('view-categories')}
-function openKids(){kidsMode=false;switchView('view-kids');kidsRenderSubjects();kidsSetSubj(kidsSubj);}
+function openKids(){
+  kidsMode=false;switchView('view-kids');
+  var subs=kidsSubjects();
+  if(!subs.some(function(s){return s.key===kidsSubj}))kidsSubj=subs[0].key;
+  kidsUpdateLangUI();
+  kidsRenderSubjects();kidsSetSubj(kidsSubj);
+}
+// Hide the Arabic-language items in the FR/EN versions of the app.
+function kidsUpdateLangUI(){
+  var arBtn=document.getElementById('kids-lang-ar-btn');
+  if(arBtn)arBtn.style.display=(lang==='ar')?'':'none';
+}
 function startKids(cat){kidsMode=true;category=cat;difficulty='easy';startQuiz(false)}
 
 // ===== Kids — Algerian curriculum (matière + year + trimester) =====
 var kidsSubj='ar', kidsYear=1, KIDS_MAX_YEAR=4;
-var KIDS_SUBJECTS=[
-  {key:'ar',label:{fr:'📖 Arabe',en:'📖 Arabic',ar:'📖 اللغة العربية'},name:{fr:'Arabe',en:'Arabic',ar:'اللغة العربية'}},
-  {key:'math',label:{fr:'🔢 Maths',en:'🔢 Maths',ar:'🔢 الرياضيات'},name:{fr:'Maths',en:'Maths',ar:'الرياضيات'}}
-];
-var KIDS_THEMES={ // Arabic theme per subject/year/trimester (subject matter stays in Arabic)
+// Subjects depend on the interface language:
+//  • Arabic version → Algerian curriculum (Arabe, Maths, Sciences) in Arabic.
+//  • French version → French-language course only.
+//  • English version → English-language course only.
+// (The Arabic courses are NOT shown in the FR/EN versions.)
+var KIDS_SUBJECTS_BY_LANG={
+  ar:[
+    {key:'ar',label:{fr:'📖 Arabe',en:'📖 Arabic',ar:'📖 اللغة العربية'},name:{fr:'Arabe',en:'Arabic',ar:'اللغة العربية'}},
+    {key:'math',label:{fr:'🔢 Maths',en:'🔢 Maths',ar:'🔢 الرياضيات'},name:{fr:'Maths',en:'Maths',ar:'الرياضيات'}},
+    {key:'sci',label:{fr:'🔬 Sciences',en:'🔬 Science',ar:'🔬 التربية العلمية'},name:{fr:'Sciences',en:'Science',ar:'التربية العلمية'}}
+  ],
+  fr:[{key:'fr',label:{fr:'🇫🇷 Français',en:'🇫🇷 Français',ar:'🇫🇷 Français'},name:{fr:'Français',en:'French',ar:'Français'}}],
+  en:[{key:'en',label:{fr:'🇬🇧 English',en:'🇬🇧 English',ar:'🇬🇧 English'},name:{fr:'Anglais',en:'English',ar:'English'}}]
+};
+function kidsSubjects(){return KIDS_SUBJECTS_BY_LANG[lang]||KIDS_SUBJECTS_BY_LANG.ar;}
+function kidsIsLangCourse(){return kidsSubj==='fr'||kidsSubj==='en';}
+var KIDS_THEMES={ // theme per subject/year/trimester
   ar:{
     1:['الحروف والحركات','المدّ والشدّة','التنوين والتاء'],
     2:['المذكر والمؤنث','المثنى والضمائر','الجملة وعلامات الوقف'],
@@ -1897,11 +2417,32 @@ var KIDS_THEMES={ // Arabic theme per subject/year/trimester (subject matter sta
     2:['الأعداد والمنازل','الضرب والوقت','القياس والنقود'],
     3:['الضرب والأعداد','القسمة والكسور','المحيط والقياس'],
     4:['الأعداد الكبيرة','الكسور والعشرية','المساحة والهندسة']
+  },
+  sci:{
+    1:['حواسّي الخمسة','جسم الإنسان والنظافة','النبات والحيوان'],
+    2:['الكائنات الحيّة','الماء والهواء','الفصول والغذاء'],
+    3:['تغذية الإنسان','النبات: النموّ والأجزاء','الماء وحالاته'],
+    4:['الهيكل والأسنان','الهضم والتنفّس','المادّة والبيئة']
+  },
+  fr:{
+    1:['Alphabet & sons','Saluer & se présenter','Nombres & couleurs'],
+    2:['Les articles','Genre & pluriel','« Être » et « avoir »'],
+    3:['Verbes en -er','Pronoms & négation','Famille & école'],
+    4:['Le passé composé','Futur & imparfait','Orthographe']
+  },
+  en:{
+    1:['Alphabet & sounds','Greetings','Numbers & colors'],
+    2:['Articles a/an/the','Plurals & this/that','To be & to have'],
+    3:['Present simple','Pronouns & questions','Family & school'],
+    4:['Past simple','Future & continuous','Spelling']
   }
 };
 function kidsRenderSubjects(){
   var box=document.getElementById('kids-subj-sel');if(!box)return;var html='';
-  KIDS_SUBJECTS.forEach(function(s){
+  var subs=kidsSubjects();
+  // A single subject (FR/EN courses) needs no selector row.
+  box.style.display=(subs.length<=1)?'none':'';
+  subs.forEach(function(s){
     var a=s.key===kidsSubj;
     html+='<button onclick="kidsSetSubj(\''+s.key+'\')" class="rounded-lg py-2.5 text-sm font-bold" style="border:1px solid '+(a?'var(--cyan)':'rgba(255,255,255,.15)')+';background:'+(a?'rgba(0,229,255,.18)':'rgba(255,255,255,.04)')+';color:'+(a?'#fff':'rgba(255,255,255,.7)')+'">'+(s.label[lang]||s.label.fr)+'</button>';
   });
@@ -1912,12 +2453,13 @@ function kidsRenderYears(){
   var box=document.getElementById('kids-year-sel');if(!box)return;var html='';
   for(var y=1;y<=KIDS_MAX_YEAR;y++){
     var a=y===kidsYear;
-    html+='<button onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:1px solid '+(a?'#22c55e':'rgba(255,255,255,.15)')+';background:'+(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)')+';color:'+(a?'#fff':'rgba(255,255,255,.7)')+'">السنة '+y+'</button>';
+    var yl=(lang==='ar')?('السنة '+y):(lang==='fr'?('Niv. '+y):('Lvl '+y));
+    html+='<button onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:1px solid '+(a?'#22c55e':'rgba(255,255,255,.15)')+';background:'+(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)')+';color:'+(a?'#fff':'rgba(255,255,255,.7)')+'">'+yl+'</button>';
   }
   box.innerHTML=html;
 }
-function kidsYearLabel(y){return (lang==='fr'?'Année ':lang==='en'?'Year ':'السنة ')+y;}
-function kidsSubjName(){var s=KIDS_SUBJECTS.filter(function(o){return o.key===kidsSubj})[0]||KIDS_SUBJECTS[0];return s.name[lang]||s.name.fr;}
+function kidsYearLabel(y){var p=kidsIsLangCourse()?(lang==='fr'?'Niveau ':'Level '):(lang==='fr'?'Année ':lang==='en'?'Year ':'السنة ');return p+y;}
+function kidsSubjName(){var subs=kidsSubjects();var s=subs.filter(function(o){return o.key===kidsSubj})[0]||subs[0];return s.name[lang]||s.name.fr;}
 function kidsBestStars(cat){if(!userData)return 0;try{return (JSON.parse(userData.kids_stars||'{}'))[cat]||0;}catch(e){return 0;}}
 function kidsStarRow(n){var h='<span style="font-size:11px;letter-spacing:1px">';for(var i=0;i<3;i++)h+='<span style="color:'+(i<n?'#FFD700':'rgba(255,255,255,.22)')+'">'+(i<n?'★':'☆')+'</span>';return h+'</span>';}
 function kidsSetYear(y){
@@ -1930,7 +2472,8 @@ function kidsSetYear(y){
   // overall progress for this subject (stars earned / max)
   var got=0;for(var yy=1;yy<=KIDS_MAX_YEAR;yy++)for(var tt=1;tt<=3;tt++)got+=kidsBestStars(kidsSubj+'_s'+yy+'_t'+tt);
   var max=KIDS_MAX_YEAR*3*3;
-  var ti=document.getElementById('kids-prog-title');if(ti)ti.textContent=t('kidsProg')+' — '+kidsSubjName()+' · '+kidsYearLabel(y)+'  ⭐'+got+'/'+max;
+  var head=kidsIsLangCourse()?('📚 '+(lang==='fr'?'Cours de ':'Course: ')+kidsSubjName()):(t('kidsProg')+' — '+kidsSubjName());
+  var ti=document.getElementById('kids-prog-title');if(ti)ti.textContent=head+' · '+kidsYearLabel(y)+'  ⭐'+got+'/'+max;
 }
 function kidsStartTerm(tn){openLesson(kidsSubj,kidsYear,tn);}
 
@@ -1949,7 +2492,87 @@ function openLesson(subj,year,tn){
   var ll=document.getElementById('lesson-listen');if(ll)ll.style.display=ttsSupported()?'':'none';
 }
 function startLessonQuiz(){if(lessonCat)startKids(lessonCat);}
-function speakLesson(){var L=(typeof LESSONS!=='undefined')?LESSONS[lessonCat]:null;if(!L)return;speakText(L.t+'. '+L.i+' '+L.p.join('. '),'ar');}
+function speakLesson(){var L=(typeof LESSONS!=='undefined')?LESSONS[lessonCat]:null;if(!L)return;var lc=/^fr_/.test(lessonCat||'')?'fr':/^en_/.test(lessonCat||'')?'en':'ar';speakText(L.t+'. '+L.i+' '+L.p.join('. '),lc);}
+
+// ===== Match (associer / طابق) — pair-matching exercise (ANTON-style) =====
+function mtx(e){return '⁦'+e+'⁩';}
+var MATCH={
+  ar:[
+    {t:'المفرد ↔ الجمع',p:[['قلم','أقلام'],['بيت','بيوت'],['وردة','ورود'],['كتاب','كتب'],['ولد','أولاد'],['باب','أبواب']]},
+    {t:'المذكر ↔ المؤنث',p:[['معلّم','معلّمة'],['ولد','بنت'],['مَلِك','مَلِكة'],['قطّ','قطّة'],['طالب','طالبة'],['جدّ','جدّة']]}
+  ],
+  math:[
+    {t:'العملية ↔ النتيجة',p:[[mtx('2 + 3'),'5'],[mtx('4 × 2'),'8'],[mtx('10 − 4'),'6'],[mtx('12 ÷ 3'),'4'],[mtx('1 + 2'),'3'],[mtx('7 + 0'),'7']]},
+    {t:'الشكل ↔ عدد الأضلاع',p:[['المثلّث','3'],['المربّع','4'],['الخماسي','5'],['المسدّس','6'],['السباعي','7'],['الثماني','8']]}
+  ],
+  sci:[
+    {t:'الحاسّة ↔ العضو',p:[['البصر','العين'],['السمع','الأذن'],['الشمّ','الأنف'],['التذوّق','اللسان'],['اللمس','الجلد']]},
+    {t:'الحيوان ↔ ما يعطينا',p:[['البقرة','الحليب'],['الدجاجة','البيض'],['النحلة','العسل'],['الخروف','الصوف']]},
+    {t:'العضو ↔ وظيفته',p:[['الرئتان','التنفّس'],['القلب','ضخّ الدم'],['المعدة','الهضم'],['الجذر','امتصاص الماء']]}
+  ],
+  fr:[
+    {t:'Verbe « être » au présent',p:[['je','suis'],['tu','es'],['il','est'],['nous','sommes'],['vous','êtes']]},
+    {t:'Singulier ↔ pluriel',p:[['le chat','les chats'],['un cheval','des chevaux'],['le journal','les journaux'],['un bijou','des bijoux']]},
+    {t:'Masculin ↔ féminin',p:[['ami','amie'],['grand','grande'],['acteur','actrice'],['le maître','la maîtresse']]}
+  ],
+  en:[
+    {t:'Verb “to be”',p:[['I','am'],['you','are'],['he','is'],['we','are'],['it','is']]},
+    {t:'Singular ↔ plural',p:[['cat','cats'],['box','boxes'],['child','children'],['foot','feet']]},
+    {t:'Word ↔ opposite',p:[['big','small'],['hot','cold'],['day','night'],['yes','no']]}
+  ]
+};
+var mtPairs=[],mtSelLeft=null,mtMatched=0,mtWrong=0,MT_N=5;
+function openMatch(){
+  var sets=MATCH[kidsSubj]||MATCH.ar;
+  var set=sets[Math.floor(Math.random()*sets.length)];
+  var pairs=shuffle(set.p.slice()).slice(0,Math.min(MT_N,set.p.length));
+  mtPairs=pairs;mtMatched=0;mtWrong=0;mtSelLeft=null;
+  document.getElementById('mt-subj').textContent=set.t;
+  document.getElementById('mt-progress').textContent='0/'+pairs.length;
+  var left=pairs.map(function(p,i){return {id:i,txt:p[0]};});
+  var right=pairs.map(function(p,i){return {id:i,txt:p[1]};});
+  mtRenderCol('mt-left',shuffle(left));
+  mtRenderCol('mt-right',shuffle(right));
+  switchView('view-match');
+}
+function mtRenderCol(boxId,items){
+  var box=document.getElementById(boxId);box.innerHTML='';
+  items.forEach(function(it){
+    var btn=document.createElement('button');
+    btn.textContent=it.txt;btn.setAttribute('data-pid',it.id);btn.setAttribute('data-side',boxId==='mt-left'?'L':'R');
+    btn.className='py-3 px-2 rounded-xl font-bold text-sm text-white transition-all';
+    btn.style.cssText='background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);min-height:50px';
+    btn.onclick=function(){mtPick(btn);};
+    box.appendChild(btn);
+  });
+}
+function mtPick(btn){
+  if(btn.getAttribute('data-done'))return;
+  var side=btn.getAttribute('data-side');
+  if(side==='L'){
+    if(mtSelLeft&&mtSelLeft!==btn)mtSelLeft.style.borderColor='rgba(255,255,255,.18)';
+    mtSelLeft=btn;btn.style.borderColor='var(--cyan)';haptic(8);return;
+  }
+  if(!mtSelLeft)return;
+  if(mtSelLeft.getAttribute('data-pid')===btn.getAttribute('data-pid')){
+    [mtSelLeft,btn].forEach(function(b){b.setAttribute('data-done','1');b.disabled=true;b.style.background='rgba(16,185,129,.35)';b.style.borderColor='#10b981';b.classList.add('correct-pulse');});
+    mtSelLeft=null;mtMatched++;haptic(12);playCorrect();
+    document.getElementById('mt-progress').textContent=mtMatched+'/'+mtPairs.length;
+    if(mtMatched>=mtPairs.length)mtFinish();
+  }else{
+    mtWrong++;haptic(45);playWrong();
+    var a=mtSelLeft,bb=btn;a.style.borderColor='#ef4444';bb.style.borderColor='#ef4444';bb.classList.add('wrong-pulse');
+    setTimeout(function(){if(!a.getAttribute('data-done'))a.style.borderColor='rgba(255,255,255,.18)';if(!bb.getAttribute('data-done'))bb.style.borderColor='rgba(255,255,255,.18)';},480);
+    mtSelLeft=null;
+  }
+}
+function mtFinish(){
+  var stars=mtWrong===0?3:mtWrong<=2?2:1;
+  triggerConfetti();
+  if(userData)addGems(mtMatched);
+  showToast(t(stars>=3?'resPerfect':stars>=2?'resGood':'resTry')+' '+'★'.repeat(stars),'gold',2600);
+  setTimeout(function(){if(document.getElementById('view-match').classList.contains('active'))openKids();},2300);
+}
 
 // ===== PUZZLE MAP (self-contained — tap the right continent) =====
 var pzTarget=null,pzScore=0,pzRound=0,pzUsed=[],pzTotal=10,pzLock=false;
@@ -2418,7 +3041,7 @@ function generateForCat(cat){
       return{display:getName(q),type:'text',answer:locMap[correct],options:opts,meta:q}
     });
   }
-  const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q,kids_3_5:KIDS_3_5,kids_6_8:KIDS_6_8,kids_9_12:KIDS_9_12,kids_lang_fr:KIDS_LANG_FR,kids_lang_ar:KIDS_LANG_AR,kids_lang_en:KIDS_LANG_EN,ar_s1_t1:AR_S1_T1,ar_s1_t2:AR_S1_T2,ar_s1_t3:AR_S1_T3,ar_s2_t1:AR_S2T1,ar_s2_t2:AR_S2T2,ar_s2_t3:AR_S2T3,ar_s3_t1:AR_S3T1,ar_s3_t2:AR_S3T2,ar_s3_t3:AR_S3T3,ar_s4_t1:AR_S4T1,ar_s4_t2:AR_S4T2,ar_s4_t3:AR_S4T3,math_s1_t1:MATH_S1T1,math_s1_t2:MATH_S1T2,math_s1_t3:MATH_S1T3,math_s2_t1:MATH_S2T1,math_s2_t2:MATH_S2T2,math_s2_t3:MATH_S2T3,math_s3_t1:MATH_S3T1,math_s3_t2:MATH_S3T2,math_s3_t3:MATH_S3T3,math_s4_t1:MATH_S4T1,math_s4_t2:MATH_S4T2,math_s4_t3:MATH_S4T3};
+  const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q,kids_3_5:KIDS_3_5,kids_6_8:KIDS_6_8,kids_9_12:KIDS_9_12,kids_lang_fr:KIDS_LANG_FR,kids_lang_ar:KIDS_LANG_AR,kids_lang_en:KIDS_LANG_EN,ar_s1_t1:AR_S1_T1,ar_s1_t2:AR_S1_T2,ar_s1_t3:AR_S1_T3,ar_s2_t1:AR_S2T1,ar_s2_t2:AR_S2T2,ar_s2_t3:AR_S2T3,ar_s3_t1:AR_S3T1,ar_s3_t2:AR_S3T2,ar_s3_t3:AR_S3T3,ar_s4_t1:AR_S4T1,ar_s4_t2:AR_S4T2,ar_s4_t3:AR_S4T3,math_s1_t1:MATH_S1T1,math_s1_t2:MATH_S1T2,math_s1_t3:MATH_S1T3,math_s2_t1:MATH_S2T1,math_s2_t2:MATH_S2T2,math_s2_t3:MATH_S2T3,math_s3_t1:MATH_S3T1,math_s3_t2:MATH_S3T2,math_s3_t3:MATH_S3T3,math_s4_t1:MATH_S4T1,math_s4_t2:MATH_S4T2,math_s4_t3:MATH_S4T3,sci_s1_t1:SCI_S1_T1,sci_s1_t2:SCI_S1_T2,sci_s1_t3:SCI_S1_T3,sci_s2_t1:SCI_S2_T1,sci_s2_t2:SCI_S2_T2,sci_s2_t3:SCI_S2_T3,sci_s3_t1:SCI_S3_T1,sci_s3_t2:SCI_S3_T2,sci_s3_t3:SCI_S3_T3,sci_s4_t1:SCI_S4_T1,sci_s4_t2:SCI_S4_T2,sci_s4_t3:SCI_S4_T3,fr_s1_t1:FR_S1_T1,fr_s1_t2:FR_S1_T2,fr_s1_t3:FR_S1_T3,fr_s2_t1:FR_S2_T1,fr_s2_t2:FR_S2_T2,fr_s2_t3:FR_S2_T3,fr_s3_t1:FR_S3_T1,fr_s3_t2:FR_S3_T2,fr_s3_t3:FR_S3_T3,fr_s4_t1:FR_S4_T1,fr_s4_t2:FR_S4_T2,fr_s4_t3:FR_S4_T3,en_s1_t1:EN_S1_T1,en_s1_t2:EN_S1_T2,en_s1_t3:EN_S1_T3,en_s2_t1:EN_S2_T1,en_s2_t2:EN_S2_T2,en_s2_t3:EN_S2_T3,en_s3_t1:EN_S3_T1,en_s3_t2:EN_S3_T2,en_s3_t3:EN_S3_T3,en_s4_t1:EN_S4_T1,en_s4_t2:EN_S4_T2,en_s4_t3:EN_S4_T3};
   const baseBank=BANKS[cat]||HISTORY;
   const bank=(typeof TF!=='undefined'&&TF[cat])?baseBank.concat(TF[cat]):baseBank;
   return shuffle([...bank]).slice(0,Math.min(count,bank.length)).map(q=>{
@@ -2634,7 +3257,7 @@ function endQuiz(){
   userData.category_stats=JSON.stringify(stats);
 
   // Kids mastery stars (best per trimester) — progress path (Lalilo/Duolingo)
-  if(kidsMode&&/^(ar|math)_s[1-4]_t[1-3]$/.test(category)){
+  if(kidsMode&&/^(ar|math|sci|fr|en)_s[1-4]_t[1-3]$/.test(category)){
     try{var ks=JSON.parse(userData.kids_stars||'{}');if((ks[category]||0)<stars){ks[category]=stars;userData.kids_stars=JSON.stringify(ks);}}catch(e){}
   }
 
