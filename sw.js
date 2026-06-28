@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlasquest-v4';
+const CACHE_NAME = 'atlasquest-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -26,15 +26,40 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return cached || fetch(event.request).then((response) => {
-        if (response && response.status === 200 && event.request.url.startsWith(self.location.origin)) {
+  const url = new URL(event.request.url);
+  const sameOrigin = url.origin === self.location.origin;
+  const isAppCode = event.request.mode === 'navigate'
+    || url.pathname === '/' || url.pathname.endsWith('/')
+    || url.pathname.endsWith('.html')
+    || url.pathname.endsWith('.js');
+
+  // Network-first for the app shell (HTML + JS): updates appear immediately
+  // when online, with offline fallback to the cached copy.
+  if (sameOrigin && isAppCode) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        if (response && response.status === 200) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return response;
-      }).catch(() => cached);
-    })
+      }).catch(() =>
+        caches.match(event.request).then((cached) => cached || caches.match('./index.html'))
+      )
+    );
+    return;
+  }
+
+  // Cache-first for other static assets (icons, images…) — fast & offline.
+  event.respondWith(
+    caches.match(event.request).then((cached) =>
+      cached || fetch(event.request).then((response) => {
+        if (response && response.status === 200 && sameOrigin) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      }).catch(() => cached)
+    )
   );
 });
