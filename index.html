@@ -413,7 +413,7 @@
 
   <!-- KIDS ZONE -->
   <section id="view-kids" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-up">
-    <div class="text-5xl mt-8">🧸</div>
+    <div id="kids-mascot" class="mt-8 flex flex-col items-center gap-1"></div>
     <h2 class="playfair font-bold text-2xl" id="kids-title" style="color:#22c55e">Espace Enfants</h2>
     <p class="text-sm opacity-70 text-center" id="kids-desc">Choisis ton âge</p>
     <div class="w-full flex flex-col gap-3 mt-2">
@@ -464,7 +464,7 @@
 
   <!-- LESSON (mini-cours before exercises) -->
   <section id="view-lesson" class="view flex-col items-center gap-3 max-w-md mx-auto w-full fade-up">
-    <div class="text-4xl mt-6">📘</div>
+    <div class="flex items-center gap-2 mt-6 w-full justify-center" id="lesson-mascot"></div>
     <div class="text-xs opacity-60" id="lesson-crumb">—</div>
     <h2 class="playfair font-bold text-2xl text-center" style="color:var(--gold)" id="lesson-title">الدرس</h2>
     <button onclick="speakLesson()" class="rounded-full px-4 py-1.5 text-xs font-bold" style="background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.4);color:var(--cyan)" id="lesson-listen">🔊 <span id="lesson-listen-lbl">Écouter</span></button>
@@ -3227,6 +3227,8 @@ function openKids(){
   var subs=kidsSubjects();
   if(!subs.some(function(s){return s.key===kidsSubj}))kidsSubj=subs[0].key;
   kidsUpdateLangUI();
+  var km=document.getElementById('kids-mascot');
+  if(km){var g=lang==='ar'?'مرحبًا، أنا فنّك! 🦊':lang==='en'?'Hi, I’m Fennec! 🦊':'Salut, moi c’est Fennec ! 🦊';km.innerHTML=(typeof mascotSVG==='function'?mascotSVG('cheer',72):'🦊')+'<div class="rounded-full px-3 py-1 text-xs font-bold" style="background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4)">'+g+'</div>';}
   kidsRenderSubjects();kidsSetSubj(kidsSubj);
 }
 // Hide the Arabic-language items in the FR/EN versions of the app.
@@ -3390,6 +3392,36 @@ var ILLUS_FOR={
   math_s3_t3:'shapes',math_s5_t3:'shapes',
   geo_s2_t1:'algeria',geo_s2_t3:'algeria',geo_s5_t1:'algeria'
 };
+// ===== Mascotte-guide : le Fennec (فنّك) — personnage-guide (façon Khan Academy Kids) =====
+function mascotSVG(mood,size){
+  size=size||96;
+  var eyes=mood==='cheer'
+    ?'<path d="M43 64 q7 -8 14 0" fill="none" stroke="#3a2a15" stroke-width="3.5" stroke-linecap="round"/><path d="M63 64 q7 -8 14 0" fill="none" stroke="#3a2a15" stroke-width="3.5" stroke-linecap="round"/>'
+    :'<circle cx="50" cy="65" r="5.5" fill="#2a1c0e"/><circle cx="70" cy="65" r="5.5" fill="#2a1c0e"/><circle cx="52" cy="63" r="1.7" fill="#fff"/><circle cx="72" cy="63" r="1.7" fill="#fff"/>';
+  var mouth=mood==='cheer'
+    ?'<path d="M51 79 q9 13 18 0 z" fill="#b3402f"/><path d="M55 84 q5 4 10 0" fill="#ef6b6b"/>'
+    :'<path d="M54 80 q6 6 12 0" fill="none" stroke="#3a2a15" stroke-width="2.6" stroke-linecap="round"/>';
+  var spark=mood==='cheer'?'<g fill="#FFD700"><path d="M16 30 l2.2 6 6 2.2 -6 2.2 -2.2 6 -2.2 -6 -6 -2.2 6 -2.2z"/><path d="M102 40 l1.6 4.4 4.4 1.6 -4.4 1.6 -1.6 4.4 -1.6 -4.4 -4.4 -1.6 4.4 -1.6z"/></g>':'';
+  return '<svg viewBox="0 0 120 120" width="'+size+'" height="'+size+'" style="display:block;overflow:visible">'
+    +'<ellipse cx="33" cy="33" rx="15" ry="27" fill="#efd9ac" transform="rotate(-24 33 33)"/>'
+    +'<ellipse cx="87" cy="33" rx="15" ry="27" fill="#efd9ac" transform="rotate(24 87 33)"/>'
+    +'<ellipse cx="34" cy="36" rx="7" ry="16" fill="#f6b0bf" transform="rotate(-24 34 36)"/>'
+    +'<ellipse cx="86" cy="36" rx="7" ry="16" fill="#f6b0bf" transform="rotate(24 86 36)"/>'
+    +'<ellipse cx="60" cy="70" rx="37" ry="33" fill="#f2e0b6"/>'
+    +'<ellipse cx="60" cy="82" rx="23" ry="18" fill="#fdf4de"/>'
+    +spark+eyes
+    +'<ellipse cx="60" cy="75" rx="4.2" ry="3.2" fill="#2a1c0e"/>'
+    +mouth
+    +'<circle cx="39" cy="80" r="4.5" fill="#f6b0bf" opacity=".55"/><circle cx="81" cy="80" r="4.5" fill="#f6b0bf" opacity=".55"/>'
+    +'</svg>';
+}
+var MASCOT_TIPS={
+  fr:['Prêt à apprendre ? 🦊','Lis bien, puis réponds !','Tu vas y arriver, courage !','Concentre-toi, on y va !'],
+  en:['Ready to learn? 🦊','Read carefully, then answer!','You can do it!','Focus — let’s go!'],
+  ar:['هيّا نتعلّم! 🦊','اقرأ جيّدًا ثمّ أجِب','أنت تستطيع، بالتوفيق!','ركّز، لنبدأ!']
+};
+function mascotTip(){var a=MASCOT_TIPS[lang]||MASCOT_TIPS.fr;return a[Math.floor(Math.random()*a.length)];}
+function renderLessonMascot(){var lm=document.getElementById('lesson-mascot');if(!lm)return;var rtl=(lang==='ar');lm.innerHTML='<div style="flex-shrink:0">'+mascotSVG('happy',60)+'</div><div class="rounded-2xl px-3 py-2 text-sm" style="max-width:230px;background:rgba(167,139,250,.16);border:1px solid rgba(167,139,250,.4);border-'+(rtl?'right':'left')+':3px solid var(--purple)">'+mascotTip()+'</div>';}
 function openLesson(subj,year,tn){
   var cat=subj+'_s'+year+'_t'+tn;lessonCat=cat;
   kidsSubj=subj;kidsYear=year; // keep state in sync with the lesson shown
@@ -3402,6 +3434,7 @@ function openLesson(subj,year,tn){
   document.getElementById('lesson-points').innerHTML=L.p.map(function(p){return '<li>'+p+'</li>';}).join('');
   document.getElementById('lesson-examples').innerHTML=L.e.map(function(e){return '<div style="background:rgba(255,255,255,.05);border-radius:8px;padding:6px 10px">'+e+'</div>';}).join('');
   var ll=document.getElementById('lesson-listen');if(ll)ll.style.display=ttsSupported()?'':'none';
+  renderLessonMascot();
   // Embedded SVG illustration (offline, high-resolution) when one matches this lesson
   var ill=document.getElementById('lesson-illus');
   if(ill){var key=(typeof ILLUS_FOR!=='undefined')?ILLUS_FOR[cat]:null;var svg=key&&ILLUS[key];if(svg){ill.innerHTML=svg;ill.style.display='';}else{ill.innerHTML='';ill.style.display='none';}}
@@ -4151,7 +4184,7 @@ function endQuiz(){
   const msgEl=document.getElementById('result-msg');
   if(msgEl)msgEl.textContent=t(stars>=3?'resPerfect':stars>=2?'resGood':stars>=1?'resTry':'resKeep');
   const mEl=document.getElementById('result-mascot');
-  if(mEl)mEl.textContent=stars>=3?'🏆':stars>=2?'🌟':stars>=1?'🙂':'💪';
+  if(mEl){if(typeof mascotSVG==='function'){mEl.innerHTML='<div style="display:flex;justify-content:center">'+mascotSVG(stars>=2?'cheer':'happy',96)+'</div>';}else{mEl.textContent=stars>=3?'🏆':stars>=2?'🌟':stars>=1?'🙂':'💪';}}
   if(stars>=2)triggerConfetti();
 
   document.getElementById('result-stats').innerHTML=`
