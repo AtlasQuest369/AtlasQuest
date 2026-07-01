@@ -3384,6 +3384,37 @@ function kidsSetYear(y){
   var ti=document.getElementById('kids-prog-title');if(ti)ti.textContent=head+' · '+kidsYearLabel(y)+'  ⭐'+got+'/'+max;
 }
 function kidsStartTerm(tn){openLesson(kidsSubj,kidsYear,tn);}
+// ===== Badges par matière (récompenses de maîtrise) =====
+var KIDS_BADGES={
+  ar:{icon:'📖',fr:'Petit Érudit',en:'Word Star',ar:'بارع في العربية'},
+  math:{icon:'🔢',fr:'Petit Mathématicien',en:'Math Whiz',ar:'بارع في الرياضيات'},
+  sci:{icon:'🔬',fr:'Petit Savant',en:'Little Scientist',ar:'عالِم صغير'},
+  islam:{icon:'🕌',fr:'Bon Élève',en:'Good Pupil',ar:'متميّز في التربية الإسلامية'},
+  civic:{icon:'🤝',fr:'Bon Citoyen',en:'Good Citizen',ar:'مواطن صالح'},
+  hist:{icon:'📜',fr:'Petit Historien',en:'Historian',ar:'مؤرّخ صغير'},
+  geo:{icon:'🗺️',fr:'Globe-Trotter',en:'Explorer',ar:'مستكشف الجغرافيا'},
+  fr:{icon:'🇫🇷',fr:'Francophone',en:'Francophone',ar:'متعلّم الفرنسية'},
+  en:{icon:'🇬🇧',fr:'Anglophone',en:'English Star',ar:'متعلّم الإنجليزية'}
+};
+var KIDS_BADGE_TIER=['','🥉','🥈','🏆'];
+var KIDS_BADGE_COLOR=['rgba(255,255,255,.25)','#cd7f32','#c0c0c0','#FFD700'];
+function kidsSubjStars(key){var my=kidsSubjMaxYear(key),g=0;for(var y=1;y<=my;y++)for(var t=1;t<=3;t++)g+=kidsBestStars(key+'_s'+y+'_t'+t);return g;}
+function kidsSubjTier(key){var my=kidsSubjMaxYear(key),max=my*9,s=kidsSubjStars(key);return s>=max?3:s>=Math.round(max*2/3)?2:s>=Math.round(max/3)?1:0;}
+// Award new subject badges after a Kids quiz; celebrate on tier-up.
+function kidsCheckBadges(){
+  if(!userData)return;var stored={};try{stored=JSON.parse(userData.kids_badges||'{}');}catch(e){}
+  var changed=false;
+  Object.keys(KIDS_BADGES).forEach(function(k){
+    var tier=kidsSubjTier(k);
+    if(tier>(stored[k]||0)){
+      stored[k]=tier;changed=true;
+      var b=KIDS_BADGES[k],name=b[lang]||b.fr;
+      try{showToast(KIDS_BADGE_TIER[tier]+' '+b.icon+' '+name,'gold',2800);}catch(e){}
+      try{if(tier>=2&&typeof triggerConfetti==='function')triggerConfetti();}catch(e){}
+    }
+  });
+  if(changed){userData.kids_badges=JSON.stringify(stored);saveData(userData);}
+}
 // ===== Bulletin de progression par matière (report card) =====
 function kidsSubjMaxYear(key){return (key==='fr'||key==='en')?4:5;}
 function openKidsReport(){
@@ -3403,8 +3434,10 @@ function openKidsReport(){
     }
     totGot+=got;totMax+=max;
     var pct=max?Math.round(got/max*100):0,nm=(s.label[lang]||s.label.fr);
+    var tier=kidsSubjTier(s.key),bd=KIDS_BADGES[s.key];
+    var chip=tier>0?'<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style="margin-'+(lang==='ar'?'right':'left')+':6px;border:1px solid '+KIDS_BADGE_COLOR[tier]+';color:'+KIDS_BADGE_COLOR[tier]+'">'+KIDS_BADGE_TIER[tier]+' '+(bd?bd.icon:'')+'</span>':'';
     html+='<div class="rounded-xl p-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">'
-      +'<div class="flex justify-between items-center mb-1"><span class="font-bold text-sm">'+nm+'</span><span class="text-xs font-bold" style="color:var(--gold)">⭐ '+got+'/'+max+'</span></div>'
+      +'<div class="flex justify-between items-center mb-1"><span class="font-bold text-sm">'+nm+chip+'</span><span class="text-xs font-bold" style="color:var(--gold)">⭐ '+got+'/'+max+'</span></div>'
       +'<div class="w-full h-1.5 rounded-full" style="background:rgba(255,255,255,.1)"><div class="h-1.5 rounded-full" style="width:'+pct+'%;background:linear-gradient(90deg,#22c55e,#FFD700)"></div></div>'
       +'<div class="flex gap-1 mt-2">'+pills+'</div></div>';
   });
@@ -4275,6 +4308,7 @@ function endQuiz(){
   // Kids mastery stars (best per trimester) — progress path (Lalilo/Duolingo)
   if(kidsMode&&/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$/.test(category)){
     try{var ks=JSON.parse(userData.kids_stars||'{}');if((ks[category]||0)<stars){ks[category]=stars;userData.kids_stars=JSON.stringify(ks);}}catch(e){}
+    kidsCheckBadges();
   }
 
   // Quests
