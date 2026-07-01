@@ -671,12 +671,21 @@
     <div id="category-stats-grid" class="w-full grid grid-cols-2 gap-2"></div>
     <h3 class="font-bold w-full mt-4" id="badges-title">🏆 Badges</h3>
     <div id="badges-grid" class="grid grid-cols-4 gap-3 w-full"></div>
+    <button onclick="openParent()" class="mt-4 w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(167,139,250,.2),rgba(255,255,255,.04));border:1.5px solid rgba(167,139,250,.45)"><span class="text-xl">👪</span><span id="parent-btn-lbl">Espace Parent</span></button>
   </section>
 
   <!-- LEGAL -->
   <section id="view-legal" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-up">
     <div id="legal-content" class="w-full text-sm leading-relaxed mt-8"></div>
     <button class="opacity-50 text-sm underline mt-6" onclick="switchView('view-dashboard')" id="legal-back-btn">← Retour</button>
+  </section>
+
+  <!-- ESPACE PARENT -->
+  <section id="view-parent" class="view flex-col items-center gap-3 max-w-md mx-auto w-full fade-up">
+    <div class="text-4xl mt-6">👪</div>
+    <h2 class="playfair font-bold text-2xl" style="color:var(--purple)" id="parent-title">Espace Parent</h2>
+    <div class="w-full flex flex-col gap-2" id="parent-content"></div>
+    <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-profile')" id="parent-back">← Retour</button>
   </section>
 
 </div><!-- /main -->
@@ -739,6 +748,18 @@
       <button onclick="startRewardedAd()" class="w-full py-3 rounded-xl font-bold mb-2 text-white" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)" id="nolives-watch">📺 Regarder une pub (+1 ❤️)</button>
       <button onclick="closeModal('modal-no-lives')" class="w-full py-2 rounded-xl text-sm opacity-50" id="nolives-later">Revenir demain</button>
     </div>
+  </div>
+</div>
+
+<!-- PARENT PIN -->
+<div id="modal-parent-pin" class="modal-overlay hidden">
+  <div class="modal-box text-center" style="max-width:300px;border:1px solid rgba(167,139,250,.5)">
+    <div class="text-4xl mb-2">🔒</div>
+    <h3 class="font-bold mb-3" id="pin-title">Code parent</h3>
+    <input id="pin-input" type="password" inputmode="numeric" maxlength="4" class="w-full text-center text-2xl rounded-lg py-2 mb-2" style="letter-spacing:.5rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff" onkeydown="if(event.key==='Enter')submitParentPin()" />
+    <div id="pin-msg" class="text-xs mb-2" style="min-height:16px;color:#f87171"></div>
+    <button onclick="submitParentPin()" id="pin-validate" class="w-full py-2 rounded-xl font-bold text-black mb-2" style="background:var(--purple)">Valider</button>
+    <button onclick="closeModal('modal-parent-pin')" class="text-xs opacity-50" id="pin-cancel">✕</button>
   </div>
 </div>
 
@@ -3389,9 +3410,11 @@ function setLang(l){
   });
   if(userData){userData.preferred_language=l;saveData(userData)}
   applyTranslations();
+  var pb=document.getElementById('parent-btn-lbl');if(pb&&typeof pt==='function')pb.textContent=pt('space');
   // The Kids curriculum depends on the language — refresh it if it's open.
   var kv=document.getElementById('view-kids');
   if(kv&&kv.classList.contains('active')&&typeof openKids==='function')openKids();
+  if(document.getElementById('view-parent')&&document.getElementById('view-parent').classList.contains('active'))renderParentDashboard();
 }
 
 function applyTranslations(){
@@ -3471,6 +3494,15 @@ function switchView(id){
   if(id==='view-quests')renderQuests();
   if(id==='view-shop')renderShop();
   if(id==='view-profile'){updateProfileView();renderBadges()}
+  if(id==='view-parent')renderParentDashboard();
+  updateAdVisibility(id);
+}
+// Mode Enfant = jardin clos : aucune publicité dans les vues enfant/parent.
+function isChildView(id){return id==='view-kids'||id==='view-lesson'||id==='view-match'||id==='view-kidsreport'||id==='view-parent';}
+function updateAdVisibility(id){
+  var child=isChildView(id)||(id==='view-quiz'&&kidsMode);
+  if(child){var b=document.getElementById('ad-banner');if(b)b.classList.add('hidden');if(typeof adTimer!=='undefined')clearInterval(adTimer);}
+  else if(userData&&!userData.isPremium&&id!=='view-quiz'&&id!=='view-onboard'){showAdBanner();}
 }
 
 function selectCategory(cat){kidsMode=false;category=cat;switchView('view-categories')}
@@ -3686,6 +3718,75 @@ function openKidsReport(){
   var rm=document.getElementById('report-mascot');
   if(rm){var msg=tpct>=66?(lang==='ar'?'رائع! تقدّم ممتاز 🌟':lang==='en'?'Awesome progress! 🌟':'Superbe progression ! 🌟'):tpct>=20?(lang==='ar'?'أحسنت، واصِل! 💪':lang==='en'?'Well done, keep going! 💪':'Bravo, continue ! 💪'):(lang==='ar'?'هيّا نبدأ التعلّم! 🦊':lang==='en'?'Let’s start learning! 🦊':'On commence à apprendre ! 🦊');
     rm.innerHTML=(typeof mascotSVG==='function'?mascotSVG(tpct>=20?'cheer':'happy',68):'🦊')+'<div class="rounded-full px-3 py-1 text-xs font-bold" style="background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4)">'+msg+'</div>';}
+}
+
+// ===== Espace Parent (couche de contrôle + analytics, protégée par PIN) =====
+var PT={
+  title:{fr:'👪 Espace Parent',en:'👪 Parent Space',ar:'👪 فضاء الوليّ'},
+  space:{fr:'Espace Parent',en:'Parent Space',ar:'فضاء الوليّ'},
+  pinCreate:{fr:'Créez un code parent (4 chiffres)',en:'Create a parent PIN (4 digits)',ar:'أنشئ رمز الوليّ (4 أرقام)'},
+  pinEnter:{fr:'Entrez le code parent',en:'Enter the parent PIN',ar:'أدخل رمز الوليّ'},
+  pinWrong:{fr:'Code incorrect',en:'Wrong PIN',ar:'الرمز خاطئ'},
+  validate:{fr:'Valider',en:'Confirm',ar:'تأكيد'},
+  overview:{fr:'Progression de l’enfant',en:'Child progress',ar:'تقدّم الطفل'},
+  weak:{fr:'Points à renforcer',en:'Areas to improve',ar:'نقاط للتحسين'},
+  activity:{fr:'Activité',en:'Activity',ar:'النشاط'},
+  games:{fr:'Quiz complétés',en:'Quizzes done',ar:'اختبارات مُنجزة'},
+  lastSeen:{fr:'Dernière activité',en:'Last active',ar:'آخر نشاط'},
+  safe:{fr:'✅ Mode Enfant sans publicité ni lien externe',en:'✅ Kids Mode: no ads, no external links',ar:'✅ وضع الطفل: بلا إعلانات ولا روابط خارجية'},
+  reset:{fr:'Réinitialiser la progression',en:'Reset progress',ar:'إعادة تعيين التقدّم'},
+  resetOk:{fr:'Progression réinitialisée',en:'Progress reset',ar:'تمّت إعادة التعيين'},
+  none:{fr:'Aucune activité',en:'No activity yet',ar:'لا نشاط بعد'}
+};
+function pt(k){return (PT[k]&&(PT[k][lang]||PT[k].fr))||k;}
+function parentHash(s){var h=5381,i;for(i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))>>>0;}return 'p'+h;}
+var pinMode='verify';
+function openParent(){
+  if(!userData)return;
+  pinMode=userData.parent_pin?'verify':'create';
+  document.getElementById('pin-title').textContent=pinMode==='create'?pt('pinCreate'):pt('pinEnter');
+  document.getElementById('pin-validate').textContent=pt('validate');
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-msg').textContent='';
+  document.getElementById('modal-parent-pin').classList.remove('hidden');
+  setTimeout(function(){var i=document.getElementById('pin-input');if(i)i.focus();},120);
+}
+function submitParentPin(){
+  var v=((document.getElementById('pin-input').value)||'').trim();
+  if(!/^\d{4}$/.test(v)){document.getElementById('pin-msg').textContent=pt('pinCreate');return;}
+  if(pinMode==='create'){userData.parent_pin=parentHash(v);saveData(userData);closeModal('modal-parent-pin');switchView('view-parent');return;}
+  if(parentHash(v)===userData.parent_pin){closeModal('modal-parent-pin');switchView('view-parent');}
+  else{document.getElementById('pin-msg').textContent=pt('pinWrong');document.getElementById('pin-input').value='';}
+}
+function renderParentDashboard(){
+  if(!userData)return;
+  document.getElementById('parent-title').textContent=pt('title');
+  document.getElementById('parent-back').textContent=t('back');
+  var core=KIDS_SUBJECTS_BY_LANG.ar;
+  var rows=core.map(function(s){var got=kidsSubjStars(s.key),max=kidsSubjMaxYear(s.key)*9,pct=max?Math.round(got/max*100):0;return {name:(s.name[lang]||s.name.fr),icon:s.label.ar.split(' ')[0],pct:pct};});
+  var overview=rows.map(function(r){return '<div class="rounded-xl p-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)"><div class="flex justify-between text-sm mb-1"><span class="font-bold">'+r.icon+' '+r.name+'</span><span style="color:var(--gold)">'+r.pct+'%</span></div><div class="w-full h-1.5 rounded-full" style="background:rgba(255,255,255,.1)"><div class="h-1.5 rounded-full" style="width:'+r.pct+'%;background:linear-gradient(90deg,#22c55e,#FFD700)"></div></div></div>';}).join('');
+  var weak=rows.slice().sort(function(a,b){return a.pct-b.pct;}).slice(0,3).map(function(r){return '<span class="text-xs px-2 py-1 rounded-full" style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);color:#f59e0b">'+r.icon+' '+r.name+' · '+r.pct+'%</span>';}).join(' ');
+  var last=userData.last_played?new Date(userData.last_played).toLocaleDateString():pt('none');
+  document.getElementById('parent-content').innerHTML=''
+    +'<h3 class="w-full font-bold text-sm opacity-70 mt-2">'+pt('overview')+'</h3>'
+    +'<div class="w-full flex flex-col gap-2">'+overview+'</div>'
+    +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+pt('weak')+'</h3>'
+    +'<div class="w-full flex flex-wrap gap-2">'+weak+'</div>'
+    +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+pt('activity')+'</h3>'
+    +'<div class="w-full grid grid-cols-2 gap-2">'
+      +'<div class="gold-card p-3 text-center"><div class="text-xl font-bold">'+(userData.quizzes_completed||0)+'</div><div class="text-xs opacity-60">'+pt('games')+'</div></div>'
+      +'<div class="gold-card p-3 text-center"><div class="text-xl font-bold">🔥 '+(userData.best_streak||0)+'</div><div class="text-xs opacity-60">'+t('bestStreak')+'</div></div>'
+      +'<div class="gold-card p-3 text-center col-span-2"><div class="text-sm font-bold">'+last+'</div><div class="text-xs opacity-60">'+pt('lastSeen')+'</div></div>'
+    +'</div>'
+    +'<div class="w-full rounded-xl p-3 mt-3 text-sm text-center" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3)">'+pt('safe')+'</div>'
+    +'<button onclick="resetChildProgress()" class="mt-3 text-xs underline opacity-60">'+pt('reset')+'</button>';
+}
+function resetChildProgress(){
+  if(!userData)return;
+  if(typeof confirm==='function'&&!confirm(pt('reset')+' ?'))return;
+  userData.kids_stars='{}';userData.kids_badges='{}';userData.kids_review='{}';
+  saveData(userData);renderParentDashboard();
+  if(typeof showToast==='function')showToast(pt('resetOk'),'green');
 }
 
 // ===== Lesson (mini-cours, ANTON/Khan-inspired): explain, then practice =====
@@ -4218,6 +4319,8 @@ function startDaily(){
 // ===== AD SYSTEM =====
 function showAdBanner(){
   if(!userData||userData.isPremium)return;
+  var av=document.querySelector('.view.active');
+  if(av&&(isChildView(av.id)||(av.id==='view-quiz'&&kidsMode)))return; // pas de pub en Mode Enfant
   const banner=document.getElementById('ad-banner');
   const content=document.getElementById('ad-content');
   banner.classList.remove('hidden');
