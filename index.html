@@ -416,6 +416,7 @@
     <div id="kids-mascot" class="mt-8 flex flex-col items-center gap-1"></div>
     <h2 class="playfair font-bold text-2xl" id="kids-title" style="color:#22c55e">Espace Enfants</h2>
     <p class="text-sm opacity-70 text-center" id="kids-desc">Choisis ton âge</p>
+    <div id="kids-goal" class="w-full rounded-xl p-3" style="display:none;background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.3)"></div>
     <div class="w-full flex flex-col gap-3 mt-2">
       <button onclick="startKids('kids_3_5')" class="cat-card rounded-2xl py-5 px-4 flex items-center gap-4" style="background:linear-gradient(135deg,rgba(244,114,182,.18),rgba(255,255,255,.04));border:1.5px solid rgba(244,114,182,.4)">
         <span class="text-4xl">🐣</span>
@@ -3522,6 +3523,7 @@ function openKids(){
   kidsUpdateLangUI();
   var km=document.getElementById('kids-mascot');
   if(km){var g=lang==='ar'?'مرحبًا، أنا فنّك! 🦊':lang==='en'?'Hi, I’m Fennec! 🦊':'Salut, moi c’est Fennec ! 🦊';km.innerHTML=(typeof mascotSVG==='function'?mascotSVG('cheer',72):'🦊')+'<div class="rounded-full px-3 py-1 text-xs font-bold" style="background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4)">'+g+'</div>';}
+  if(typeof renderKidsGoal==='function')renderKidsGoal();
   var due=(typeof kidsDueList==='function')?kidsDueList():[];
   var rb=document.getElementById('kids-review-btn');
   if(rb){if(due.length){rb.style.display='';document.getElementById('kids-review-lbl').textContent=(lang==='ar'?'المراجعة':lang==='en'?'Review':'Révision')+' ('+due.length+')';}else{rb.style.display='none';}}
@@ -3770,6 +3772,31 @@ function openReview(){
     var go=lang==='ar'?'راجِع ←':lang==='en'?'Review →':'Réviser →';
     return '<button onclick="openLesson(\''+subj+'\','+y+','+tn+')" class="w-full rounded-xl p-3 flex items-center justify-between gap-2" style="background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.4)"><span style="text-align:start"><span class="font-bold text-sm">'+icon+' '+nm+'</span><br><span class="text-xs opacity-70">'+kidsYearLbl(subj,y)+' · '+th+'</span></span><span class="text-xs font-bold" style="color:var(--purple);white-space:nowrap">'+go+'</span></button>';
   }).join('');
+}
+
+// ===== Objectif quotidien (Mode Enfant) — moteur de régularité =====
+var KIDS_GOAL_N=3;
+function kidsGoalGet(){
+  var today=new Date().toISOString().slice(0,10),g;
+  try{g=JSON.parse(userData.kids_goal||'{}');}catch(e){g={};}
+  if(g.d!==today)g={d:today,n:0,r:false};
+  return g;
+}
+function kidsGoalBump(){
+  if(!userData)return;
+  var g=kidsGoalGet();g.n=(g.n||0)+1;var justDone=false;
+  if(g.n>=KIDS_GOAL_N&&!g.r){g.r=true;justDone=true;}
+  userData.kids_goal=JSON.stringify(g);saveData(userData);
+  if(justDone){if(typeof addGems==='function')addGems(15);if(typeof triggerConfetti==='function')triggerConfetti();
+    if(typeof showToast==='function')showToast(lang==='ar'?'🎯 هدف اليوم مُنجز! +15 💎':lang==='en'?'🎯 Daily goal done! +15 💎':'🎯 Objectif du jour atteint ! +15 💎','gold',2600);}
+}
+function renderKidsGoal(){
+  var kg=document.getElementById('kids-goal');if(!kg||!userData)return;
+  var g=kidsGoalGet(),n=Math.min(g.n||0,KIDS_GOAL_N),pct=Math.round(n/KIDS_GOAL_N*100),done=(g.n||0)>=KIDS_GOAL_N;
+  var lbl=lang==='ar'?'🎯 هدف اليوم':lang==='en'?'🎯 Daily goal':'🎯 Objectif du jour';
+  kg.style.display='';
+  kg.innerHTML='<div class="flex justify-between text-xs mb-1"><span class="font-bold">'+lbl+'</span><span>'+n+'/'+KIDS_GOAL_N+(done?' ✅':'')+'</span></div>'
+    +'<div class="w-full h-2 rounded-full" style="background:rgba(255,255,255,.1)"><div class="h-2 rounded-full" style="width:'+pct+'%;background:linear-gradient(90deg,#22c55e,#FFD700)"></div></div>';
 }
 
 // ===== Espace Parent (couche de contrôle + analytics, protégée par PIN) =====
@@ -4740,6 +4767,7 @@ function endQuiz(){
     kidsCheckBadges();
     // Répétition espacée : planifie la prochaine révision de cette compétence.
     try{var kr=JSON.parse(userData.kids_review||'{}');var now=Date.now();kr[category]={s:stars,done:now,due:now+reviewInterval(stars)};userData.kids_review=JSON.stringify(kr);saveData(userData);}catch(e){}
+    if(typeof kidsGoalBump==='function')kidsGoalBump(); // objectif quotidien
   }
 
   // Quests
