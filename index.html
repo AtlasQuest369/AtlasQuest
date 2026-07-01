@@ -413,7 +413,7 @@
 
   <!-- KIDS ZONE -->
   <section id="view-kids" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-up">
-    <div class="text-5xl mt-8">🧸</div>
+    <div id="kids-mascot" class="mt-8 flex flex-col items-center gap-1"></div>
     <h2 class="playfair font-bold text-2xl" id="kids-title" style="color:#22c55e">Espace Enfants</h2>
     <p class="text-sm opacity-70 text-center" id="kids-desc">Choisis ton âge</p>
     <div class="w-full flex flex-col gap-3 mt-2">
@@ -464,11 +464,12 @@
 
   <!-- LESSON (mini-cours before exercises) -->
   <section id="view-lesson" class="view flex-col items-center gap-3 max-w-md mx-auto w-full fade-up">
-    <div class="text-4xl mt-6">📘</div>
+    <div class="flex items-center gap-2 mt-6 w-full justify-center" id="lesson-mascot"></div>
     <div class="text-xs opacity-60" id="lesson-crumb">—</div>
     <h2 class="playfair font-bold text-2xl text-center" style="color:var(--gold)" id="lesson-title">الدرس</h2>
     <button onclick="speakLesson()" class="rounded-full px-4 py-1.5 text-xs font-bold" style="background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.4);color:var(--cyan)" id="lesson-listen">🔊 <span id="lesson-listen-lbl">Écouter</span></button>
     <p class="text-sm opacity-80 text-center" id="lesson-intro"></p>
+    <div id="lesson-illus" class="w-full rounded-2xl p-3" style="display:none;background:linear-gradient(135deg,rgba(167,139,250,.1),rgba(0,229,255,.06));border:1px solid rgba(167,139,250,.3)"></div>
     <div class="w-full rounded-2xl p-4" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.25)">
       <ul class="list-disc list-inside space-y-2 text-sm" id="lesson-points" style="line-height:1.8"></ul>
     </div>
@@ -3226,6 +3227,8 @@ function openKids(){
   var subs=kidsSubjects();
   if(!subs.some(function(s){return s.key===kidsSubj}))kidsSubj=subs[0].key;
   kidsUpdateLangUI();
+  var km=document.getElementById('kids-mascot');
+  if(km){var g=lang==='ar'?'مرحبًا، أنا فنّك! 🦊':lang==='en'?'Hi, I’m Fennec! 🦊':'Salut, moi c’est Fennec ! 🦊';km.innerHTML=(typeof mascotSVG==='function'?mascotSVG('cheer',72):'🦊')+'<div class="rounded-full px-3 py-1 text-xs font-bold" style="background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4)">'+g+'</div>';}
   kidsRenderSubjects();kidsSetSubj(kidsSubj);
 }
 // Hide the Arabic-language items in the FR/EN versions of the app.
@@ -3368,6 +3371,57 @@ function kidsStartTerm(tn){openLesson(kidsSubj,kidsYear,tn);}
 
 // ===== Lesson (mini-cours, ANTON/Khan-inspired): explain, then practice =====
 var lessonCat=null;
+// ===== Illustrations SVG embarquées (haute résolution, 100% hors-ligne) =====
+var ILLUS={
+  water:'<svg viewBox="0 0 320 180" width="100%" style="max-height:210px;display:block;margin:auto"><rect width="320" height="180" rx="10" fill="#0e2233"/><circle cx="46" cy="40" r="16" fill="#FFD54A"/><g stroke="#FFD54A" stroke-width="2" stroke-linecap="round"><line x1="46" y1="14" x2="46" y2="7"/><line x1="20" y1="40" x2="12" y2="40"/><line x1="27" y1="22" x2="22" y2="17"/><line x1="65" y1="22" x2="70" y2="17"/></g><text x="46" y="72" fill="#FFD54A" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">الشمس</text><g fill="#e8edf2"><ellipse cx="225" cy="44" rx="36" ry="17"/><ellipse cx="252" cy="50" rx="22" ry="13"/><ellipse cx="200" cy="50" rx="20" ry="12"/></g><text x="225" y="48" fill="#334155" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">تكاثف</text><g stroke="#5cc8ff" stroke-width="2" stroke-linecap="round"><line x1="205" y1="66" x2="201" y2="80"/><line x1="225" y1="66" x2="221" y2="80"/><line x1="245" y1="66" x2="241" y2="80"/></g><text x="270" y="76" fill="#9bd4ff" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">تساقط</text><path d="M0 150 q20 -10 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 V180 H0 Z" fill="#2b7fc4"/><text x="55" y="173" fill="#dffbff" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">البحر</text><path d="M120 148 C112 122 132 112 124 94" fill="none" stroke="#9bd4ff" stroke-width="2"/><polygon points="124,88 118,98 130,97" fill="#9bd4ff"/><text x="152" y="122" fill="#9bd4ff" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">تبخّر</text></svg>',
+  plant:'<svg viewBox="0 0 320 180" width="100%" style="max-height:210px;display:block;margin:auto"><rect width="320" height="180" rx="10" fill="#0e1f16"/><rect y="136" width="320" height="44" fill="#6b4423"/><g stroke="#caa472" stroke-width="2" fill="none" stroke-linecap="round"><path d="M160 136 L150 168"/><path d="M160 136 L170 168"/><path d="M160 136 L160 172"/><path d="M160 136 L138 160"/><path d="M160 136 L182 160"/></g><text x="112" y="166" fill="#e9d8b6" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">الجذر</text><rect x="156" y="56" width="8" height="82" rx="3" fill="#2f9e44"/><text x="210" y="112" fill="#74e08a" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">الساق</text><path d="M160 96 C120 82 110 106 150 109 C150 101 155 98 160 96Z" fill="#37b24d"/><path d="M160 82 C200 68 210 92 170 95 C170 87 165 84 160 82Z" fill="#37b24d"/><text x="226" y="80" fill="#74e08a" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">الأوراق</text><g fill="#f783ac"><circle cx="160" cy="27" r="9"/><circle cx="176" cy="39" r="9"/><circle cx="170" cy="57" r="9"/><circle cx="150" cy="57" r="9"/><circle cx="144" cy="39" r="9"/></g><circle cx="160" cy="42" r="8" fill="#ffd43b"/><text x="160" y="14" fill="#ffb3c6" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">الزهرة</text></svg>',
+  senses:'<svg viewBox="0 0 320 168" width="100%" style="max-height:200px;display:block;margin:auto"><rect width="320" height="168" rx="10" fill="#1a1230"/><g stroke="rgba(167,139,250,.3)" fill="rgba(255,255,255,.05)"><rect x="8" y="16" width="54" height="136" rx="9"/><rect x="68" y="16" width="54" height="136" rx="9"/><rect x="128" y="16" width="54" height="136" rx="9"/><rect x="188" y="16" width="54" height="136" rx="9"/><rect x="248" y="16" width="54" height="136" rx="9"/></g><ellipse cx="35" cy="66" rx="17" ry="11" fill="#fff"/><circle cx="35" cy="66" r="5.5" fill="#1f6feb"/><path d="M103 54 a15 15 0 1 0 -3 28 q7 2 6 -7" fill="none" stroke="#f7caa0" stroke-width="5" stroke-linecap="round"/><path d="M155 52 l-9 26 h18 Z" fill="#f0b48a"/><rect x="202" y="58" width="26" height="20" rx="10" fill="#e8638a"/><line x1="215" y1="58" x2="215" y2="70" stroke="#b73d63" stroke-width="2"/><rect x="262" y="60" width="26" height="18" rx="6" fill="#ffd9b3"/><g fill="#ffd9b3"><rect x="264" y="50" width="5" height="12" rx="2"/><rect x="271" y="47" width="5" height="15" rx="2"/><rect x="278" y="49" width="5" height="13" rx="2"/><rect x="284" y="53" width="5" height="10" rx="2"/></g><g fill="#c4b5fd" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif"><text x="35" y="128">البصر</text><text x="95" y="128">السمع</text><text x="155" y="128">الشمّ</text><text x="215" y="128">التذوّق</text><text x="275" y="128">اللمس</text></g></svg>',
+  solar:'<svg viewBox="0 0 320 180" width="100%" style="max-height:210px;display:block;margin:auto"><rect width="320" height="180" rx="10" fill="#0a0a1f"/><ellipse cx="150" cy="92" rx="120" ry="58" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-dasharray="4 5"/><circle cx="56" cy="92" r="30" fill="#FFB300"/><g stroke="#FFB300" stroke-width="2" stroke-linecap="round"><line x1="56" y1="52" x2="56" y2="44"/><line x1="56" y1="132" x2="56" y2="140"/><line x1="16" y1="92" x2="8" y2="92"/><line x1="26" y1="62" x2="20" y2="56"/><line x1="26" y1="122" x2="20" y2="128"/></g><text x="56" y="96" fill="#1a1a1a" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">الشمس</text><circle cx="266" cy="92" r="16" fill="#2b8acb"/><path d="M256 86 q6 4 12 0 q4 6 -2 10 q-8 2 -12 -4 Z" fill="#37b24d"/><text x="266" y="124" fill="#7cc4ff" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">الأرض</text><circle cx="292" cy="66" r="7" fill="#cbd5e1"/><text x="296" y="52" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="Cairo,sans-serif">القمر</text></svg>',
+  shapes:'<svg viewBox="0 0 320 170" width="100%" style="max-height:200px;display:block;margin:auto"><rect width="320" height="170" rx="10" fill="#11182a"/><polygon points="40,46 17,90 63,90" fill="#ffd43b"/><rect x="96" y="44" width="48" height="48" rx="4" fill="#4dabf7"/><polygon points="200,42 224,60 215,89 185,89 176,60" fill="#69db7c"/><polygon points="306,68 293,90 267,90 254,68 267,46 293,46" fill="#f783ac"/><g fill="#e2e8f0" font-size="12" text-anchor="middle" font-family="Cairo,sans-serif"><text x="40" y="122">مثلّث ٣</text><text x="120" y="122">مربّع ٤</text><text x="200" y="122">خماسي ٥</text><text x="280" y="122">سداسي ٦</text></g></svg>',
+  circuit:'<svg viewBox="0 0 320 180" width="100%" style="max-height:210px;display:block;margin:auto"><rect width="320" height="180" rx="10" fill="#11160e"/><g fill="none" stroke="#FFD54A" stroke-width="3" stroke-linecap="round"><path d="M70 40 H146"/><path d="M174 40 H250 V140 H70 V40"/></g><circle cx="160" cy="40" r="16" fill="#fff6c2"/><path d="M152 40 l5 7 l6 -14 l5 7" fill="none" stroke="#e0a800" stroke-width="2"/><text x="160" y="18" fill="#ffe08a" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">المصباح</text><g stroke="#cbd5e1" stroke-width="3"><line x1="60" y1="78" x2="80" y2="78"/><line x1="64" y1="102" x2="76" y2="102"/></g><text x="106" y="94" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">البطّارية</text><circle cx="160" cy="140" r="4" fill="#FFD54A"/><line x1="160" y1="140" x2="178" y2="130" stroke="#FFD54A" stroke-width="3" stroke-linecap="round"/><text x="160" y="166" fill="#ffe08a" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">القاطع</text></svg>',
+  organs:'<svg viewBox="0 0 320 180" width="100%" style="max-height:210px;display:block;margin:auto"><rect width="320" height="180" rx="10" fill="#1c1020"/><path d="M120 28 q40 -14 80 0 q14 6 12 24 l-6 96 q-2 14 -16 14 H130 q-14 0 -16 -14 l-6 -96 q-2 -18 12 -24 Z" fill="#ffd9c9"/><path d="M150 56 q-22 2 -24 30 q-1 22 10 30 q10 4 12 -8 l2 -50 q0 -3 -0 -2 Z" fill="#ff8fa3"/><path d="M170 56 q22 2 24 30 q1 22 -10 30 q-10 4 -12 -8 l-2 -50 Z" fill="#ff8fa3"/><text x="244" y="74" fill="#ffb3c1" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">الرئتان</text><path d="M160 58 q14 -2 14 12 q0 12 -14 18 q-14 -6 -14 -18 q0 -14 14 -12 Z" fill="#e03131"/><text x="78" y="92" fill="#ff8787" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">القلب</text><path d="M140 110 q24 -6 34 6 q8 12 -4 20 q-18 8 -32 -4 q-8 -14 2 -22 Z" fill="#f59f00"/><text x="232" y="128" fill="#ffd07a" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">المعدة</text></svg>',
+  algeria:'<svg viewBox="0 0 320 180" width="100%" style="max-height:210px;display:block;margin:auto"><rect width="320" height="180" rx="10" fill="#0c1a24"/><defs><clipPath id="dz"><path d="M120 22 L210 30 L236 64 L292 150 L150 162 L70 150 L78 96 L60 60 Z"/></clipPath></defs><g clip-path="url(#dz)"><rect x="50" y="20" width="252" height="46" fill="#37b24d"/><rect x="50" y="66" width="252" height="40" fill="#d4a76a"/><rect x="50" y="106" width="252" height="70" fill="#f2c94c"/></g><path d="M120 22 L210 30 L236 64 L292 150 L150 162 L70 150 L78 96 L60 60 Z" fill="none" stroke="#ffffff" stroke-width="2"/><polygon points="138,40 141,47 149,47 143,52 145,59 138,55 131,59 133,52 127,47 135,47" fill="#e03131"/><text x="190" y="48" fill="#063" font-size="10" text-anchor="middle" font-family="Cairo,sans-serif">الساحل والتلّ</text><text x="200" y="92" fill="#5a3d12" font-size="10" text-anchor="middle" font-family="Cairo,sans-serif">الهضاب العليا</text><text x="200" y="140" fill="#7a5c00" font-size="11" text-anchor="middle" font-family="Cairo,sans-serif">الصحراء</text></svg>'
+};
+var ILLUS_FOR={
+  sci_s2_t2:'water',sci_s3_t3:'water',
+  sci_s1_t3:'plant',sci_s3_t2:'plant',
+  sci_s1_t1:'senses',
+  sci_s5_t3:'solar',
+  sci_s5_t1:'circuit',
+  sci_s5_t2:'organs',sci_s4_t2:'organs',
+  math_s3_t3:'shapes',math_s5_t3:'shapes',
+  geo_s2_t1:'algeria',geo_s2_t3:'algeria',geo_s5_t1:'algeria'
+};
+// ===== Mascotte-guide : le Fennec (فنّك) — personnage-guide (façon Khan Academy Kids) =====
+function mascotSVG(mood,size){
+  size=size||96;
+  var eyes=mood==='cheer'
+    ?'<path d="M43 64 q7 -8 14 0" fill="none" stroke="#3a2a15" stroke-width="3.5" stroke-linecap="round"/><path d="M63 64 q7 -8 14 0" fill="none" stroke="#3a2a15" stroke-width="3.5" stroke-linecap="round"/>'
+    :'<circle cx="50" cy="65" r="5.5" fill="#2a1c0e"/><circle cx="70" cy="65" r="5.5" fill="#2a1c0e"/><circle cx="52" cy="63" r="1.7" fill="#fff"/><circle cx="72" cy="63" r="1.7" fill="#fff"/>';
+  var mouth=mood==='cheer'
+    ?'<path d="M51 79 q9 13 18 0 z" fill="#b3402f"/><path d="M55 84 q5 4 10 0" fill="#ef6b6b"/>'
+    :'<path d="M54 80 q6 6 12 0" fill="none" stroke="#3a2a15" stroke-width="2.6" stroke-linecap="round"/>';
+  var spark=mood==='cheer'?'<g fill="#FFD700"><path d="M16 30 l2.2 6 6 2.2 -6 2.2 -2.2 6 -2.2 -6 -6 -2.2 6 -2.2z"/><path d="M102 40 l1.6 4.4 4.4 1.6 -4.4 1.6 -1.6 4.4 -1.6 -4.4 -4.4 -1.6 4.4 -1.6z"/></g>':'';
+  return '<svg viewBox="0 0 120 120" width="'+size+'" height="'+size+'" style="display:block;overflow:visible">'
+    +'<ellipse cx="33" cy="33" rx="15" ry="27" fill="#efd9ac" transform="rotate(-24 33 33)"/>'
+    +'<ellipse cx="87" cy="33" rx="15" ry="27" fill="#efd9ac" transform="rotate(24 87 33)"/>'
+    +'<ellipse cx="34" cy="36" rx="7" ry="16" fill="#f6b0bf" transform="rotate(-24 34 36)"/>'
+    +'<ellipse cx="86" cy="36" rx="7" ry="16" fill="#f6b0bf" transform="rotate(24 86 36)"/>'
+    +'<ellipse cx="60" cy="70" rx="37" ry="33" fill="#f2e0b6"/>'
+    +'<ellipse cx="60" cy="82" rx="23" ry="18" fill="#fdf4de"/>'
+    +spark+eyes
+    +'<ellipse cx="60" cy="75" rx="4.2" ry="3.2" fill="#2a1c0e"/>'
+    +mouth
+    +'<circle cx="39" cy="80" r="4.5" fill="#f6b0bf" opacity=".55"/><circle cx="81" cy="80" r="4.5" fill="#f6b0bf" opacity=".55"/>'
+    +'</svg>';
+}
+var MASCOT_TIPS={
+  fr:['Prêt à apprendre ? 🦊','Lis bien, puis réponds !','Tu vas y arriver, courage !','Concentre-toi, on y va !'],
+  en:['Ready to learn? 🦊','Read carefully, then answer!','You can do it!','Focus — let’s go!'],
+  ar:['هيّا نتعلّم! 🦊','اقرأ جيّدًا ثمّ أجِب','أنت تستطيع، بالتوفيق!','ركّز، لنبدأ!']
+};
+function mascotTip(){var a=MASCOT_TIPS[lang]||MASCOT_TIPS.fr;return a[Math.floor(Math.random()*a.length)];}
+function renderLessonMascot(){var lm=document.getElementById('lesson-mascot');if(!lm)return;var rtl=(lang==='ar');lm.innerHTML='<div style="flex-shrink:0">'+mascotSVG('happy',60)+'</div><div class="rounded-2xl px-3 py-2 text-sm" style="max-width:230px;background:rgba(167,139,250,.16);border:1px solid rgba(167,139,250,.4);border-'+(rtl?'right':'left')+':3px solid var(--purple)">'+mascotTip()+'</div>';}
 function openLesson(subj,year,tn){
   var cat=subj+'_s'+year+'_t'+tn;lessonCat=cat;
   kidsSubj=subj;kidsYear=year; // keep state in sync with the lesson shown
@@ -3380,6 +3434,10 @@ function openLesson(subj,year,tn){
   document.getElementById('lesson-points').innerHTML=L.p.map(function(p){return '<li>'+p+'</li>';}).join('');
   document.getElementById('lesson-examples').innerHTML=L.e.map(function(e){return '<div style="background:rgba(255,255,255,.05);border-radius:8px;padding:6px 10px">'+e+'</div>';}).join('');
   var ll=document.getElementById('lesson-listen');if(ll)ll.style.display=ttsSupported()?'':'none';
+  renderLessonMascot();
+  // Embedded SVG illustration (offline, high-resolution) when one matches this lesson
+  var ill=document.getElementById('lesson-illus');
+  if(ill){var key=(typeof ILLUS_FOR!=='undefined')?ILLUS_FOR[cat]:null;var svg=key&&ILLUS[key];if(svg){ill.innerHTML=svg;ill.style.display='';}else{ill.innerHTML='';ill.style.display='none';}}
 }
 function startLessonQuiz(){if(lessonCat)startKids(lessonCat);}
 function speakLesson(){var L=(typeof LESSONS!=='undefined')?LESSONS[lessonCat]:null;if(!L)return;var lc=/^fr_/.test(lessonCat||'')?'fr':/^en_/.test(lessonCat||'')?'en':'ar';speakText(L.t+'. '+L.i+' '+L.p.join('. '),lc);}
@@ -3961,12 +4019,13 @@ function generateForCat(cat){
 }
 
 function startQuiz(daily=false){
-  if(!userData||userData.lives<=0){
+  isDaily=daily;
+  isTraining=kidsMode||(document.getElementById('training-toggle').checked&&!daily);
+  // Lives only gate competitive play. The Kids / learning & training modes are unlimited (free).
+  if(!userData||(userData.lives<=0&&!isTraining)){
     document.getElementById('modal-no-lives').classList.remove('hidden');
     return;
   }
-  isDaily=daily;
-  isTraining=kidsMode||(document.getElementById('training-toggle').checked&&!daily);
   questions=generateQuestions();
   current=0;score=0;streak=0;maxStreak=0;correctCount=0;
   quizStartTime=Date.now();
@@ -4125,7 +4184,7 @@ function endQuiz(){
   const msgEl=document.getElementById('result-msg');
   if(msgEl)msgEl.textContent=t(stars>=3?'resPerfect':stars>=2?'resGood':stars>=1?'resTry':'resKeep');
   const mEl=document.getElementById('result-mascot');
-  if(mEl)mEl.textContent=stars>=3?'🏆':stars>=2?'🌟':stars>=1?'🙂':'💪';
+  if(mEl){if(typeof mascotSVG==='function'){mEl.innerHTML='<div style="display:flex;justify-content:center">'+mascotSVG(stars>=2?'cheer':'happy',96)+'</div>';}else{mEl.textContent=stars>=3?'🏆':stars>=2?'🌟':stars>=1?'🙂':'💪';}}
   if(stars>=2)triggerConfetti();
 
   document.getElementById('result-stats').innerHTML=`
@@ -4151,9 +4210,8 @@ function endQuiz(){
   if(pct>userData.bestScore)userData.bestScore=pct;
   userData.gamesPlayed++;
 
-  // Use a life
-  userData.lives=Math.max(0,userData.lives-1);
-  updateLivesBadge();
+  // Use a life — but learning (Kids) and training modes are free & unlimited.
+  if(!isTraining){userData.lives=Math.max(0,userData.lives-1);updateLivesBadge();}
 
   // XP Boost used
   if(userData.xp_boost_active)userData.xp_boost_active=false;
