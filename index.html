@@ -448,7 +448,16 @@
       <button onclick="openMatch()" class="cat-card rounded-xl py-3 flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(167,139,250,.2),rgba(255,255,255,.04));border:1.5px solid rgba(167,139,250,.45)"><span class="text-xl">🧩</span><span class="font-bold text-sm" id="kids-match-btn">Associer (paires)</span></button>
       <button onclick="openKidsReport()" class="cat-card rounded-xl py-3 flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,255,255,.04));border:1.5px solid rgba(255,215,0,.45)"><span class="text-xl">📊</span><span class="font-bold text-sm" id="kids-report-btn">Mon bulletin</span></button>
     </div>
+    <button id="kids-review-btn" onclick="openReview()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="display:none;background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(255,255,255,.04));border:1.5px solid rgba(167,139,250,.55)"><span class="text-xl">🔁</span><span class="font-bold text-sm" id="kids-review-lbl">Révision</span></button>
     <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')" id="kids-back">← Retour</button>
+  </section>
+
+  <!-- RÉVISION (répétition espacée) -->
+  <section id="view-review" class="view flex-col items-center gap-3 max-w-md mx-auto w-full fade-up">
+    <div class="text-4xl mt-6">🔁</div>
+    <h2 class="playfair font-bold text-2xl" style="color:var(--purple)" id="review-title">🔁 Révision</h2>
+    <div class="w-full flex flex-col gap-2" id="review-list"></div>
+    <button class="opacity-50 text-sm underline mt-2" onclick="openKids()" id="review-back">← Retour</button>
   </section>
 
   <!-- BULLETIN / بطاقة التقدّم -->
@@ -3498,7 +3507,7 @@ function switchView(id){
   updateAdVisibility(id);
 }
 // Mode Enfant = jardin clos : aucune publicité dans les vues enfant/parent.
-function isChildView(id){return id==='view-kids'||id==='view-lesson'||id==='view-match'||id==='view-kidsreport'||id==='view-parent';}
+function isChildView(id){return id==='view-kids'||id==='view-lesson'||id==='view-match'||id==='view-kidsreport'||id==='view-review'||id==='view-parent';}
 function updateAdVisibility(id){
   var child=isChildView(id)||(id==='view-quiz'&&kidsMode);
   if(child){var b=document.getElementById('ad-banner');if(b)b.classList.add('hidden');if(typeof adTimer!=='undefined')clearInterval(adTimer);}
@@ -3513,6 +3522,9 @@ function openKids(){
   kidsUpdateLangUI();
   var km=document.getElementById('kids-mascot');
   if(km){var g=lang==='ar'?'مرحبًا، أنا فنّك! 🦊':lang==='en'?'Hi, I’m Fennec! 🦊':'Salut, moi c’est Fennec ! 🦊';km.innerHTML=(typeof mascotSVG==='function'?mascotSVG('cheer',72):'🦊')+'<div class="rounded-full px-3 py-1 text-xs font-bold" style="background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4)">'+g+'</div>';}
+  var due=(typeof kidsDueList==='function')?kidsDueList():[];
+  var rb=document.getElementById('kids-review-btn');
+  if(rb){if(due.length){rb.style.display='';document.getElementById('kids-review-lbl').textContent=(lang==='ar'?'المراجعة':lang==='en'?'Review':'Révision')+' ('+due.length+')';}else{rb.style.display='none';}}
   kidsRenderSubjects();kidsSetSubj(kidsSubj);
 }
 // Hide the Arabic-language items in the FR/EN versions of the app.
@@ -3713,11 +3725,43 @@ function openKidsReport(){
   });
   document.getElementById('report-list').innerHTML=html||('<div class="text-center text-sm opacity-70 py-6">'+t('reportEmpty')+'</div>');
   var tpct=totMax?Math.round(totGot/totMax*100):0;
-  document.getElementById('report-total').textContent='⭐ '+totGot+'/'+totMax;
+  var dueN=(typeof kidsDueList==='function')?kidsDueList().length:0;
+  document.getElementById('report-total').textContent='⭐ '+totGot+'/'+totMax+(dueN?'   🔁'+dueN:'');
   document.getElementById('report-total-bar').style.width=tpct+'%';
   var rm=document.getElementById('report-mascot');
   if(rm){var msg=tpct>=66?(lang==='ar'?'رائع! تقدّم ممتاز 🌟':lang==='en'?'Awesome progress! 🌟':'Superbe progression ! 🌟'):tpct>=20?(lang==='ar'?'أحسنت، واصِل! 💪':lang==='en'?'Well done, keep going! 💪':'Bravo, continue ! 💪'):(lang==='ar'?'هيّا نبدأ التعلّم! 🦊':lang==='en'?'Let’s start learning! 🦊':'On commence à apprendre ! 🦊');
     rm.innerHTML=(typeof mascotSVG==='function'?mascotSVG(tpct>=20?'cheer':'happy',68):'🦊')+'<div class="rounded-full px-3 py-1 text-xs font-bold" style="background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4)">'+msg+'</div>';}
+}
+
+// ===== Moteur pédagogique : états de maîtrise par compétence + répétition espacée =====
+var KIDS_STATE={
+  new:{fr:'Non vu',en:'Not seen',ar:'لم يُدرَس',c:'rgba(255,255,255,.35)'},
+  progress:{fr:'En cours',en:'In progress',ar:'قيد التعلّم',c:'#f59e0b'},
+  acquired:{fr:'Acquis',en:'Acquired',ar:'مكتسَب',c:'#3b82f6'},
+  mastered:{fr:'Maîtrisé',en:'Mastered',ar:'متقَن',c:'#22c55e'},
+  review:{fr:'À revoir',en:'Review',ar:'للمراجعة',c:'#a78bfa'}
+};
+// Intervalle de révision espacée selon la maîtrise : 1★→1j, 2★→3j, 3★→7j.
+function reviewInterval(stars){return (stars>=3?7:stars>=2?3:1)*86400000;}
+function kidsReviewMap(){if(!userData)return {};try{return JSON.parse(userData.kids_review||'{}');}catch(e){return {};}}
+function kidsCompState(cat){var r=kidsReviewMap()[cat];if(!r)return 'new';if(Date.now()>=r.due)return 'review';return r.s>=3?'mastered':r.s>=2?'acquired':'progress';}
+function kidsDueList(){var kr=kidsReviewMap(),now=Date.now(),out=[];Object.keys(kr).forEach(function(c){if(kr[c]&&kr[c].due<=now)out.push(c);});return out;}
+function kidsSubjByKey(key){var all=KIDS_SUBJECTS_BY_LANG.ar.concat(KIDS_SUBJECTS_BY_LANG.fr,KIDS_SUBJECTS_BY_LANG.en);return all.filter(function(o){return o.key===key})[0];}
+function kidsYearLbl(subj,y){return (subj==='fr'||subj==='en')?((lang==='fr'?'Niveau ':'Level ')+y):((lang==='ar'?'السنة ':lang==='fr'?'Année ':'Year ')+y);}
+function openReview(){
+  switchView('view-review');
+  document.getElementById('review-title').textContent=lang==='ar'?'🔁 المراجعة':lang==='en'?'🔁 Review':'🔁 Révision';
+  document.getElementById('review-back').textContent=t('back');
+  var due=kidsDueList(),box=document.getElementById('review-list');
+  if(!due.length){box.innerHTML='<div class="text-center text-sm opacity-70 py-8">'+(lang==='ar'?'لا شيء للمراجعة الآن ✨':lang==='en'?'Nothing to review now ✨':'Rien à réviser pour l’instant ✨')+'</div>';return;}
+  box.innerHTML=due.map(function(cat){
+    var m=cat.match(/^([a-z]+)_s(\d)_t(\d)$/);if(!m)return '';
+    var subj=m[1],y=+m[2],tn=+m[3],s=kidsSubjByKey(subj);
+    var nm=s?(s.name[lang]||s.name.fr):subj,icon=s?s.label.ar.split(' ')[0]:'📘';
+    var th=((KIDS_THEMES[subj]||{})[y]||[])[tn-1]||'';
+    var go=lang==='ar'?'راجِع ←':lang==='en'?'Review →':'Réviser →';
+    return '<button onclick="openLesson(\''+subj+'\','+y+','+tn+')" class="w-full rounded-xl p-3 flex items-center justify-between gap-2" style="background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.4)"><span style="text-align:start"><span class="font-bold text-sm">'+icon+' '+nm+'</span><br><span class="text-xs opacity-70">'+kidsYearLbl(subj,y)+' · '+th+'</span></span><span class="text-xs font-bold" style="color:var(--purple);white-space:nowrap">'+go+'</span></button>';
+  }).join('');
 }
 
 // ===== Espace Parent (couche de contrôle + analytics, protégée par PIN) =====
@@ -3772,6 +3816,7 @@ function renderParentDashboard(){
     +'<div class="w-full flex flex-col gap-2">'+overview+'</div>'
     +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+pt('weak')+'</h3>'
     +'<div class="w-full flex flex-wrap gap-2">'+weak+'</div>'
+    +((typeof kidsDueList==='function'&&kidsDueList().length)?'<div class="w-full text-sm mt-1" style="color:#a78bfa">🔁 '+kidsDueList().length+' '+(lang==='ar'?'كفاءة للمراجعة':lang==='en'?'to review':'à revoir')+'</div>':'')
     +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+pt('activity')+'</h3>'
     +'<div class="w-full grid grid-cols-2 gap-2">'
       +'<div class="gold-card p-3 text-center"><div class="text-xl font-bold">'+(userData.quizzes_completed||0)+'</div><div class="text-xs opacity-60">'+pt('games')+'</div></div>'
@@ -4662,6 +4707,8 @@ function endQuiz(){
   if(kidsMode&&/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$/.test(category)){
     try{var ks=JSON.parse(userData.kids_stars||'{}');if((ks[category]||0)<stars){ks[category]=stars;userData.kids_stars=JSON.stringify(ks);}}catch(e){}
     kidsCheckBadges();
+    // Répétition espacée : planifie la prochaine révision de cette compétence.
+    try{var kr=JSON.parse(userData.kids_review||'{}');var now=Date.now();kr[category]={s:stars,done:now,due:now+reviewInterval(stars)};userData.kids_review=JSON.stringify(kr);saveData(userData);}catch(e){}
   }
 
   // Quests
