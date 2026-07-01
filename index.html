@@ -4455,20 +4455,32 @@ function selectAnswer(answer,btn){
     }
   }
 
-  if(isTraining){showFact(q);return}
+  if(isTraining){showFact(q,answer===q.answer);return}
   setTimeout(()=>{current++;current<totalQ?showQuestion():endQuiz()},900);
 }
 
-function showFact(q){
+// Remédiation / correction intelligente : après chaque réponse, on explique.
+function showFact(q,ok){
   const card=document.getElementById('fact-card');
   const content=document.getElementById('fact-content');
-  let fact='';
+  const L=(typeof LESSONS!=='undefined')?LESSONS[category]:null;
+  const lAns=lang==='ar'?'الإجابة الصحيحة':lang==='en'?'Correct answer':'Bonne réponse';
+  const lRule=lang==='ar'?'تذكّر':lang==='en'?'Remember':'Rappel';
+  const lEx=lang==='ar'?'مثال':lang==='en'?'Example':'Exemple';
+  let html='';
   if(q.meta&&q.meta.flag){
     const ck='cap'+lang.charAt(0).toUpperCase()+lang.slice(1);
     const locMap=contNameMap[lang]||contNameMap.fr;
-    fact=q.meta.flag+' '+getName(q.meta)+' — Capital: '+(q.meta[ck]||q.meta.capFr)+' | '+locMap[q.meta.continent];
-  }else{fact='✓ '+q.answer}
-  content.textContent=fact;card.classList.remove('hidden');
+    html=q.meta.flag+' '+getName(q.meta)+' — '+(q.meta[ck]||q.meta.capFr)+' · '+locMap[q.meta.continent];
+  }else if(L&&(L.p||L.e)){
+    // Kids curriculum: show the correct answer + a rule reminder + an example (from the lesson).
+    html='<div class="font-bold" style="color:'+(ok?'#22c55e':'#f59e0b')+'">'+(ok?'✅ ':'💡 ')+lAns+' : '+q.answer+'</div>';
+    if(L.p&&L.p.length){html+='<div class="mt-2"><span style="color:var(--cyan)">📌 '+lRule+' :</span> '+L.p.slice(0,2).map(function(p){return p;}).join(' ')+'</div>';}
+    if(L.e&&L.e.length){html+='<div class="mt-1 opacity-80">'+lEx+' : '+L.e[0]+'</div>';}
+  }else{
+    html=(ok?'✅ ':'💡 ')+lAns+' : '+q.answer;
+  }
+  content.innerHTML=html;card.classList.remove('hidden');
 }
 function nextAfterFact(){
   document.getElementById('fact-card').classList.add('hidden');
