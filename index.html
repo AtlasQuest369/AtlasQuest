@@ -3333,7 +3333,7 @@ const DIFF={easy:{time:20,count:5},normal:{time:15,count:10},expert:{time:10,cou
 // ===== STATE =====
 let lang='fr',difficulty='easy',category='flags';
 let userData=null;
-let questions=[],current=0,score=0,streak=0,maxStreak=0,correctCount=0,timer=null,totalQ=10;
+let questions=[],current=0,score=0,streak=0,maxStreak=0,correctCount=0,timer=null,totalQ=10,recoveryAdded=0;
 let isDaily=false,isTraining=false,onboardStep=0,kidsMode=false;
 let duelPlayers={p1:'',p2:''},duelScores={p1:0,p2:0},duelCurrent=0;
 let quizStartTime=0;
@@ -4437,7 +4437,9 @@ function generateQuestions(){
     ['flags','capitals','monuments','history','continents'].forEach(c=>all.push(...generateForCat(c)));
     return shuffle(all).slice(0,totalQ);
   }
-  return generateForCat(category);
+  var qs=generateForCat(category);
+  totalQ=qs.length; // synchronise (le compte adaptatif du Mode Enfant peut différer de DIFF)
+  return qs;
 }
 
 // Drapeaux quasi identiques : ne jamais les proposer comme distracteurs l'un de l'autre
@@ -4513,7 +4515,7 @@ function startQuiz(daily=false){
     return;
   }
   questions=generateQuestions();
-  current=0;score=0;streak=0;maxStreak=0;correctCount=0;
+  current=0;score=0;streak=0;maxStreak=0;correctCount=0;recoveryAdded=0;
   quizStartTime=Date.now();
   xpBoostActive=userData&&userData.xp_boost_active;
   shieldActive=userData&&userData.shield_active;
@@ -4619,6 +4621,16 @@ function selectAnswer(answer,btn){
       playWrong();
       if(btn){btn.style.background='rgba(239,68,68,.35)';btn.classList.add('wrong-pulse')}
       if(answer!==null)showToast(`❌ ${t('toastAnswer')} ${q.answer}`,'red');
+      // Difficulté adaptative en temps réel : ajoute une question de renfort
+      // (« recovery question ») sur la même compétence, plafonnée à 3.
+      if(kidsMode&&answer!==null&&recoveryAdded<3&&/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$/.test(category)){
+        try{
+          var used={};questions.forEach(function(x){used[x.display]=1;});
+          var extra=(generateForCat(category)||[]).filter(function(x){return !used[x.display];})[0];
+          if(extra){questions.push(extra);totalQ=questions.length;recoveryAdded++;
+            var qc=document.getElementById('q-counter');if(qc)qc.textContent=(current+1)+'/'+totalQ;}
+        }catch(e){}
+      }
     }
   }
 
