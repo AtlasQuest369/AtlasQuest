@@ -460,6 +460,8 @@
     <button id="kids-dict-btn" onclick="startDictation()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="display:none;background:linear-gradient(135deg,rgba(0,229,255,.18),rgba(255,255,255,.04));border:1.5px solid rgba(0,229,255,.45)"><span class="text-xl">🎧</span><span class="font-bold text-sm" id="kids-dict-lbl">Dictée</span></button>
     <button id="kids-order-btn" onclick="startWordOrder()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(34,197,94,.18),rgba(255,255,255,.04));border:1.5px solid rgba(34,197,94,.45)"><span class="text-xl">🧩</span><span class="font-bold text-sm" id="kids-order-lbl">Phrases</span></button>
     <button id="kids-sort-btn" onclick="startSorting()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(255,215,0,.14),rgba(255,255,255,.04));border:1.5px solid rgba(255,215,0,.4)"><span class="text-xl">🗂️</span><span class="font-bold text-sm" id="kids-sort-lbl">Tri</span></button>
+    <button id="kids-tables-btn" onclick="toggleTablesGrid()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(244,114,182,.16),rgba(255,255,255,.04));border:1.5px solid rgba(244,114,182,.45)"><span class="text-xl">✖️</span><span class="font-bold text-sm" id="kids-tables-lbl">Tables</span></button>
+    <div id="kids-tables-grid" class="w-full grid grid-cols-4 gap-2" style="display:none"></div>
     <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')" id="kids-back">← Retour</button>
   </section>
 
@@ -3529,7 +3531,7 @@ var ROUTES={
 };
 // Registre de contenu Enfant : catégories du programme (matière_année_trimestre)
 // + dictées audio par langue. Source de vérité UNIQUE — ne jamais dupliquer.
-var KIDS_CAT_RE=/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$|^(dict|ord|sort)_(ar|fr|en)$/;
+var KIDS_CAT_RE=/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$|^(dict|ord|sort)_(ar|fr|en)$|^mult_t[2-9]$/;
 function isKidsCat(c){return KIDS_CAT_RE.test(c);}
 
 // ===== Tri & classement (Mode Enfant) : glisser chaque élément dans la
@@ -3575,6 +3577,26 @@ var SORT_BANKS={
 };
 function startSorting(){
   startKids('sort_'+(lang==='ar'?'ar':lang==='fr'?'fr':'en'));
+}
+// Grille des tables de multiplication (2 à 9) avec étoiles de maîtrise.
+function renderTablesGrid(){
+  var g=document.getElementById('kids-tables-grid');if(!g||!userData)return;
+  var ks={};try{ks=JSON.parse(userData.kids_stars||'{}');}catch(e){}
+  var h='';
+  for(var n=2;n<=9;n++){
+    var st=ks['mult_t'+n]||0;
+    h+='<button onclick="startKids(\'mult_t'+n+'\')" class="rounded-xl py-3 font-bold text-sm" style="background:rgba(255,255,255,.05);border:1.5px solid '+(st===3?'var(--gold)':'rgba(255,255,255,.18)')+'">'
+      +'<span style="direction:ltr;unicode-bidi:isolate">×'+n+'</span>'
+      +(st?'<div class="text-[10px]" style="color:var(--gold)">'+'★'.repeat(st)+'</div>':'')
+      +'</button>';
+  }
+  g.innerHTML=h;
+}
+function toggleTablesGrid(){
+  var g=document.getElementById('kids-tables-grid');if(!g)return;
+  var show=g.style.display==='none';
+  g.style.display=show?'':'none';
+  if(show)renderTablesGrid();
 }
 
 // ===== Construction de phrases (Mode Enfant) : remettre les mots dans
@@ -3729,6 +3751,13 @@ function openKids(){
     var sks={};try{sks=JSON.parse(userData.kids_stars||'{}');}catch(e){}
     var sst=sks[scat]||0;
     sb2.textContent=(lang==='ar'?'التصنيف':lang==='en'?'Sorting':'Tri')+(sst?' '+'⭐'.repeat(sst):'');
+  }
+  var tb=document.getElementById('kids-tables-lbl');
+  if(tb){
+    var tks={};try{tks=JSON.parse(userData.kids_stars||'{}');}catch(e){}
+    var mastered=0;for(var tn=2;tn<=9;tn++){if((tks['mult_t'+tn]||0)===3)mastered++;}
+    tb.textContent=(lang==='ar'?'جداول الضرب':lang==='en'?'Times tables':'Tables de ×')+(mastered?' '+mastered+'/8 ⭐':'');
+    renderTablesGrid();
   }
   kidsRenderSubjects();kidsSetSubj(kidsSubj);
 }
@@ -4925,6 +4954,19 @@ function generateForCat(cat){
       var sh=shuffle([...ws]),g=0;
       while(sh.join(' ')===s&&ws.length>1&&g<10){sh=shuffle([...ws]);g++;}
       return {display:s,type:'order',words:sh,answer:s,options:[]};
+    });
+  }
+  var multM=cat.match(/^mult_t([2-9])$/);
+  if(multM){
+    // Tables de multiplication : questions générées (variété infinie).
+    var mn=+multM[1];
+    return shuffle([1,2,3,4,5,6,7,8,9,10]).slice(0,Math.min(count,10)).map(function(b){
+      var ans=mn*b;
+      var seen={};seen[ans]=1;
+      var wrongs=[];
+      var cands=shuffle([ans+mn,ans-mn,ans+b,ans-b,ans+1,ans-1,ans+2,ans+10]);
+      for(var i=0;i<cands.length&&wrongs.length<3;i++){var c=cands[i];if(c>0&&!seen[c]){seen[c]=1;wrongs.push(c);}}
+      return {display:'⁦'+mn+' × '+b+' = ?⁩',type:'text',answer:String(ans),options:shuffle([String(ans)].concat(wrongs.map(String)))};
     });
   }
   var sortM=cat.match(/^sort_(ar|fr|en)$/);
