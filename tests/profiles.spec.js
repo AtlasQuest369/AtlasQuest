@@ -18,16 +18,20 @@ runSpec('profiles',async browser=>{
   assert(r1.n===1&&r1.active,'migration : 1 profil actif attendu');
   assert(r1.addBtn,'bouton « + Ajouter un enfant » absent');
 
-  // 2) Ajout d'un profil → reload → onboarding pour le nouveau
-  await page.evaluate(()=>{window.prompt=()=>'Yanis';profAdd();}).catch(()=>{}); // reload détruit le contexte
+  // 2) Ajout d'un profil avec tentative d'injection → reload → onboarding
+  //    Le prénom doit être assaini (SECURITY.md §5 : aucun <>&"' stocké).
+  await page.evaluate(()=>{window.prompt=()=>'<b>Yanis';profAdd();}).catch(()=>{});
   await page.waitForTimeout(800);
   const r2=await page.evaluate(()=>{
     const reg=JSON.parse(localStorage.getItem('aq_profiles'));
-    return {n:reg.list.length,name:reg.list[1].name,
+    const name=reg.list[1].name;
+    return {n:reg.list.length,name:name,
+      clean:!/[<>&"']/.test(name),
       onboarding:document.getElementById('view-onboarding').classList.contains('active')};
   });
   assert(r2.n===2,'2 profils attendus après ajout, obtenu '+r2.n);
-  assert(r2.name==='Yanis','nom du nouveau profil attendu « Yanis », obtenu '+r2.name);
+  assert(r2.clean,'le prénom du profil doit être assaini (aucun <>&"\' stocké) : '+r2.name);
+  assert(r2.name.indexOf('Yanis')>-1,'la partie inoffensive du prénom doit être conservée : '+r2.name);
   assert(r2.onboarding,"le nouveau profil doit démarrer sur l'onboarding");
 
   // 3) Le nouveau termine son onboarding, joue, puis retour au profil 1
