@@ -3578,7 +3578,26 @@ var SORT_BANKS={
 function startSorting(){
   startKids('sort_'+(lang==='ar'?'ar':lang==='fr'?'fr':'en'));
 }
-// Grille des tables de multiplication (2 à 9) avec étoiles de maîtrise.
+
+// Leçons des nouveaux exercices : la remédiation (showFact) affiche la
+// règle 📌 + l'exemple 💡 après chaque erreur (CONTENT-MODEL.md §7.5).
+LESSONS['dict_ar']={t:'الإملاء',i:'نستمع ونكتب بدون أخطاء.',p:['أنصت جيّدًا إلى كل حرف في الكلمة.','انتبه إلى التاء المربوطة (ة) والهاء (ه)، وإلى الذال (ذ) والزاي (ز).'],e:['مدرسة تنتهي بتاء مربوطة (ة)','ذئب تبدأ بالذال (ذ)']};
+LESSONS['dict_fr']={t:'Dictée',i:'On écoute et on écrit sans faute.',p:['Écoute bien chaque son du mot.','Attention aux accents (é, è, ê) et aux lettres doubles (ll, ss, mm).'],e:['« école » s’écrit avec un é','« toujours » se termine par un s']};
+LESSONS['dict_en']={t:'Dictation',i:'Listen and spell the word.',p:['Listen to every sound in the word.','Watch out for tricky letters and double letters (oo, ll, tt).'],e:['friend: i comes before e','school starts with sch']};
+LESSONS['ord_ar']={t:'ترتيب الجملة',i:'نرتّب الكلمات لنكوّن جملة مفيدة.',p:['الجملة الاسمية تبدأ بالمبتدأ ثم يأتي الخبر.','الجملة تنتهي بمعنى تامّ ومفيد.'],e:['القطةُ تشربُ الحليبَ']};
+LESSONS['ord_fr']={t:'Ordre des mots',i:'On remet les mots dans l’ordre.',p:['Une phrase commence par une majuscule.','Ordre habituel : sujet, puis verbe, puis complément.'],e:['Le chat (sujet) boit (verbe) du lait (complément)']};
+LESSONS['ord_en']={t:'Word order',i:'Put the words in the right order.',p:['A sentence starts with a capital letter.','Usual order: subject, then verb, then object.'],e:['The cat (subject) drinks (verb) milk (object)']};
+LESSONS['sort_ar']={t:'التصنيف',i:'نضع كل كلمة في مجموعتها.',p:['ابحث عن الصفة المشتركة بين الكلمات.','كل كلمة توضع في مجموعة واحدة فقط.'],e:['القط حيوان، والوردة نبات']};
+LESSONS['sort_fr']={t:'Le tri',i:'On range chaque mot dans sa famille.',p:['Cherche le point commun entre les mots.','Chaque mot ne va que dans une seule boîte.'],e:['Le chat est un animal, la rose est une plante']};
+LESSONS['sort_en']={t:'Sorting',i:'Put each word in its group.',p:['Look for what the words have in common.','Each word goes in only one box.'],e:['A cat is an animal, a rose is a plant']};
+(function(){
+  // Leçon symbolique universelle (lisible dans les 3 langues).
+  for(var n=2;n<=9;n++){
+    LESSONS['mult_t'+n]={t:'×'+n,i:'',
+      p:['⁦×'+n+'⁩ = ⁦+'+n+'⁩ ⁦+'+n+'⁩ ⁦+'+n+'⁩ …','⁦a × b = b × a⁩'],
+      e:['⁦'+n+' × 2 = '+(n*2)+'⁩ · ⁦'+n+' × 5 = '+(n*5)+'⁩ · ⁦'+n+' × 10 = '+(n*10)+'⁩']};
+  }
+})();
 function renderTablesGrid(){
   var g=document.getElementById('kids-tables-grid');if(!g||!userData)return;
   var ks={};try{ks=JSON.parse(userData.kids_stars||'{}');}catch(e){}

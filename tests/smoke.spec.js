@@ -23,12 +23,16 @@ runSpec('smoke',async browser=>{
   const arch=await page.evaluate(()=>{
     const ids=[...document.querySelectorAll('[id^="view-"]')].map(e=>e.id)
       .filter(id=>/^view-[a-z]+$/.test(id));
+    const newCats=['dict_ar','dict_fr','dict_en','ord_ar','ord_fr','ord_en',
+      'sort_ar','sort_fr','sort_en','mult_t2','mult_t5','mult_t9'];
     return {
       missing:ids.filter(id=>!(id in ROUTES)).join(','),
-      kidsOk:isKidsCat('sci_s1_t1')&&isKidsCat('math_s5_t3')&&!isKidsCat('capitals')&&!isKidsCat('sci_s6_t1')
+      kidsOk:isKidsCat('sci_s1_t1')&&isKidsCat('math_s5_t3')&&!isKidsCat('capitals')&&!isKidsCat('sci_s6_t1'),
+      lessons:newCats.filter(c=>!(LESSONS[c]&&LESSONS[c].p&&LESSONS[c].p.length&&LESSONS[c].e&&LESSONS[c].e.length)).join(',')
     };
   });
   assert(arch.missing==='','vues absentes de ROUTES : '+arch.missing);
   assert(arch.kidsOk,'isKidsCat ne classe pas correctement les catégories');
+  assert(arch.lessons==='','exercices sans leçon de remédiation : '+arch.lessons);
   assert(errors.length===0,'erreurs de page au boot : '+errors.join(' | '));
 });
