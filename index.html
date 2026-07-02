@@ -458,6 +458,7 @@
     </div>
     <button id="kids-review-btn" onclick="openReview()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="display:none;background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(255,255,255,.04));border:1.5px solid rgba(167,139,250,.55)"><span class="text-xl">🔁</span><span class="font-bold text-sm" id="kids-review-lbl">Révision</span></button>
     <button id="kids-dict-btn" onclick="startDictation()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="display:none;background:linear-gradient(135deg,rgba(0,229,255,.18),rgba(255,255,255,.04));border:1.5px solid rgba(0,229,255,.45)"><span class="text-xl">🎧</span><span class="font-bold text-sm" id="kids-dict-lbl">Dictée</span></button>
+    <button id="kids-order-btn" onclick="startWordOrder()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(34,197,94,.18),rgba(255,255,255,.04));border:1.5px solid rgba(34,197,94,.45)"><span class="text-xl">🧩</span><span class="font-bold text-sm" id="kids-order-lbl">Phrases</span></button>
     <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')" id="kids-back">← Retour</button>
   </section>
 
@@ -3527,8 +3528,59 @@ var ROUTES={
 };
 // Registre de contenu Enfant : catégories du programme (matière_année_trimestre)
 // + dictées audio par langue. Source de vérité UNIQUE — ne jamais dupliquer.
-var KIDS_CAT_RE=/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$|^dict_(ar|fr|en)$/;
+var KIDS_CAT_RE=/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$|^(dict|ord)_(ar|fr|en)$/;
 function isKidsCat(c){return KIDS_CAT_RE.test(c);}
+
+// ===== Construction de phrases (Mode Enfant) : remettre les mots dans
+// l'ordre en tapant les étiquettes (tap-to-build). Phrases simples de
+// niveau primaire, structure sujet-verbe-complément.
+var ORDER_BANKS={
+  ar:[
+    'القطة تشرب الحليب',
+    'الولد يقرأ الكتاب',
+    'الشمس تشرق في الصباح',
+    'أمي تطبخ الطعام',
+    'التلميذ يكتب الدرس',
+    'العصفور يطير في السماء',
+    'أبي يعمل في المزرعة',
+    'البنت تلعب في الحديقة',
+    'المعلم يشرح الدرس',
+    'القمر يظهر في الليل',
+    'الفلاح يزرع القمح',
+    'السمكة تسبح في الماء'
+  ],
+  fr:[
+    'Le chat boit du lait',
+    'Maman prépare le dîner',
+    'Le soleil brille dans le ciel',
+    'Les enfants jouent au ballon',
+    'Je vais à l’école le matin',
+    'L’oiseau chante sur la branche',
+    'Papa lit son journal',
+    'La fille écrit une lettre',
+    'Nous mangeons des pommes',
+    'Le maître explique la leçon',
+    'Il pleut sur la ville',
+    'Mon frère range sa chambre'
+  ],
+  en:[
+    'The cat drinks milk',
+    'The sun shines in the sky',
+    'I go to school every day',
+    'My mother cooks dinner',
+    'The bird sings in the tree',
+    'We play football after school',
+    'The teacher reads a story',
+    'My father works on the farm',
+    'The girl writes a letter',
+    'The moon shines at night',
+    'The fish swims in the water',
+    'I brush my teeth every morning'
+  ]
+};
+function startWordOrder(){
+  startKids('ord_'+(lang==='ar'?'ar':lang==='fr'?'fr':'en'));
+}
 
 // ===== Dictée audio (Mode Enfant) : entendre le mot, choisir la bonne
 // orthographe parmi des graphies fautives plausibles. TTS locale, 0 réseau.
@@ -3617,6 +3669,13 @@ function openKids(){
       var dst=dks[dcat]||0;
       document.getElementById('kids-dict-lbl').textContent=(lang==='ar'?'الإملاء':lang==='en'?'Dictation':'Dictée')+(dst?' '+'⭐'.repeat(dst):'');
     }else{db.style.display='none';}
+  }
+  var ob=document.getElementById('kids-order-lbl');
+  if(ob){
+    var ocat='ord_'+(lang==='ar'?'ar':lang==='fr'?'fr':'en');
+    var oks={};try{oks=JSON.parse(userData.kids_stars||'{}');}catch(e){}
+    var ost=oks[ocat]||0;
+    ob.textContent=(lang==='ar'?'ترتيب الجمل':lang==='en'?'Sentences':'Phrases')+(ost?' '+'⭐'.repeat(ost):'');
   }
   kidsRenderSubjects();kidsSetSubj(kidsSubj);
 }
@@ -4805,6 +4864,16 @@ function generateForCat(cat){
       return {display:'🔊',type:'audio',word:e[0],answer:e[0],options:shuffle([e[0]].concat(e[1]))};
     });
   }
+  var ordM=cat.match(/^ord_(ar|fr|en)$/);
+  if(ordM){
+    var obank=ORDER_BANKS[ordM[1]]||[];
+    return shuffle([...obank]).slice(0,Math.min(count,obank.length)).map(function(s){
+      var ws=s.split(' ');
+      var sh=shuffle([...ws]),g=0;
+      while(sh.join(' ')===s&&ws.length>1&&g<10){sh=shuffle([...ws]);g++;}
+      return {display:s,type:'order',words:sh,answer:s,options:[]};
+    });
+  }
   const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q,kids_3_5:KIDS_3_5,kids_6_8:KIDS_6_8,kids_9_12:KIDS_9_12,kids_lang_fr:KIDS_LANG_FR,kids_lang_ar:KIDS_LANG_AR,kids_lang_en:KIDS_LANG_EN,ar_s1_t1:AR_S1_T1,ar_s1_t2:AR_S1_T2,ar_s1_t3:AR_S1_T3,ar_s2_t1:AR_S2T1,ar_s2_t2:AR_S2T2,ar_s2_t3:AR_S2T3,ar_s3_t1:AR_S3T1,ar_s3_t2:AR_S3T2,ar_s3_t3:AR_S3T3,ar_s4_t1:AR_S4T1,ar_s4_t2:AR_S4T2,ar_s4_t3:AR_S4T3,math_s1_t1:MATH_S1T1,math_s1_t2:MATH_S1T2,math_s1_t3:MATH_S1T3,math_s2_t1:MATH_S2T1,math_s2_t2:MATH_S2T2,math_s2_t3:MATH_S2T3,math_s3_t1:MATH_S3T1,math_s3_t2:MATH_S3T2,math_s3_t3:MATH_S3T3,math_s4_t1:MATH_S4T1,math_s4_t2:MATH_S4T2,math_s4_t3:MATH_S4T3,sci_s1_t1:SCI_S1_T1,sci_s1_t2:SCI_S1_T2,sci_s1_t3:SCI_S1_T3,sci_s2_t1:SCI_S2_T1,sci_s2_t2:SCI_S2_T2,sci_s2_t3:SCI_S2_T3,sci_s3_t1:SCI_S3_T1,sci_s3_t2:SCI_S3_T2,sci_s3_t3:SCI_S3_T3,sci_s4_t1:SCI_S4_T1,sci_s4_t2:SCI_S4_T2,sci_s4_t3:SCI_S4_T3,fr_s1_t1:FR_S1_T1,fr_s1_t2:FR_S1_T2,fr_s1_t3:FR_S1_T3,fr_s2_t1:FR_S2_T1,fr_s2_t2:FR_S2_T2,fr_s2_t3:FR_S2_T3,fr_s3_t1:FR_S3_T1,fr_s3_t2:FR_S3_T2,fr_s3_t3:FR_S3_T3,fr_s4_t1:FR_S4_T1,fr_s4_t2:FR_S4_T2,fr_s4_t3:FR_S4_T3,en_s1_t1:EN_S1_T1,en_s1_t2:EN_S1_T2,en_s1_t3:EN_S1_T3,en_s2_t1:EN_S2_T1,en_s2_t2:EN_S2_T2,en_s2_t3:EN_S2_T3,en_s3_t1:EN_S3_T1,en_s3_t2:EN_S3_T2,en_s3_t3:EN_S3_T3,en_s4_t1:EN_S4_T1,en_s4_t2:EN_S4_T2,en_s4_t3:EN_S4_T3,islam_s1_t1:ISLAM_S1_T1,islam_s1_t2:ISLAM_S1_T2,islam_s1_t3:ISLAM_S1_T3,islam_s2_t1:ISLAM_S2_T1,islam_s2_t2:ISLAM_S2_T2,islam_s2_t3:ISLAM_S2_T3,islam_s3_t1:ISLAM_S3_T1,islam_s3_t2:ISLAM_S3_T2,islam_s3_t3:ISLAM_S3_T3,islam_s4_t1:ISLAM_S4_T1,islam_s4_t2:ISLAM_S4_T2,islam_s4_t3:ISLAM_S4_T3,civic_s1_t1:CIVIC_S1_T1,civic_s1_t2:CIVIC_S1_T2,civic_s1_t3:CIVIC_S1_T3,civic_s2_t1:CIVIC_S2_T1,civic_s2_t2:CIVIC_S2_T2,civic_s2_t3:CIVIC_S2_T3,civic_s3_t1:CIVIC_S3_T1,civic_s3_t2:CIVIC_S3_T2,civic_s3_t3:CIVIC_S3_T3,civic_s4_t1:CIVIC_S4_T1,civic_s4_t2:CIVIC_S4_T2,civic_s4_t3:CIVIC_S4_T3,hist_s1_t1:HIST_S1_T1,hist_s1_t2:HIST_S1_T2,hist_s1_t3:HIST_S1_T3,hist_s2_t1:HIST_S2_T1,hist_s2_t2:HIST_S2_T2,hist_s2_t3:HIST_S2_T3,hist_s3_t1:HIST_S3_T1,hist_s3_t2:HIST_S3_T2,hist_s3_t3:HIST_S3_T3,hist_s4_t1:HIST_S4_T1,hist_s4_t2:HIST_S4_T2,hist_s4_t3:HIST_S4_T3,geo_s1_t1:GEO_S1_T1,geo_s1_t2:GEO_S1_T2,geo_s1_t3:GEO_S1_T3,geo_s2_t1:GEO_S2_T1,geo_s2_t2:GEO_S2_T2,geo_s2_t3:GEO_S2_T3,geo_s3_t1:GEO_S3_T1,geo_s3_t2:GEO_S3_T2,geo_s3_t3:GEO_S3_T3,geo_s4_t1:GEO_S4_T1,geo_s4_t2:GEO_S4_T2,geo_s4_t3:GEO_S4_T3,ar_s5_t1:AR_S5_T1,ar_s5_t2:AR_S5_T2,ar_s5_t3:AR_S5_T3,math_s5_t1:MATH_S5_T1,math_s5_t2:MATH_S5_T2,math_s5_t3:MATH_S5_T3,sci_s5_t1:SCI_S5_T1,sci_s5_t2:SCI_S5_T2,sci_s5_t3:SCI_S5_T3,islam_s5_t1:ISLAM_S5_T1,islam_s5_t2:ISLAM_S5_T2,islam_s5_t3:ISLAM_S5_T3,civic_s5_t1:CIVIC_S5_T1,civic_s5_t2:CIVIC_S5_T2,civic_s5_t3:CIVIC_S5_T3,hist_s5_t1:HIST_S5_T1,hist_s5_t2:HIST_S5_T2,hist_s5_t3:HIST_S5_T3,geo_s5_t1:GEO_S5_T1,geo_s5_t2:GEO_S5_T2,geo_s5_t3:GEO_S5_T3,fr_s5_t1:FR_S5_T1,fr_s5_t2:FR_S5_T2,fr_s5_t3:FR_S5_T3,en_s5_t1:EN_S5_T1,en_s5_t2:EN_S5_T2,en_s5_t3:EN_S5_T3};
   const baseBank=BANKS[cat]||HISTORY;
   const bank=(typeof TF!=='undefined'&&TF[cat])?baseBank.concat(TF[cat]):baseBank;
@@ -4837,9 +4906,9 @@ function startQuiz(daily=false){
 function ttsSupported(){return typeof window!=='undefined'&&'speechSynthesis'in window;}
 function ttsClean(s){return String(s).replace(/[⁦⁩‎‏]/g,'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}←-⇿⬀-⯿️⃣]/gu,'').replace(/\s+/g,' ').trim();}
 function ttsLangCode(){
-  if(/^ar_s|^math_s/.test(category)||category==='kids_lang_ar'||category==='dict_ar')return 'ar';
-  if(category==='kids_lang_fr'||category==='dict_fr')return 'fr';
-  if(category==='kids_lang_en'||category==='dict_en')return 'en';
+  if(/^ar_s|^math_s/.test(category)||category==='kids_lang_ar'||/^(dict|ord)_ar$/.test(category))return 'ar';
+  if(category==='kids_lang_fr'||/^(dict|ord)_fr$/.test(category))return 'fr';
+  if(category==='kids_lang_en'||/^(dict|ord)_en$/.test(category))return 'en';
   return lang==='ar'?'ar':lang==='fr'?'fr':'en';
 }
 function speakText(text,code){
@@ -4872,6 +4941,12 @@ function showQuestion(){
     flagEl.classList.remove('hidden');textEl.classList.add('hidden');
     flagEl.innerHTML='<button onclick="speakQuestion()" aria-label="écouter" class="rounded-full" style="font-size:52px;line-height:1;width:104px;height:104px;background:rgba(0,229,255,.12);border:2px solid rgba(0,229,255,.45)">🔊</button>';
     setTimeout(speakQuestion,350);
+  }else if(q.type==='order'){
+    // Construction de phrase : consigne + zone où la phrase se construit.
+    flagEl.classList.remove('hidden');textEl.classList.add('hidden');
+    ordBuilt=[];
+    flagEl.innerHTML='<div class="text-xs opacity-60 mb-2">'+(lang==='ar'?'رتّب الكلمات لتكوين جملة':lang==='en'?'Put the words in order':'Remets les mots dans l’ordre')+'</div>'
+      +'<div id="ord-built" class="font-bold text-lg" style="min-height:34px">…</div>';
   }else{
     flagEl.classList.add('hidden');textEl.classList.remove('hidden');textEl.textContent=q.display;
   }
@@ -4880,6 +4955,26 @@ function showQuestion(){
   document.getElementById('q-streak').textContent='🔥 '+streak;
   const opts=document.getElementById('options');
   opts.innerHTML='';
+  if(q.type==='order'){
+    // Étiquettes de mots (tap-to-build) + bouton recommencer.
+    opts.style.gridTemplateColumns='1fr 1fr';
+    q.words.forEach(w=>{
+      const chip=document.createElement('button');
+      chip.textContent=w;
+      chip.className='py-3 px-4 rounded-xl font-bold text-sm text-white transition-all';
+      chip.style.cssText='background:rgba(0,229,255,.10);border:1.5px solid rgba(0,229,255,.4)';
+      chip.onclick=function(){ordPick(w,chip);};
+      opts.appendChild(chip);
+    });
+    const rst=document.createElement('button');
+    rst.textContent='↺';
+    rst.className='py-2 px-4 rounded-xl text-sm';
+    rst.style.cssText='background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);grid-column:1/-1';
+    rst.onclick=ordReset;
+    opts.appendChild(rst);
+    if(!isTraining)startTimer();
+    return;
+  }
   const twoOpt=q.options.length===2;
   opts.style.gridTemplateColumns=twoOpt?'1fr 1fr':'';
   q.options.forEach(o=>{
@@ -4896,6 +4991,24 @@ function showQuestion(){
   if(!isTraining)startTimer();
 }
 
+// État de la question « ordre des mots » : mots déjà posés.
+var ordBuilt=[];
+function ordPick(w,btn){
+  var q=questions[current];if(!q||q.type!=='order')return;
+  if(btn){btn.disabled=true;btn.style.opacity=.3;}
+  ordBuilt.push(w);
+  var el=document.getElementById('ord-built');if(el)el.textContent=ordBuilt.join(' ');
+  if(ordBuilt.length===q.words.length){
+    var s=ordBuilt.join(' ');
+    setTimeout(function(){selectAnswer(s===q.answer?q.answer:s,null);},250);
+  }
+}
+function ordReset(){
+  var q=questions[current];if(!q||q.type!=='order'||ordBuilt.length===q.words.length)return;
+  ordBuilt=[];
+  var el=document.getElementById('ord-built');if(el)el.textContent='…';
+  document.getElementById('options').querySelectorAll('button').forEach(function(b){b.disabled=false;b.style.opacity=1;});
+}
 function startTimer(){
   const time=DIFF[difficulty].time;
   let left=time;
