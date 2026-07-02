@@ -3900,7 +3900,7 @@ function resetChildProgress(){
 // Renseigner CLOUD.url + CLOUD.key après création du projet (voir docs/BACKEND-SETUP.md).
 // Tant que CLOUD est vide : aucune requête réseau, l'app reste 100% hors-ligne.
 // Accès confiné à l'Espace Parent (protégé par PIN) — jamais depuis le Mode Enfant.
-var CLOUD={url:'',key:''};
+var CLOUD={url:'https://xgbmjijpmdbgnemybdws.supabase.co',key:''};
 function cloudEnabled(){return !!(CLOUD.url&&CLOUD.key);}
 function cloudCode(){
   if(!userData)return null;
