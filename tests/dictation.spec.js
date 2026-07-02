@@ -11,8 +11,16 @@ runSpec('dictation',async browser=>{
     // Le registre de contenu doit classer les dictées côté Enfant
     const reg=isKidsCat('dict_fr')&&isKidsCat('dict_ar')&&isKidsCat('dict_en')&&!isKidsCat('dict_de');
     // Chaque banque : ≥ 10 mots, 3 graphies fautives distinctes du mot
-    const banksOk=['ar','fr','en'].every(l=>DICT_BANKS[l].length>=10&&
-      DICT_BANKS[l].every(e=>e[1].length===3&&e[1].every(b=>b!==e[0])));
+    const banksOk=['ar','fr','en'].every(l=>{
+      const bank=DICT_BANKS[l];
+      const words=bank.map(e=>e[0]);
+      const noDupWord=new Set(words).size===words.length;
+      const entriesOk=bank.every(e=>{
+        const opts=[e[0]].concat(e[1]);
+        return e[1].length===3&&new Set(opts).size===4; // mot + 3 fautes, tous distincts
+      });
+      return bank.length>=10&&noDupWord&&entriesOk;
+    });
     startDictation(); // interface FR par défaut → dict_fr
     const quiz=document.getElementById('view-quiz').classList.contains('active');
     const q=questions[0];
