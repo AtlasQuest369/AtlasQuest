@@ -31,20 +31,27 @@ runSpec('parent',async browser=>{
   });
   assert(locked===false,"un mauvais PIN ne doit pas ouvrir l'Espace Parent");
 
-  // Bon PIN + contenu du tableau de bord
+  // Bon PIN + contenu du tableau de bord (avec ateliers)
   const dash=await page.evaluate(()=>{
+    const ks=JSON.parse(userData.kids_stars||'{}');
+    ks['dict_fr']=2;ks['mult_t3']=3;ks['mult_t7']=3;
+    userData.kids_stars=JSON.stringify(ks);saveData(userData);
     document.getElementById('pin-input').value='1234';
     submitParentPin();
     const h=document.getElementById('parent-content').innerHTML;
     return {
       open:document.getElementById('view-parent').classList.contains('active'),
       share:h.indexOf('shareParentReport')>-1,
-      cloud:h.indexOf('cloudSave()')>-1
+      cloud:h.indexOf('cloudSave()')>-1,
+      dictStars:h.indexOf('★★☆')>-1,
+      tables:h.indexOf('2/8')>-1
     };
   });
   assert(dash.open,"le bon PIN doit ouvrir l'Espace Parent");
   assert(dash.share,'bouton de partage du bulletin absent');
   assert(dash.cloud,'section ☁️ cloud absente du tableau de bord');
+  assert(dash.dictStars,'les étoiles de la dictée (★★☆) doivent apparaître dans les ateliers');
+  assert(dash.tables,'le compteur de tables maîtrisées (2/8) doit apparaître');
 
   // Sauvegarde cloud (backend simulé)
   await page.evaluate(()=>cloudSave());

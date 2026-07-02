@@ -4064,6 +4064,7 @@ var PT={
   games:{fr:'Quiz complétés',en:'Quizzes done',ar:'اختبارات مُنجزة'},
   lastSeen:{fr:'Dernière activité',en:'Last active',ar:'آخر نشاط'},
   safe:{fr:'✅ Mode Enfant sans publicité ni lien externe',en:'✅ Kids Mode: no ads, no external links',ar:'✅ وضع الطفل: بلا إعلانات ولا روابط خارجية'},
+  workshops:{fr:'Ateliers',en:'Workshops',ar:'الورشات'},
   reset:{fr:'Réinitialiser la progression',en:'Reset progress',ar:'إعادة تعيين التقدّم'},
   resetOk:{fr:'Progression réinitialisée',en:'Progress reset',ar:'تمّت إعادة التعيين'},
   share:{fr:'📤 Partager le bulletin',en:'📤 Share report',ar:'📤 مشاركة البطاقة'},
@@ -4111,6 +4112,19 @@ function submitParentPin(){
   if(parentHash(v)===userData.parent_pin){closeModal('modal-parent-pin');switchView('view-parent');}
   else{document.getElementById('pin-msg').textContent=pt('pinWrong');document.getElementById('pin-input').value='';}
 }
+// Progression des ateliers (dictée, phrases, tri, tables) pour le parent.
+function kidsWorkshops(){
+  var ks={};try{ks=JSON.parse(userData.kids_stars||'{}');}catch(e){}
+  var L2=lang==='ar'?'ar':lang==='fr'?'fr':'en';
+  function stars(k){var s=ks[k]||0;return '★'.repeat(s)+'☆'.repeat(3-s);}
+  var mastered=0;for(var n=2;n<=9;n++)if((ks['mult_t'+n]||0)===3)mastered++;
+  return [
+    {ic:'🎧',n:{fr:'Dictée',en:'Dictation',ar:'الإملاء'},v:stars('dict_'+L2)},
+    {ic:'🧩',n:{fr:'Phrases',en:'Sentences',ar:'ترتيب الجمل'},v:stars('ord_'+L2)},
+    {ic:'🗂️',n:{fr:'Tri',en:'Sorting',ar:'التصنيف'},v:stars('sort_'+L2)},
+    {ic:'✖️',n:{fr:'Tables',en:'Times tables',ar:'جداول الضرب'},v:mastered+'/8'}
+  ];
+}
 function renderParentDashboard(){
   if(!userData)return;
   document.getElementById('parent-title').textContent=pt('title');
@@ -4127,6 +4141,8 @@ function renderParentDashboard(){
     +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+pt('weak')+'</h3>'
     +'<div class="w-full flex flex-wrap gap-2">'+weak+'</div>'
     +((typeof kidsDueList==='function'&&kidsDueList().length)?'<div class="w-full text-sm mt-1" style="color:#a78bfa">🔁 '+kidsDueList().length+' '+(lang==='ar'?'كفاءة للمراجعة':lang==='en'?'to review':'à revoir')+'</div>':'')
+    +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+pt('workshops')+'</h3>'
+    +'<div class="w-full flex flex-wrap gap-2">'+kidsWorkshops().map(function(w){return '<span class="text-xs px-2 py-1 rounded-full" style="background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.35)">'+w.ic+' '+(w.n[lang]||w.n.fr)+' · <span style="color:var(--gold)">'+w.v+'</span></span>';}).join(' ')+'</div>'
     +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+pt('activity')+'</h3>'
     +'<div class="w-full grid grid-cols-2 gap-2">'
       +'<div class="gold-card p-3 text-center"><div class="text-xl font-bold">'+(userData.quizzes_completed||0)+'</div><div class="text-xs opacity-60">'+pt('games')+'</div></div>'
@@ -4142,6 +4158,7 @@ function shareParentReport(){
   if(!userData)return;
   var core=KIDS_SUBJECTS_BY_LANG.ar;
   var lines=core.map(function(s){var got=kidsSubjStars(s.key),max=kidsSubjMaxYear(s.key)*9,pct=max?Math.round(got/max*100):0;return (s.name[lang]||s.name.fr)+' : '+pct+'%';});
+  if(typeof kidsWorkshops==='function'){lines=lines.concat(kidsWorkshops().map(function(w){return w.ic+' '+(w.n[lang]||w.n.fr)+' : '+w.v;}));}
   var head=pt('reportTitle');
   var stats=pt('games')+' : '+(userData.quizzes_completed||0)+' · 🔥 '+(userData.best_streak||0);
   var url='https://atlasquest369.github.io/AtlasQuest';
