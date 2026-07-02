@@ -3829,6 +3829,13 @@ var PT={
   cloudAskCode:{fr:'Entrez le code famille',en:'Enter the family code',ar:'أدخل رمز العائلة'},
   cloudLast:{fr:'Dernière sauvegarde',en:'Last backup',ar:'آخر نسخة'},
   cloudAuto:{fr:'Sauvegarde automatique après chaque quiz',en:'Auto-backup after each quiz',ar:'نسخ احتياطي تلقائي بعد كل اختبار'},
+  profiles:{fr:'👨‍👩‍👧‍👦 Profils enfants',en:'👨‍👩‍👧‍👦 Child profiles',ar:'👨‍👩‍👧‍👦 ملفات الأطفال'},
+  profAdd:{fr:'+ Ajouter un enfant',en:'+ Add a child',ar:'+ إضافة طفل'},
+  profName:{fr:'Prénom de l’enfant',en:'Child’s first name',ar:'اسم الطفل'},
+  profDefault:{fr:'Enfant',en:'Child',ar:'طفل'},
+  profActive:{fr:'actif',en:'active',ar:'نشط'},
+  profDel:{fr:'Supprimer ce profil',en:'Delete this profile',ar:'حذف هذا الملف'},
+  profDelOk:{fr:'Profil supprimé',en:'Profile deleted',ar:'تم حذف الملف'},
   cloudAutoOn:{fr:'Sauvegarde automatique activée',en:'Auto-backup enabled',ar:'تم تفعيل النسخ التلقائي'},
   cloudAutoOff:{fr:'Sauvegarde automatique désactivée',en:'Auto-backup disabled',ar:'تم إيقاف النسخ التلقائي'},
   none:{fr:'Aucune activité',en:'No activity yet',ar:'لا نشاط بعد'}
@@ -3863,6 +3870,7 @@ function renderParentDashboard(){
   var weak=rows.slice().sort(function(a,b){return a.pct-b.pct;}).slice(0,3).map(function(r){return '<span class="text-xs px-2 py-1 rounded-full" style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);color:#f59e0b">'+r.icon+' '+r.name+' · '+r.pct+'%</span>';}).join(' ');
   var last=userData.last_played?new Date(userData.last_played).toLocaleDateString():pt('none');
   document.getElementById('parent-content').innerHTML=''
+    +((typeof profSectionHTML==='function')?profSectionHTML():'')
     +'<h3 class="w-full font-bold text-sm opacity-70 mt-2">'+pt('overview')+'</h3>'
     +'<div class="w-full flex flex-col gap-2">'+overview+'</div>'
     +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+pt('weak')+'</h3>'
@@ -3979,6 +3987,69 @@ function cloudAutoKick(){
       .then(function(r){if(r.ok){userData.cloud_last=Date.now();saveData(userData);}})
       .catch(function(){});
   },8000);
+}
+
+// ===== Profils multi-enfants (Espace Parent) =====
+// Registre localStorage 'aq_profiles' : {list:[{id,name}],active:id}.
+// La donnée du profil ACTIF vit sous SK (tout le code existant reste
+// inchangé) ; les profils inactifs sont rangés sous 'aq_p_<id>' (chaîne
+// enc() brute, copiée telle quelle). La bascule recharge l'application.
+var PROF_REG='aq_profiles',PROF_MAX=6;
+function profGet(){try{var r=JSON.parse(localStorage.getItem(PROF_REG));if(r&&r.list&&r.list.length&&r.active)return r;}catch(e){}return null;}
+function profSaveReg(r){try{localStorage.setItem(PROF_REG,JSON.stringify(r));}catch(e){}}
+function profNewId(){return 'p'+Date.now().toString(36)+Math.floor(Math.random()*1e6).toString(36);}
+function profEnsure(){
+  var r=profGet();
+  if(!r&&userData){
+    var p={id:profNewId(),name:pt('profDefault')+' 1'};
+    r={list:[p],active:p.id};
+    profSaveReg(r);
+  }
+  return r;
+}
+function profSwitch(id){
+  var r=profGet();if(!r||id===r.active)return;
+  if(!r.list.some(function(p){return p.id===id;}))return;
+  try{
+    if(userData)saveData(userData);
+    var cur=localStorage.getItem(SK);
+    if(cur!==null)localStorage.setItem('aq_p_'+r.active,cur);
+    var next=localStorage.getItem('aq_p_'+id);
+    if(next!==null)localStorage.setItem(SK,next);else localStorage.removeItem(SK);
+    r.active=id;profSaveReg(r);
+    location.reload(); // reboote sur le profil choisi (onboarding si nouveau)
+  }catch(e){}
+}
+function profAdd(){
+  var r=profEnsure();if(!r||r.list.length>=PROF_MAX)return;
+  var name=((typeof prompt==='function'?prompt(pt('profName')):'')||'').replace(/[<>&"']/g,'').trim().slice(0,20);
+  if(!name)return;
+  var p={id:profNewId(),name:name};
+  r.list.push(p);profSaveReg(r);
+  profSwitch(p.id);
+}
+function profRemove(id){
+  var r=profGet();if(!r||id===r.active)return; // jamais le profil actif
+  if(typeof confirm==='function'&&!confirm(pt('profDel')+' ?'))return;
+  r.list=r.list.filter(function(p){return p.id!==id;});
+  profSaveReg(r);
+  try{localStorage.removeItem('aq_p_'+id);}catch(e){}
+  renderParentDashboard();
+  if(typeof showToast==='function')showToast(pt('profDelOk'),'gold');
+}
+function profSectionHTML(){
+  var r=profEnsure();if(!r)return '';
+  var rows=r.list.map(function(p){
+    var act=p.id===r.active;
+    return '<div class="flex items-center gap-2 rounded-xl p-2" style="background:rgba(255,255,255,.05);border:1px solid '+(act?'rgba(255,215,0,.45)':'rgba(255,255,255,.1)')+'">'
+      +'<button onclick="profSwitch(\''+p.id+'\')" class="flex-1 text-sm font-bold" style="text-align:start">'+(act?'⭐ ':'')+p.name+(act?' <span class="text-xs opacity-60">('+pt('profActive')+')</span>':'')+'</button>'
+      +(act?'':'<button onclick="profRemove(\''+p.id+'\')" class="text-xs opacity-50 px-2">✕</button>')
+      +'</div>';
+  }).join('');
+  return '<h3 class="w-full font-bold text-sm opacity-70 mt-2">'+pt('profiles')+'</h3>'
+    +'<div class="w-full flex flex-col gap-2">'+rows
+    +(r.list.length<PROF_MAX?'<button onclick="profAdd()" class="w-full rounded-xl p-2 text-sm font-bold" style="background:rgba(255,255,255,.05);border:1px dashed rgba(255,255,255,.25)">'+pt('profAdd')+'</button>':'')
+    +'</div>';
 }
 
 // ===== Lesson (mini-cours, ANTON/Khan-inspired): explain, then practice =====
