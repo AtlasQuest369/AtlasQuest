@@ -6,6 +6,24 @@ on:
     branches: [main]
 
 jobs:
+  secrets:
+    name: Scan anti-secrets (SECURITY.md §6)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Aucune clé secrète ne doit être committée
+        run: |
+          # Un vrai secret vivrait dans le code applicatif embarqué (html/js/json).
+          # Seule la clé publiable Supabase (sb_publishable_) est autorisée.
+          # Les docs (*.md) et ce workflow citent ces motifs à dessein → exclus.
+          if grep -rEn 'sb_secret_[A-Za-z0-9]|"service_role"|BEGIN [A-Z ]*PRIVATE KEY' \
+               --include='*.html' --include='*.js' --include='*.json' . ; then
+            echo '::error::Secret potentiel détecté (service_role / sb_secret_ / clé privée).'
+            exit 1
+          fi
+          echo 'OK : aucun secret détecté.'
+
   e2e:
     name: Harnais e2e hors-ligne (npm test)
     runs-on: ubuntu-latest

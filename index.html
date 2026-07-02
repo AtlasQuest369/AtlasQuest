@@ -4067,6 +4067,7 @@ var PT={
   pinCreate:{fr:'Créez un code parent (4 chiffres)',en:'Create a parent PIN (4 digits)',ar:'أنشئ رمز الوليّ (4 أرقام)'},
   pinEnter:{fr:'Entrez le code parent',en:'Enter the parent PIN',ar:'أدخل رمز الوليّ'},
   pinWrong:{fr:'Code incorrect',en:'Wrong PIN',ar:'الرمز خاطئ'},
+  pinLocked:{fr:'Trop d’essais — réessayez dans {s} s',en:'Too many tries — wait {s} s',ar:'محاولات كثيرة — انتظر {s} ث'},
   validate:{fr:'Valider',en:'Confirm',ar:'تأكيد'},
   overview:{fr:'Progression de l’enfant',en:'Child progress',ar:'تقدّم الطفل'},
   weak:{fr:'Points à renforcer',en:'Areas to improve',ar:'نقاط للتحسين'},
@@ -4103,8 +4104,28 @@ var PT={
   none:{fr:'Aucune activité',en:'No activity yet',ar:'لا نشاط بعد'}
 };
 function pt(k){return (PT[k]&&(PT[k][lang]||PT[k].fr))||k;}
-function parentHash(s){var h=5381,i;for(i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))>>>0;}return 'p'+h;}
-var pinMode='verify';
+// ===== PIN parent — SHA-256 salé (WebCrypto) avec repli et migration douce =====
+// Ancien hash djb2 (préfixe 'p') conservé pour vérifier les PIN existants ;
+// dès la 1re bonne saisie, on ré-enregistre en SHA-256 (préfixe 's').
+function parentHashLegacy(s){var h=5381,i;for(i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))>>>0;}return 'p'+h;}
+function parentHash(pin){
+  try{
+    if(window.crypto&&crypto.subtle&&window.TextEncoder){
+      var data=new TextEncoder().encode('atlasquest$'+pin);
+      return crypto.subtle.digest('SHA-256',data).then(function(buf){
+        var b=new Uint8Array(buf),h='';for(var i=0;i<b.length;i++)h+=('0'+b[i].toString(16)).slice(-2);
+        return 's'+h;
+      });
+    }
+  }catch(e){}
+  return Promise.resolve(parentHashLegacy(pin)); // repli (contexte non sécurisé)
+}
+function parentVerify(pin,stored){
+  if(!stored)return Promise.resolve(false);
+  if(stored.charAt(0)==='p')return Promise.resolve(parentHashLegacy(pin)===stored);
+  return parentHash(pin).then(function(h){return h===stored;});
+}
+var pinMode='verify',pinFails=0,pinLockUntil=0;
 function openParent(){
   if(!userData)return;
   pinMode=userData.parent_pin?'verify':'create';
@@ -4116,11 +4137,29 @@ function openParent(){
   setTimeout(function(){var i=document.getElementById('pin-input');if(i)i.focus();},120);
 }
 function submitParentPin(){
+  var msg=document.getElementById('pin-msg');
+  // Verrouillage progressif : après 3 échecs, délai croissant anti-essais.
+  var wait=Math.ceil((pinLockUntil-Date.now())/1000);
+  if(wait>0){msg.textContent=pt('pinLocked').replace('{s}',wait);return Promise.resolve(false);}
   var v=((document.getElementById('pin-input').value)||'').trim();
-  if(!/^\d{4}$/.test(v)){document.getElementById('pin-msg').textContent=pt('pinCreate');return;}
-  if(pinMode==='create'){userData.parent_pin=parentHash(v);saveData(userData);closeModal('modal-parent-pin');switchView('view-parent');return;}
-  if(parentHash(v)===userData.parent_pin){closeModal('modal-parent-pin');switchView('view-parent');}
-  else{document.getElementById('pin-msg').textContent=pt('pinWrong');document.getElementById('pin-input').value='';}
+  if(!/^\d{4}$/.test(v)){msg.textContent=pt('pinCreate');return Promise.resolve(false);}
+  if(pinMode==='create'){
+    return parentHash(v).then(function(h){
+      userData.parent_pin=h;saveData(userData);pinFails=0;
+      closeModal('modal-parent-pin');switchView('view-parent');return true;
+    });
+  }
+  return parentVerify(v,userData.parent_pin).then(function(ok){
+    if(ok){
+      pinFails=0;
+      // Migration douce : re-hache en SHA-256 si l'ancien format est encore stocké.
+      if((userData.parent_pin||'').charAt(0)==='p'){parentHash(v).then(function(h){userData.parent_pin=h;saveData(userData);});}
+      closeModal('modal-parent-pin');switchView('view-parent');return true;
+    }
+    pinFails++;
+    if(pinFails>=3)pinLockUntil=Date.now()+(pinFails-2)*5000;
+    msg.textContent=pt('pinWrong');document.getElementById('pin-input').value='';return false;
+  });
 }
 // Progression des ateliers (dictée, phrases, tri, tables) pour le parent.
 function kidsWorkshops(){
