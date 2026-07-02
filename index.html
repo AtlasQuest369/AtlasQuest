@@ -74,6 +74,13 @@
     .confetti{position:fixed;pointer-events:none;animation:confetti-fall 2.5s ease-out forwards;z-index:9999}
     .glow-active{animation:glow-gold 2s ease-in-out infinite}
 
+    /* ACCESSIBILITÉ : réduire le mouvement (DESIGN-SYSTEM.md §5) */
+    @media (prefers-reduced-motion:reduce){
+      .confetti,.glow-active,.correct-pulse,.wrong-pulse,#result-mascot,.fade-up,#result-stars span{animation:none!important}
+      .timer-bar{transition:none}
+      *{scroll-behavior:auto!important}
+    }
+
     /* TIMER */
     .timer-bar{transition:width linear}
 
@@ -3507,8 +3514,22 @@ function switchView(id){
   if(id==='view-parent')renderParentDashboard();
   updateAdVisibility(id);
 }
+// ===== Table de routes : mode propriétaire de chaque vue (ARCHITECTURE.md §4) =====
+var ROUTES={
+  'view-onboarding':'adult','view-dashboard':'adult','view-categories':'adult',
+  'view-quiz':'adult','view-results':'adult','view-leaderboard':'adult',
+  'view-quests':'adult','view-shop':'adult','view-profile':'adult',
+  'view-puzzle':'adult','view-worldmap':'adult','view-legal':'adult',
+  'view-kids':'child','view-lesson':'child','view-match':'child',
+  'view-kidsreport':'child','view-review':'child',
+  'view-parent':'parent'
+};
+// Registre de contenu Enfant : catégories du programme (matière_année_trimestre).
+// Source de vérité UNIQUE — ne jamais dupliquer ce motif ailleurs.
+var KIDS_CAT_RE=/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$/;
+function isKidsCat(c){return KIDS_CAT_RE.test(c);}
 // Mode Enfant = jardin clos : aucune publicité dans les vues enfant/parent.
-function isChildView(id){return id==='view-kids'||id==='view-lesson'||id==='view-match'||id==='view-kidsreport'||id==='view-review'||id==='view-parent';}
+function isChildView(id){return ROUTES[id]==='child'||ROUTES[id]==='parent';}
 function updateAdVisibility(id){
   var child=isChildView(id)||(id==='view-quiz'&&kidsMode);
   if(child){var b=document.getElementById('ad-banner');if(b)b.classList.add('hidden');if(typeof adTimer!=='undefined')clearInterval(adTimer);}
@@ -3536,7 +3557,7 @@ function kidsUpdateLangUI(){
 }
 function startKids(cat){
   kidsMode=true;category=cat;difficulty='easy';
-  if(typeof kidsCompState==='function'&&/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$/.test(cat)){
+  if(typeof kidsCompState==='function'&&isKidsCat(cat)){
     var st=kidsCompState(cat);
     if(st==='mastered')showToast(lang==='ar'?'🏆 تحدّي التثبيت':lang==='en'?'🏆 Consolidation challenge':'🏆 Défi de consolidation','gold',1800);
     else if(st==='review')showToast(lang==='ar'?'🔁 حصّة مراجعة':lang==='en'?'🔁 Review session':'🔁 Séance de révision','gold',1800);
@@ -4666,7 +4687,7 @@ function kidsAdaptiveCount(cat){
 }
 function generateForCat(cat){
   let count=DIFF[difficulty].count;
-  if(kidsMode&&/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$/.test(cat)){
+  if(kidsMode&&isKidsCat(cat)){
     count=kidsAdaptiveCount(cat);
   }
   if(cat==='flags'){
@@ -4833,7 +4854,7 @@ function selectAnswer(answer,btn){
       if(answer!==null)showToast(`❌ ${t('toastAnswer')} ${q.answer}`,'red');
       // Difficulté adaptative en temps réel : ajoute une question de renfort
       // (« recovery question ») sur la même compétence, plafonnée à 3.
-      if(kidsMode&&answer!==null&&recoveryAdded<3&&/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$/.test(category)){
+      if(kidsMode&&answer!==null&&recoveryAdded<3&&isKidsCat(category)){
         try{
           var used={};questions.forEach(function(x){used[x.display]=1;});
           var extra=(generateForCat(category)||[]).filter(function(x){return !used[x.display];})[0];
@@ -4945,7 +4966,7 @@ function endQuiz(){
   userData.category_stats=JSON.stringify(stats);
 
   // Kids mastery stars (best per trimester) — progress path (Lalilo/Duolingo)
-  if(kidsMode&&/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$/.test(category)){
+  if(kidsMode&&isKidsCat(category)){
     try{var ks=JSON.parse(userData.kids_stars||'{}');if((ks[category]||0)<stars){ks[category]=stars;userData.kids_stars=JSON.stringify(ks);}}catch(e){}
     kidsCheckBadges();
     // Répétition espacée : planifie la prochaine révision de cette compétence.
@@ -5236,6 +5257,7 @@ function renderBadges(){
 
 // ===== CONFETTI =====
 function triggerConfetti(){
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const items=['🎉','✨','🌟','💫','🎊','💎','⭐'];
   for(let i=0;i<25;i++){
     const c=document.createElement('div');
