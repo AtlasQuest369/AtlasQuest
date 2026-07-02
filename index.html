@@ -3558,7 +3558,10 @@ var SORT_BANKS={
     {t:'صنّف',c:[{n:'المدرسة',i:['قلم','كراس','محفظة']},{n:'المطبخ',i:['قدر','ملعقة','صحن']}]},
     {t:'صنّف',c:[{n:'النهار',i:['شمس','عمل','فطور']},{n:'الليل',i:['قمر','نجوم','نوم']}]},
     {t:'صنّف',c:[{n:'حار',i:['نار','شاي ساخن','صحراء']},{n:'بارد',i:['ثلج','مثلجات','ثلاجة']}]},
-    {t:'صنّف',c:[{n:'نقل برّي',i:['سيارة','حافلة','دراجة']},{n:'نقل بحري',i:['سفينة','قارب','غواصة']}]}
+    {t:'صنّف',c:[{n:'نقل برّي',i:['سيارة','حافلة','دراجة']},{n:'نقل بحري',i:['سفينة','قارب','غواصة']}]},
+    {t:'صنّف',c:[{n:'أعداد زوجية',i:['٢','٤','٦']},{n:'أعداد فردية',i:['١','٣','٥']}]},
+    {t:'صنّف',c:[{n:'كبير',i:['فيل','جبل','حوت']},{n:'صغير',i:['نملة','فأر','نحلة']}]},
+    {t:'صنّف',c:[{n:'ملابس',i:['قميص','حذاء','قبعة']},{n:'أدوات',i:['مطرقة','مقص','مفتاح']}]}
   ],
   fr:[
     {t:'Classe les mots',c:[{n:'Animaux',i:['chat','cheval','oiseau']},{n:'Plantes',i:['rose','arbre','palmier']}]},
@@ -3570,7 +3573,10 @@ var SORT_BANKS={
     {t:'Classe les mots',c:[{n:'École',i:['le stylo','le cahier','le cartable']},{n:'Cuisine',i:['la casserole','la cuillère','l’assiette']}]},
     {t:'Classe les mots',c:[{n:'Le jour',i:['le soleil','l’école','le déjeuner']},{n:'La nuit',i:['la lune','les étoiles','le sommeil']}]},
     {t:'Classe les mots',c:[{n:'Chaud',i:['le feu','le thé','le désert']},{n:'Froid',i:['la glace','la neige','le réfrigérateur']}]},
-    {t:'Classe les mots',c:[{n:'Sur terre',i:['la voiture','le bus','le vélo']},{n:'Sur mer',i:['le bateau','la barque','le sous-marin']}]}
+    {t:'Classe les mots',c:[{n:'Sur terre',i:['la voiture','le bus','le vélo']},{n:'Sur mer',i:['le bateau','la barque','le sous-marin']}]},
+    {t:'Classe les nombres',c:[{n:'Pairs',i:['2','4','6']},{n:'Impairs',i:['1','3','5']}]},
+    {t:'Classe les mots',c:[{n:'Grand',i:['éléphant','montagne','baleine']},{n:'Petit',i:['fourmi','souris','abeille']}]},
+    {t:'Classe les mots',c:[{n:'Vêtements',i:['chemise','chaussure','chapeau']},{n:'Outils',i:['marteau','ciseaux','clé']}]}
   ],
   en:[
     {t:'Sort the words',c:[{n:'Animals',i:['cat','horse','bird']},{n:'Plants',i:['rose','tree','palm']}]},
@@ -3582,7 +3588,10 @@ var SORT_BANKS={
     {t:'Sort the words',c:[{n:'Day',i:['sun','school','lunch']},{n:'Night',i:['moon','stars','sleep']}]},
     {t:'Sort the words',c:[{n:'Hot',i:['fire','tea','desert']},{n:'Cold',i:['ice','snow','fridge']}]},
     {t:'Sort the words',c:[{n:'On land',i:['car','bus','bike']},{n:'On sea',i:['ship','boat','submarine']}]},
-    {t:'Sort the words',c:[{n:'Big',i:['elephant','whale','mountain']},{n:'Small',i:['ant','bee','mouse']}]}
+    {t:'Sort the words',c:[{n:'Big',i:['elephant','whale','mountain']},{n:'Small',i:['ant','bee','mouse']}]},
+    {t:'Sort the numbers',c:[{n:'Even',i:['2','4','6']},{n:'Odd',i:['1','3','5']}]},
+    {t:'Sort the words',c:[{n:'Clothes',i:['shirt','shoe','hat']},{n:'Tools',i:['hammer','scissors','key']}]},
+    {t:'Sort the words',c:[{n:'Sky',i:['cloud','star','moon']},{n:'Ground',i:['grass','stone','sand']}]}
   ]
 };
 function startSorting(){
@@ -3644,7 +3653,11 @@ var ORDER_BANKS={
     'المعلم يشرح الدرس',
     'القمر يظهر في الليل',
     'الفلاح يزرع القمح',
-    'السمكة تسبح في الماء'
+    'السمكة تسبح في الماء',
+    'الطبيب يعالج المريض',
+    'الأطفال يلعبون في الساحة',
+    'الطائر يبني عشه',
+    'الجدة تروي الحكاية'
   ],
   fr:[
     'Le chat boit du lait',
@@ -3658,7 +3671,11 @@ var ORDER_BANKS={
     'Nous mangeons des pommes',
     'Le maître explique la leçon',
     'Il pleut sur la ville',
-    'Mon frère range sa chambre'
+    'Mon frère range sa chambre',
+    'Le médecin soigne le malade',
+    'Les enfants jouent dans la cour',
+    'La grand-mère raconte une histoire',
+    'Le boulanger prépare le pain'
   ],
   en:[
     'The cat drinks milk',
@@ -3672,7 +3689,11 @@ var ORDER_BANKS={
     'The girl writes a letter',
     'The moon shines at night',
     'The fish swims in the water',
-    'I brush my teeth every morning'
+    'I brush my teeth every morning',
+    'The doctor helps the sick man',
+    'The children play in the yard',
+    'The baker makes fresh bread',
+    'My grandmother tells a story'
   ]
 };
 function startWordOrder(){
@@ -3697,7 +3718,17 @@ var DICT_BANKS={
     ['مكتبة',['مكتبه','مقتبة','مكطبة']],
     ['نافذة',['نافدة','نافذه','نافظة']],
     ['قمر',['كمر','غمر','قمار']],
-    ['ثعلب',['تعلب','ثألب','سعلب']]
+    ['ثعلب',['تعلب','ثألب','سعلب']],
+    ['وردة',['ورده','وردت','ورذة']],
+    ['حصان',['حسان','هصان','حصن']],
+    ['سيارة',['سياره','صيارة','سيارت']],
+    ['تفاحة',['تفاحه','طفاحة','تفحة']],
+    ['قلم',['كلم','غلم','قلن']],
+    ['بحر',['بحل','بهر','بحغ']],
+    ['شجرة',['شجره','سجرة','شجرت']],
+    ['غابة',['غابه','قابة','غابت']],
+    ['حليب',['حليپ','هليب','خليب']],
+    ['بيت',['بيط','بايت','بئت']]
   ],
   fr:[
     ['maison',['maizon','méson','maisson']],
@@ -3714,7 +3745,17 @@ var DICT_BANKS={
     ['soleil',['soleille','solei','solail']],
     ['histoire',['istoire','histoir','histoirre']],
     ['oiseau',['oizeau','oisau','oyseau']],
-    ['montagne',['montagn','montane','monttagne']]
+    ['montagne',['montagn','montane','monttagne']],
+    ['heureux',['hureux','heureu','heureus']],
+    ['éléphant',['élephant','éléfant','elephant']],
+    ['papillon',['papion','papiyon','papillion']],
+    ['orange',['oronge','orenge','oranje']],
+    ['vendredi',['vandredi','venredi','vendredit']],
+    ['nuage',['nouage','nuaje','nuague']],
+    ['rouge',['rouje','rooge','rougue']],
+    ['bibliothèque',['bibliothéque','bibliotèque','bibliothèk']],
+    ['printemps',['printant','printemp','preintemps']],
+    ['voiture',['voitture','voature','voitur']]
   ],
   en:[
     ['because',['becuase','becouse','becaus']],
@@ -3731,7 +3772,17 @@ var DICT_BANKS={
     ['people',['peaple','peopel','pepole']],
     ['animal',['animall','anmial','animel']],
     ['beautiful',['beutiful','beautifull','beatiful']],
-    ['window',['windo','wendow','winddow']]
+    ['window',['windo','wendow','winddow']],
+    ['orange',['orang','orenge','ornge']],
+    ['garden',['gardin','gaden','gardenn']],
+    ['brother',['broter','brohter','brotherr']],
+    ['picture',['pikture','pitcure','piccture']],
+    ['together',['togeter','togather','togeather']],
+    ['elephant',['elefant','eliphant','ellephant']],
+    ['tomorrow',['tommorow','tomorow','tomorrrow']],
+    ['favourite',['favorite','favourit','favuorite']],
+    ['knife',['nife','knive','knifee']],
+    ['winter',['winer','wintter','wintar']]
   ]
 };
 function startDictation(){
