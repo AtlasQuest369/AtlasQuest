@@ -34,5 +34,18 @@ runSpec('smoke',async browser=>{
   assert(arch.missing==='','vues absentes de ROUTES : '+arch.missing);
   assert(arch.kidsOk,'isKidsCat ne classe pas correctement les catégories');
   assert(arch.lessons==='','exercices sans leçon de remédiation : '+arch.lessons);
+
+  // 4) Version de schéma : posée à l'onboarding, restaurée par migration au boot
+  const mig=await page.evaluate(()=>{
+    finishOnboard();
+    const v1=userData.v===1;
+    delete userData.v;saveData(userData); // simule une donnée d'avant la v1
+    return v1;
+  });
+  assert(mig,"userData.v doit être posé à l'onboarding");
+  await page.reload();
+  await page.waitForTimeout(400);
+  const mig2=await page.evaluate(()=>!!(userData&&userData.v===1));
+  assert(mig2,'migrateUserData doit restaurer userData.v au boot');
   assert(errors.length===0,'erreurs de page au boot : '+errors.join(' | '));
 });

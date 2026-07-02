@@ -874,6 +874,16 @@ function enc(d){try{return btoa(unescape(encodeURIComponent(JSON.stringify(d))))
 function dec(s){if(!s)return null;try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch(e){try{return JSON.parse(s)}catch(e2){return null}}}
 function loadData(){try{return dec(localStorage.getItem(SK))}catch(e){return null}}
 function saveData(d){try{localStorage.setItem(SK,enc(d))}catch(e){}}
+// ===== Migrations de schéma userData — additives uniquement (GOVERNANCE.md §1) =====
+var USERDATA_V=1;
+function migrateUserData(d){
+  if(!d)return d;
+  var dirty=false;
+  if(!d.v){d.v=1;dirty=true;}
+  // futures migrations : if(d.v<2){ … ; d.v=2; dirty=true; }
+  if(dirty){try{saveData(d);}catch(e){}}
+  return d;
+}
 
 // ===== AUDIO =====
 let audioCtx;
@@ -4218,7 +4228,7 @@ function cloudRestore(){
     .then(function(data){
       if(!data||typeof data!=='object'||Array.isArray(data)){showToast(pt('cloudNotFound'),'red');return;}
       data.cloud_code=code;data.cloud_last=Date.now();
-      userData=data;saveData(userData);
+      userData=migrateUserData(data);saveData(userData);
       if(typeof updateStatsDisplay==='function')updateStatsDisplay();
       if(typeof updateGemsBadge==='function')updateGemsBadge();
       renderParentDashboard();
@@ -4803,6 +4813,7 @@ function nextOnboard(){
 function finishOnboard(){
   const today=new Date().toDateString();
   userData={
+    v:USERDATA_V,
     total_xp:0,quizzes_completed:0,correct_answers:0,total_answers:0,
     current_streak:0,best_streak:0,last_played:'',preferred_language:lang,
     badges_earned:'',level:1,daily_completed_date:'',onboarding_done:true,
@@ -5736,7 +5747,7 @@ function showLegal(page){
 
 // ===== INIT =====
 function init(){
-  userData=loadData();
+  userData=migrateUserData(loadData());
   if(userData&&userData.preferred_language)lang=userData.preferred_language;
   document.documentElement.lang=lang;
   document.body.setAttribute('lang',lang);

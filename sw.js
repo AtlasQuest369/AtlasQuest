@@ -1,4 +1,6 @@
-const CACHE_NAME = 'atlasquest-v5';
+// Bump ce numéro à chaque release notable : l'ancien cache est purgé à
+// l'activation et la nouvelle version arrive dès la réouverture (QA-RELEASE §5).
+const CACHE_NAME = 'atlasquest-v6';
 const ASSETS = [
   './',
   './index.html',
