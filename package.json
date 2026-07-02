@@ -1,0 +1,11 @@
+{
+  "name": "atlasquest",
+  "private": true,
+  "description": "AtlasQuest — plateforme éducative familiale hors-ligne (harnais de tests)",
+  "scripts": {
+    "test": "node tests/run.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}
