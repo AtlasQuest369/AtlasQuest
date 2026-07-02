@@ -1,0 +1,23 @@
+name: tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  e2e:
+    name: Harnais e2e hors-ligne (npm test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Installer les dépendances
+        run: npm install --no-audit --no-fund
+      - name: Installer Chromium (Playwright)
+        run: npx playwright install --with-deps chromium
+      - name: Lancer le harnais
+        run: npm test
