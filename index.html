@@ -457,6 +457,7 @@
       <button onclick="openKidsReport()" class="cat-card rounded-xl py-3 flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,255,255,.04));border:1.5px solid rgba(255,215,0,.45)"><span class="text-xl">📊</span><span class="font-bold text-sm" id="kids-report-btn">Mon bulletin</span></button>
     </div>
     <button id="kids-review-btn" onclick="openReview()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="display:none;background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(255,255,255,.04));border:1.5px solid rgba(167,139,250,.55)"><span class="text-xl">🔁</span><span class="font-bold text-sm" id="kids-review-lbl">Révision</span></button>
+    <button id="kids-dict-btn" onclick="startDictation()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="display:none;background:linear-gradient(135deg,rgba(0,229,255,.18),rgba(255,255,255,.04));border:1.5px solid rgba(0,229,255,.45)"><span class="text-xl">🎧</span><span class="font-bold text-sm" id="kids-dict-lbl">Dictée</span></button>
     <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')" id="kids-back">← Retour</button>
   </section>
 
@@ -3524,10 +3525,69 @@ var ROUTES={
   'view-kidsreport':'child','view-review':'child',
   'view-parent':'parent'
 };
-// Registre de contenu Enfant : catégories du programme (matière_année_trimestre).
-// Source de vérité UNIQUE — ne jamais dupliquer ce motif ailleurs.
-var KIDS_CAT_RE=/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$/;
+// Registre de contenu Enfant : catégories du programme (matière_année_trimestre)
+// + dictées audio par langue. Source de vérité UNIQUE — ne jamais dupliquer.
+var KIDS_CAT_RE=/^(ar|math|sci|fr|en|islam|civic|hist|geo)_s[1-5]_t[1-3]$|^dict_(ar|fr|en)$/;
 function isKidsCat(c){return KIDS_CAT_RE.test(c);}
+
+// ===== Dictée audio (Mode Enfant) : entendre le mot, choisir la bonne
+// orthographe parmi des graphies fautives plausibles. TTS locale, 0 réseau.
+var DICT_BANKS={
+  ar:[
+    ['مدرسة',['مدرسه','مضرسة','مدرصة']],
+    ['حقيبة',['حقيبه','هقيبة','حكيبة']],
+    ['شمس',['شمص','سمش','شمث']],
+    ['كتاب',['كتب','قتاب','كطاب']],
+    ['سماء',['سماع','صماء','سمعء']],
+    ['طاولة',['طاوله','تاولة','طاولت']],
+    ['ذئب',['زئب','ذعب','دئب']],
+    ['ظرف',['ضرف','زرف','ظهرف']],
+    ['مسجد',['مصجد','مسجيد','مسجط']],
+    ['هدية',['هديه','حدية','هضية']],
+    ['عصفور',['عسفور','أصفور','عصفر']],
+    ['مكتبة',['مكتبه','مقتبة','مكطبة']],
+    ['نافذة',['نافدة','نافذه','نافظة']],
+    ['قمر',['كمر','غمر','قمار']],
+    ['ثعلب',['تعلب','ثألب','سعلب']]
+  ],
+  fr:[
+    ['maison',['maizon','méson','maisson']],
+    ['école',['écolle','éccole','écol']],
+    ['garçon',['garcon','garsson','garçont']],
+    ['famille',['famile','famiye','fammille']],
+    ['toujours',['toujour','tougours','toujoure']],
+    ['beaucoup',['beaucou','bocoup','baucoup']],
+    ['fenêtre',['fenetre','feunêtre','fenêttre']],
+    ['chocolat',['chocola','chokolat','choccolat']],
+    ['dimanche',['dimenche','dimanch','dimannche']],
+    ['jardin',['jardain','gardin','jardan']],
+    ['cahier',['cayer','cahié','cahyer']],
+    ['soleil',['soleille','solei','solail']],
+    ['histoire',['istoire','histoir','histoirre']],
+    ['oiseau',['oizeau','oisau','oyseau']],
+    ['montagne',['montagn','montane','monttagne']]
+  ],
+  en:[
+    ['because',['becuase','becouse','becaus']],
+    ['school',['scool','shcool','schol']],
+    ['friend',['freind','frend','frined']],
+    ['water',['watter','woter','watr']],
+    ['happy',['hapy','happie','happi']],
+    ['house',['hous','howse','huose']],
+    ['morning',['morrning','mornning','morening']],
+    ['teacher',['teatcher','techer','teecher']],
+    ['family',['familly','famely','famaly']],
+    ['yellow',['yelow','yellouw','yello']],
+    ['little',['littel','litle','littl']],
+    ['people',['peaple','peopel','pepole']],
+    ['animal',['animall','anmial','animel']],
+    ['beautiful',['beutiful','beautifull','beatiful']],
+    ['window',['windo','wendow','winddow']]
+  ]
+};
+function startDictation(){
+  startKids('dict_'+(lang==='ar'?'ar':lang==='fr'?'fr':'en'));
+}
 // Mode Enfant = jardin clos : aucune publicité dans les vues enfant/parent.
 function isChildView(id){return ROUTES[id]==='child'||ROUTES[id]==='parent';}
 function updateAdVisibility(id){
@@ -3548,6 +3608,16 @@ function openKids(){
   var due=(typeof kidsDueList==='function')?kidsDueList():[];
   var rb=document.getElementById('kids-review-btn');
   if(rb){if(due.length){rb.style.display='';document.getElementById('kids-review-lbl').textContent=(lang==='ar'?'المراجعة':lang==='en'?'Review':'Révision')+' ('+due.length+')';}else{rb.style.display='none';}}
+  var db=document.getElementById('kids-dict-btn');
+  if(db){
+    if(typeof ttsSupported==='function'&&ttsSupported()){
+      db.style.display='';
+      var dcat='dict_'+(lang==='ar'?'ar':lang==='fr'?'fr':'en');
+      var dks={};try{dks=JSON.parse(userData.kids_stars||'{}');}catch(e){}
+      var dst=dks[dcat]||0;
+      document.getElementById('kids-dict-lbl').textContent=(lang==='ar'?'الإملاء':lang==='en'?'Dictation':'Dictée')+(dst?' '+'⭐'.repeat(dst):'');
+    }else{db.style.display='none';}
+  }
   kidsRenderSubjects();kidsSetSubj(kidsSubj);
 }
 // Hide the Arabic-language items in the FR/EN versions of the app.
@@ -4728,6 +4798,13 @@ function generateForCat(cat){
       return{display:getName(q),type:'text',answer:locMap[correct],options:opts,meta:q}
     });
   }
+  var dictM=cat.match(/^dict_(ar|fr|en)$/);
+  if(dictM){
+    var dbank=DICT_BANKS[dictM[1]]||[];
+    return shuffle([...dbank]).slice(0,Math.min(count,dbank.length)).map(function(e){
+      return {display:'🔊',type:'audio',word:e[0],answer:e[0],options:shuffle([e[0]].concat(e[1]))};
+    });
+  }
   const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q,kids_3_5:KIDS_3_5,kids_6_8:KIDS_6_8,kids_9_12:KIDS_9_12,kids_lang_fr:KIDS_LANG_FR,kids_lang_ar:KIDS_LANG_AR,kids_lang_en:KIDS_LANG_EN,ar_s1_t1:AR_S1_T1,ar_s1_t2:AR_S1_T2,ar_s1_t3:AR_S1_T3,ar_s2_t1:AR_S2T1,ar_s2_t2:AR_S2T2,ar_s2_t3:AR_S2T3,ar_s3_t1:AR_S3T1,ar_s3_t2:AR_S3T2,ar_s3_t3:AR_S3T3,ar_s4_t1:AR_S4T1,ar_s4_t2:AR_S4T2,ar_s4_t3:AR_S4T3,math_s1_t1:MATH_S1T1,math_s1_t2:MATH_S1T2,math_s1_t3:MATH_S1T3,math_s2_t1:MATH_S2T1,math_s2_t2:MATH_S2T2,math_s2_t3:MATH_S2T3,math_s3_t1:MATH_S3T1,math_s3_t2:MATH_S3T2,math_s3_t3:MATH_S3T3,math_s4_t1:MATH_S4T1,math_s4_t2:MATH_S4T2,math_s4_t3:MATH_S4T3,sci_s1_t1:SCI_S1_T1,sci_s1_t2:SCI_S1_T2,sci_s1_t3:SCI_S1_T3,sci_s2_t1:SCI_S2_T1,sci_s2_t2:SCI_S2_T2,sci_s2_t3:SCI_S2_T3,sci_s3_t1:SCI_S3_T1,sci_s3_t2:SCI_S3_T2,sci_s3_t3:SCI_S3_T3,sci_s4_t1:SCI_S4_T1,sci_s4_t2:SCI_S4_T2,sci_s4_t3:SCI_S4_T3,fr_s1_t1:FR_S1_T1,fr_s1_t2:FR_S1_T2,fr_s1_t3:FR_S1_T3,fr_s2_t1:FR_S2_T1,fr_s2_t2:FR_S2_T2,fr_s2_t3:FR_S2_T3,fr_s3_t1:FR_S3_T1,fr_s3_t2:FR_S3_T2,fr_s3_t3:FR_S3_T3,fr_s4_t1:FR_S4_T1,fr_s4_t2:FR_S4_T2,fr_s4_t3:FR_S4_T3,en_s1_t1:EN_S1_T1,en_s1_t2:EN_S1_T2,en_s1_t3:EN_S1_T3,en_s2_t1:EN_S2_T1,en_s2_t2:EN_S2_T2,en_s2_t3:EN_S2_T3,en_s3_t1:EN_S3_T1,en_s3_t2:EN_S3_T2,en_s3_t3:EN_S3_T3,en_s4_t1:EN_S4_T1,en_s4_t2:EN_S4_T2,en_s4_t3:EN_S4_T3,islam_s1_t1:ISLAM_S1_T1,islam_s1_t2:ISLAM_S1_T2,islam_s1_t3:ISLAM_S1_T3,islam_s2_t1:ISLAM_S2_T1,islam_s2_t2:ISLAM_S2_T2,islam_s2_t3:ISLAM_S2_T3,islam_s3_t1:ISLAM_S3_T1,islam_s3_t2:ISLAM_S3_T2,islam_s3_t3:ISLAM_S3_T3,islam_s4_t1:ISLAM_S4_T1,islam_s4_t2:ISLAM_S4_T2,islam_s4_t3:ISLAM_S4_T3,civic_s1_t1:CIVIC_S1_T1,civic_s1_t2:CIVIC_S1_T2,civic_s1_t3:CIVIC_S1_T3,civic_s2_t1:CIVIC_S2_T1,civic_s2_t2:CIVIC_S2_T2,civic_s2_t3:CIVIC_S2_T3,civic_s3_t1:CIVIC_S3_T1,civic_s3_t2:CIVIC_S3_T2,civic_s3_t3:CIVIC_S3_T3,civic_s4_t1:CIVIC_S4_T1,civic_s4_t2:CIVIC_S4_T2,civic_s4_t3:CIVIC_S4_T3,hist_s1_t1:HIST_S1_T1,hist_s1_t2:HIST_S1_T2,hist_s1_t3:HIST_S1_T3,hist_s2_t1:HIST_S2_T1,hist_s2_t2:HIST_S2_T2,hist_s2_t3:HIST_S2_T3,hist_s3_t1:HIST_S3_T1,hist_s3_t2:HIST_S3_T2,hist_s3_t3:HIST_S3_T3,hist_s4_t1:HIST_S4_T1,hist_s4_t2:HIST_S4_T2,hist_s4_t3:HIST_S4_T3,geo_s1_t1:GEO_S1_T1,geo_s1_t2:GEO_S1_T2,geo_s1_t3:GEO_S1_T3,geo_s2_t1:GEO_S2_T1,geo_s2_t2:GEO_S2_T2,geo_s2_t3:GEO_S2_T3,geo_s3_t1:GEO_S3_T1,geo_s3_t2:GEO_S3_T2,geo_s3_t3:GEO_S3_T3,geo_s4_t1:GEO_S4_T1,geo_s4_t2:GEO_S4_T2,geo_s4_t3:GEO_S4_T3,ar_s5_t1:AR_S5_T1,ar_s5_t2:AR_S5_T2,ar_s5_t3:AR_S5_T3,math_s5_t1:MATH_S5_T1,math_s5_t2:MATH_S5_T2,math_s5_t3:MATH_S5_T3,sci_s5_t1:SCI_S5_T1,sci_s5_t2:SCI_S5_T2,sci_s5_t3:SCI_S5_T3,islam_s5_t1:ISLAM_S5_T1,islam_s5_t2:ISLAM_S5_T2,islam_s5_t3:ISLAM_S5_T3,civic_s5_t1:CIVIC_S5_T1,civic_s5_t2:CIVIC_S5_T2,civic_s5_t3:CIVIC_S5_T3,hist_s5_t1:HIST_S5_T1,hist_s5_t2:HIST_S5_T2,hist_s5_t3:HIST_S5_T3,geo_s5_t1:GEO_S5_T1,geo_s5_t2:GEO_S5_T2,geo_s5_t3:GEO_S5_T3,fr_s5_t1:FR_S5_T1,fr_s5_t2:FR_S5_T2,fr_s5_t3:FR_S5_T3,en_s5_t1:EN_S5_T1,en_s5_t2:EN_S5_T2,en_s5_t3:EN_S5_T3};
   const baseBank=BANKS[cat]||HISTORY;
   const bank=(typeof TF!=='undefined'&&TF[cat])?baseBank.concat(TF[cat]):baseBank;
@@ -4760,16 +4837,16 @@ function startQuiz(daily=false){
 function ttsSupported(){return typeof window!=='undefined'&&'speechSynthesis'in window;}
 function ttsClean(s){return String(s).replace(/[⁦⁩‎‏]/g,'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}←-⇿⬀-⯿️⃣]/gu,'').replace(/\s+/g,' ').trim();}
 function ttsLangCode(){
-  if(/^ar_s|^math_s/.test(category)||category==='kids_lang_ar')return 'ar';
-  if(category==='kids_lang_fr')return 'fr';
-  if(category==='kids_lang_en')return 'en';
+  if(/^ar_s|^math_s/.test(category)||category==='kids_lang_ar'||category==='dict_ar')return 'ar';
+  if(category==='kids_lang_fr'||category==='dict_fr')return 'fr';
+  if(category==='kids_lang_en'||category==='dict_en')return 'en';
   return lang==='ar'?'ar':lang==='fr'?'fr':'en';
 }
 function speakText(text,code){
   if(!ttsSupported())return;
   try{var t=ttsClean(text);if(!t)return;var u=new SpeechSynthesisUtterance(t);u.lang=(code==='ar'?'ar-SA':code==='fr'?'fr-FR':'en-US');u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}
 }
-function speakQuestion(){var q=questions[current];if(!q)return;speakText(q.type==='image'?(q.name||''):q.display,ttsLangCode());}
+function speakQuestion(){var q=questions[current];if(!q)return;speakText(q.type==='audio'?q.word:q.type==='image'?(q.name||''):q.display,ttsLangCode());}
 function updateListenBtn(q){
   var lb=document.getElementById('listen-btn');if(!lb)return;
   lb.style.display=(ttsSupported()&&q&&q.type!=='flag')?'':'none';
@@ -4790,6 +4867,11 @@ function showQuestion(){
     im.style.cssText='height:130px;width:auto;margin:0 auto;display:block';
     im.onerror=function(){flagEl.textContent=q.name||''};
     flagEl.appendChild(im);
+  }else if(q.type==='audio'){
+    // Dictée : pas de texte affiché — un gros haut-parleur, ré-écoutable.
+    flagEl.classList.remove('hidden');textEl.classList.add('hidden');
+    flagEl.innerHTML='<button onclick="speakQuestion()" aria-label="écouter" class="rounded-full" style="font-size:52px;line-height:1;width:104px;height:104px;background:rgba(0,229,255,.12);border:2px solid rgba(0,229,255,.45)">🔊</button>';
+    setTimeout(speakQuestion,350);
   }else{
     flagEl.classList.add('hidden');textEl.classList.remove('hidden');textEl.textContent=q.display;
   }
