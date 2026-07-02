@@ -3817,6 +3817,17 @@ var PT={
   resetOk:{fr:'Progression réinitialisée',en:'Progress reset',ar:'تمّت إعادة التعيين'},
   share:{fr:'📤 Partager le bulletin',en:'📤 Share report',ar:'📤 مشاركة البطاقة'},
   reportTitle:{fr:'Bulletin AtlasQuest',en:'AtlasQuest report',ar:'بطاقة AtlasQuest'},
+  cloud:{fr:'☁️ Sauvegarde Cloud',en:'☁️ Cloud backup',ar:'☁️ النسخ الاحتياطي السحابي'},
+  cloudSave:{fr:'☁️ Sauvegarder maintenant',en:'☁️ Back up now',ar:'☁️ احفظ الآن'},
+  cloudRestore:{fr:'Restaurer avec un code famille',en:'Restore with a family code',ar:'استعادة برمز العائلة'},
+  cloudCodeLbl:{fr:'Code famille (à garder secret)',en:'Family code (keep it secret)',ar:'رمز العائلة (احتفظ به سرًّا)'},
+  cloudSaved:{fr:'Progression sauvegardée dans le cloud',en:'Progress backed up to the cloud',ar:'تم حفظ التقدّم في السحابة'},
+  cloudRestored:{fr:'Progression restaurée',en:'Progress restored',ar:'تمت استعادة التقدّم'},
+  cloudErr:{fr:'Erreur cloud — réessayez',en:'Cloud error — try again',ar:'خطأ في السحابة — أعد المحاولة'},
+  cloudNotFound:{fr:'Code introuvable',en:'Code not found',ar:'الرمز غير موجود'},
+  cloudNoNet:{fr:'Connexion Internet requise',en:'Internet connection required',ar:'يلزم اتصال بالإنترنت'},
+  cloudAskCode:{fr:'Entrez le code famille',en:'Enter the family code',ar:'أدخل رمز العائلة'},
+  cloudLast:{fr:'Dernière sauvegarde',en:'Last backup',ar:'آخر نسخة'},
   none:{fr:'Aucune activité',en:'No activity yet',ar:'لا نشاط بعد'}
 };
 function pt(k){return (PT[k]&&(PT[k][lang]||PT[k].fr))||k;}
@@ -3860,6 +3871,7 @@ function renderParentDashboard(){
       +'<div class="gold-card p-3 text-center"><div class="text-xl font-bold">🔥 '+(userData.best_streak||0)+'</div><div class="text-xs opacity-60">'+t('bestStreak')+'</div></div>'
       +'<div class="gold-card p-3 text-center col-span-2"><div class="text-sm font-bold">'+last+'</div><div class="text-xs opacity-60">'+pt('lastSeen')+'</div></div>'
     +'</div>'
+    +((typeof cloudEnabled==='function'&&cloudEnabled())?cloudSectionHTML():'')
     +'<div class="w-full rounded-xl p-3 mt-3 text-sm text-center" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3)">'+pt('safe')+'</div>'
     +'<button onclick="shareParentReport()" class="w-full mt-3 px-4 py-3 rounded-xl font-bold text-white" style="background:linear-gradient(135deg,#22c55e,#16a34a)">'+pt('share')+'</button>'
     +'<button onclick="resetChildProgress()" class="mt-3 text-xs underline opacity-60">'+pt('reset')+'</button>';
@@ -3882,6 +3894,69 @@ function resetChildProgress(){
   userData.kids_stars='{}';userData.kids_badges='{}';userData.kids_review='{}';
   saveData(userData);renderParentDashboard();
   if(typeof showToast==='function')showToast(pt('resetOk'),'green');
+}
+
+// ===== AtlasQuest Cloud v1 : sauvegarde multi-appareils (Supabase REST) =====
+// Renseigner CLOUD.url + CLOUD.key après création du projet (voir docs/BACKEND-SETUP.md).
+// Tant que CLOUD est vide : aucune requête réseau, l'app reste 100% hors-ligne.
+// Accès confiné à l'Espace Parent (protégé par PIN) — jamais depuis le Mode Enfant.
+var CLOUD={url:'',key:''};
+function cloudEnabled(){return !!(CLOUD.url&&CLOUD.key);}
+function cloudCode(){
+  if(!userData)return null;
+  if(!userData.cloud_code){
+    var c;
+    if(window.crypto&&crypto.randomUUID){c=crypto.randomUUID();}
+    else{c='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(ch){var r=Math.random()*16|0,v=ch==='x'?r:(r&0x3|0x8);return v.toString(16);});}
+    userData.cloud_code=c;saveData(userData);
+  }
+  return userData.cloud_code;
+}
+function cloudRpc(fn,args){
+  return fetch(CLOUD.url+'/rest/v1/rpc/'+fn,{
+    method:'POST',
+    headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CLOUD.key,'Content-Type':'application/json'},
+    body:JSON.stringify(args)
+  });
+}
+function cloudSave(){
+  if(!cloudEnabled()||!userData)return;
+  if(navigator.onLine===false){showToast(pt('cloudNoNet'),'gold');return;}
+  cloudRpc('put_backup',{p_code:cloudCode(),p_data:userData})
+    .then(function(r){
+      if(r.ok){userData.cloud_last=Date.now();saveData(userData);renderParentDashboard();showToast(pt('cloudSaved'),'green');}
+      else{showToast(pt('cloudErr'),'red');}
+    })
+    .catch(function(){showToast(pt('cloudErr'),'red');});
+}
+function cloudRestore(){
+  if(!cloudEnabled())return;
+  if(navigator.onLine===false){showToast(pt('cloudNoNet'),'gold');return;}
+  var code=((typeof prompt==='function'?prompt(pt('cloudAskCode')):'')||'').trim();
+  if(!/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(code)){if(code)showToast(pt('cloudNotFound'),'red');return;}
+  cloudRpc('get_backup',{p_code:code})
+    .then(function(r){if(!r.ok)throw 0;return r.json();})
+    .then(function(data){
+      if(!data||typeof data!=='object'||Array.isArray(data)){showToast(pt('cloudNotFound'),'red');return;}
+      data.cloud_code=code;data.cloud_last=Date.now();
+      userData=data;saveData(userData);
+      if(typeof updateStatsDisplay==='function')updateStatsDisplay();
+      if(typeof updateGemsBadge==='function')updateGemsBadge();
+      renderParentDashboard();
+      showToast(pt('cloudRestored'),'green');
+    })
+    .catch(function(){showToast(pt('cloudErr'),'red');});
+}
+function cloudSectionHTML(){
+  var last=userData.cloud_last?new Date(userData.cloud_last).toLocaleString():pt('none');
+  return '<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+pt('cloud')+'</h3>'
+    +'<div class="w-full rounded-xl p-3" style="background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.3)">'
+    +'<div class="text-xs opacity-60 mb-1">'+pt('cloudCodeLbl')+'</div>'
+    +'<div class="text-xs font-mono break-all select-all" style="direction:ltr">'+cloudCode()+'</div>'
+    +'<div class="text-xs opacity-60 mt-2">'+pt('cloudLast')+' : '+last+'</div>'
+    +'<button onclick="cloudSave()" class="w-full mt-2 px-4 py-2 rounded-xl font-bold text-white" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">'+pt('cloudSave')+'</button>'
+    +'<button onclick="cloudRestore()" class="w-full mt-2 text-xs underline opacity-70">'+pt('cloudRestore')+'</button>'
+    +'</div>';
 }
 
 // ===== Lesson (mini-cours, ANTON/Khan-inspired): explain, then practice =====
