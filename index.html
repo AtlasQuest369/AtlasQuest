@@ -3828,6 +3828,9 @@ var PT={
   cloudNoNet:{fr:'Connexion Internet requise',en:'Internet connection required',ar:'يلزم اتصال بالإنترنت'},
   cloudAskCode:{fr:'Entrez le code famille',en:'Enter the family code',ar:'أدخل رمز العائلة'},
   cloudLast:{fr:'Dernière sauvegarde',en:'Last backup',ar:'آخر نسخة'},
+  cloudAuto:{fr:'Sauvegarde automatique après chaque quiz',en:'Auto-backup after each quiz',ar:'نسخ احتياطي تلقائي بعد كل اختبار'},
+  cloudAutoOn:{fr:'Sauvegarde automatique activée',en:'Auto-backup enabled',ar:'تم تفعيل النسخ التلقائي'},
+  cloudAutoOff:{fr:'Sauvegarde automatique désactivée',en:'Auto-backup disabled',ar:'تم إيقاف النسخ التلقائي'},
   none:{fr:'Aucune activité',en:'No activity yet',ar:'لا نشاط بعد'}
 };
 function pt(k){return (PT[k]&&(PT[k][lang]||PT[k].fr))||k;}
@@ -3954,9 +3957,28 @@ function cloudSectionHTML(){
     +'<div class="text-xs opacity-60 mb-1">'+pt('cloudCodeLbl')+'</div>'
     +'<div class="text-xs font-mono break-all select-all" style="direction:ltr">'+cloudCode()+'</div>'
     +'<div class="text-xs opacity-60 mt-2">'+pt('cloudLast')+' : '+last+'</div>'
+    +'<label class="flex items-center gap-2 mt-2 text-xs cursor-pointer"><input type="checkbox" onchange="cloudAutoToggle(this.checked)"'+(userData.cloud_auto?' checked':'')+'><span>'+pt('cloudAuto')+'</span></label>'
     +'<button onclick="cloudSave()" class="w-full mt-2 px-4 py-2 rounded-xl font-bold text-white" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">'+pt('cloudSave')+'</button>'
     +'<button onclick="cloudRestore()" class="w-full mt-2 text-xs underline opacity-70">'+pt('cloudRestore')+'</button>'
     +'</div>';
+}
+function cloudAutoToggle(v){
+  if(!userData)return;
+  userData.cloud_auto=v?1:0;saveData(userData);
+  if(typeof showToast==='function')showToast(pt(v?'cloudAutoOn':'cloudAutoOff'),v?'green':'gold');
+}
+var cloudAutoTimer=null;
+// Sauvegarde silencieuse différée (8 s) après un quiz : coalesce les fins
+// de quiz rapprochées en un seul envoi ; jamais de toast ni d'erreur visible.
+function cloudAutoKick(){
+  if(!userData||!userData.cloud_auto||!cloudEnabled())return;
+  if(navigator.onLine===false)return;
+  clearTimeout(cloudAutoTimer);
+  cloudAutoTimer=setTimeout(function(){
+    cloudRpc('put_backup',{p_code:cloudCode(),p_data:userData})
+      .then(function(r){if(r.ok){userData.cloud_last=Date.now();saveData(userData);}})
+      .catch(function(){});
+  },8000);
 }
 
 // ===== Lesson (mini-cours, ANTON/Khan-inspired): explain, then practice =====
@@ -4862,6 +4884,9 @@ function endQuiz(){
 
   // Quests
   updateQuestProgress(pct);
+
+  // Sauvegarde cloud automatique (uniquement si activée par le parent)
+  if(typeof cloudAutoKick==='function')cloudAutoKick();
 
   // Badges
   const earned=userData.badges_earned?userData.badges_earned.split(',').filter(Boolean):[];
