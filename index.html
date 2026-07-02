@@ -3900,7 +3900,7 @@ function resetChildProgress(){
 // Renseigner CLOUD.url + CLOUD.key après création du projet (voir docs/BACKEND-SETUP.md).
 // Tant que CLOUD est vide : aucune requête réseau, l'app reste 100% hors-ligne.
 // Accès confiné à l'Espace Parent (protégé par PIN) — jamais depuis le Mode Enfant.
-var CLOUD={url:'https://xgbmjijpmdbgnemybdws.supabase.co',key:''};
+var CLOUD={url:'https://xgbmjijpmdbgnemybdws.supabase.co',key:'sb_publishable_ME2gG4QVqnMut3cHI7cCEA_Fdlpgpin'};
 function cloudEnabled(){return !!(CLOUD.url&&CLOUD.key);}
 function cloudCode(){
   if(!userData)return null;
@@ -3913,11 +3913,11 @@ function cloudCode(){
   return userData.cloud_code;
 }
 function cloudRpc(fn,args){
-  return fetch(CLOUD.url+'/rest/v1/rpc/'+fn,{
-    method:'POST',
-    headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CLOUD.key,'Content-Type':'application/json'},
-    body:JSON.stringify(args)
-  });
+  // Clés legacy JWT (eyJ...) : apikey + Authorization. Nouvelles clés
+  // sb_publishable_... : apikey seul (Authorization est réservé aux JWT).
+  var h={'apikey':CLOUD.key,'Content-Type':'application/json'};
+  if(CLOUD.key.indexOf('eyJ')===0)h['Authorization']='Bearer '+CLOUD.key;
+  return fetch(CLOUD.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:h,body:JSON.stringify(args)});
 }
 function cloudSave(){
   if(!cloudEnabled()||!userData)return;
