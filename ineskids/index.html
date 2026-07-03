@@ -4545,26 +4545,31 @@ var ILLUS_FOR={
   geo_s2_t1:'algeria',geo_s2_t3:'algeria',geo_s5_t1:'algeria'
 };
 // ===== Mascotte-guide : le Fennec (فنّك) — personnage-guide (façon Khan Academy Kids) =====
+// Mascotte Ines Kids : la fillette du logo (couette + nœud rose), remplace
+// le fennec d'AtlasQuest. Mêmes classes d'animation (flottement/rebond).
 function mascotSVG(mood,size){
   size=size||96;
-  var eyes=mood==='cheer'
-    ?'<path d="M43 64 q7 -8 14 0" fill="none" stroke="#3a2a15" stroke-width="3.5" stroke-linecap="round"/><path d="M63 64 q7 -8 14 0" fill="none" stroke="#3a2a15" stroke-width="3.5" stroke-linecap="round"/>'
-    :'<circle cx="50" cy="65" r="5.5" fill="#2a1c0e"/><circle cx="70" cy="65" r="5.5" fill="#2a1c0e"/><circle cx="52" cy="63" r="1.7" fill="#fff"/><circle cx="72" cy="63" r="1.7" fill="#fff"/>';
-  var mouth=mood==='cheer'
-    ?'<path d="M51 79 q9 13 18 0 z" fill="#b3402f"/><path d="M55 84 q5 4 10 0" fill="#ef6b6b"/>'
-    :'<path d="M54 80 q6 6 12 0" fill="none" stroke="#3a2a15" stroke-width="2.6" stroke-linecap="round"/>';
-  var spark=mood==='cheer'?'<g fill="#FFD700"><path d="M16 30 l2.2 6 6 2.2 -6 2.2 -2.2 6 -2.2 -6 -6 -2.2 6 -2.2z"/><path d="M102 40 l1.6 4.4 4.4 1.6 -4.4 1.6 -1.6 4.4 -1.6 -4.4 -4.4 -1.6 4.4 -1.6z"/></g>':'';
+  var cheer=mood==='cheer';
+  var eyes=cheer
+    ?'<path d="M44 66 q6 -7 12 0" fill="none" stroke="#3a2a1a" stroke-width="3.4" stroke-linecap="round"/><path d="M64 66 q6 -7 12 0" fill="none" stroke="#3a2a1a" stroke-width="3.4" stroke-linecap="round"/>'
+    :'<ellipse cx="50" cy="66" rx="5" ry="6.2" fill="#3a2a1a"/><ellipse cx="70" cy="66" rx="5" ry="6.2" fill="#3a2a1a"/><circle cx="52" cy="63.5" r="1.8" fill="#fff"/><circle cx="72" cy="63.5" r="1.8" fill="#fff"/>';
+  var mouth=cheer
+    ?'<path d="M52 79 q8 11 16 0 z" fill="#b3402f"/><path d="M56 84 q4 4 8 0" fill="#ef6b6b"/>'
+    :'<path d="M52 80 q8 8 16 0" fill="none" stroke="#c0392b" stroke-width="3" stroke-linecap="round"/>';
+  var spark=cheer?'<g fill="#FFD54A"><path d="M15 34 l2.2 6 6 2.2 -6 2.2 -2.2 6 -2.2 -6 -6 -2.2 6 -2.2z"/><path d="M105 44 l1.6 4.4 4.4 1.6 -4.4 1.6 -1.6 4.4 -1.6 -4.4 -4.4 -1.6 4.4 -1.6z"/></g>':'';
   return '<svg viewBox="0 0 120 120" width="'+size+'" height="'+size+'" class="mascot-svg mascot-'+mood+'" style="display:block;overflow:visible">'
-    +'<ellipse cx="33" cy="33" rx="15" ry="27" fill="#efd9ac" transform="rotate(-24 33 33)"/>'
-    +'<ellipse cx="87" cy="33" rx="15" ry="27" fill="#efd9ac" transform="rotate(24 87 33)"/>'
-    +'<ellipse cx="34" cy="36" rx="7" ry="16" fill="#f6b0bf" transform="rotate(-24 34 36)"/>'
-    +'<ellipse cx="86" cy="36" rx="7" ry="16" fill="#f6b0bf" transform="rotate(24 86 36)"/>'
-    +'<ellipse cx="60" cy="70" rx="37" ry="33" fill="#f2e0b6"/>'
-    +'<ellipse cx="60" cy="82" rx="23" ry="18" fill="#fdf4de"/>'
-    +spark+eyes
-    +'<ellipse cx="60" cy="75" rx="4.2" ry="3.2" fill="#2a1c0e"/>'
+    +spark
+    +'<ellipse cx="99" cy="52" rx="12" ry="21" fill="#7a4b2b" transform="rotate(16 99 52)"/>'
+    +'<circle cx="90" cy="41" r="4" fill="#e23b3b"/>'
+    +'<g fill="#f45fa0"><path d="M78 25 l14 -5 v13 z"/><path d="M92 25 l14 -5 v13 z"/><circle cx="92" cy="25.5" r="4.6"/></g>'
+    +'<path d="M28 62 Q28 26 60 24 Q92 26 92 62 Q92 76 84 84 L36 84 Q28 76 28 62 Z" fill="#7a4b2b"/>'
+    +'<circle cx="31" cy="68" r="5" fill="#f6c9a8"/><circle cx="89" cy="68" r="5" fill="#f6c9a8"/>'
+    +'<ellipse cx="60" cy="66" rx="29" ry="29" fill="#f6c9a8"/>'
+    +'<path d="M31 58 Q34 34 60 32 Q86 34 89 58 Q76 45 60 47 Q44 45 31 58 Z" fill="#6e4225"/>'
+    +'<circle cx="44" cy="75" r="5" fill="#f6a5c0" opacity=".6"/><circle cx="76" cy="75" r="5" fill="#f6a5c0" opacity=".6"/>'
+    +eyes
+    +'<circle cx="60" cy="73" r="1.5" fill="#e8a987"/>'
     +mouth
-    +'<circle cx="39" cy="80" r="4.5" fill="#f6b0bf" opacity=".55"/><circle cx="81" cy="80" r="4.5" fill="#f6b0bf" opacity=".55"/>'
     +'</svg>';
 }
 var MASCOT_TIPS={
