@@ -135,6 +135,12 @@
       border-radius:16px!important;font-weight:800!important;box-shadow:0 3px 0 rgba(232,76,154,.12)!important}
     .ines-app #kids-subj-sel button[data-active="1"],.ines-app #kids-year-sel button[data-active="1"]{
       background:#FFE7F3!important;border-color:#E84C9A!important;color:#B02574!important}
+    /* Accessibilité (audit C4) : cibles tactiles ≥ 52 dp + focus clavier/switch visible */
+    .ines-app .cat-card,.ines-app #options button,.ines-app #kids-subj-sel button,
+    .ines-app #kids-year-sel button,.ines-app #ines-quiz-home,.ines-app #ines-foot button{min-height:52px}
+    .ines-app #ines-foot button{min-height:44px;padding:6px 4px}
+    .ines-app button:focus-visible,.ines-app a:focus-visible,.ines-app [role="button"]:focus-visible{
+      outline:3px solid #6D28D9!important;outline-offset:2px;border-radius:12px}
     /* Espace parent lisible sur le thème clair (styles sombres hérités) */
     .ines-app #parent-content [style*="rgba(255,255,255,.05)"]{background:#fff!important;border-color:rgba(232,76,154,.18)!important}
     .ines-app #parent-content [style*="rgba(255,255,255,.1)"]{background:rgba(0,0,0,.07)!important}
