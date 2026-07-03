@@ -141,6 +141,20 @@
     .ines-app #ines-foot button{min-height:44px;padding:6px 4px}
     .ines-app button:focus-visible,.ines-app a:focus-visible,.ines-app [role="button"]:focus-visible{
       outline:3px solid #6D28D9!important;outline-offset:2px;border-radius:12px}
+    /* Premium — micro-interactions tactiles : enfoncement au tap, léger relief au survol (pointeur). */
+    .ines-app .cat-card:active{transform:scale(.975)}
+    .ines-app #options button:active{transform:scale(.985)}
+    @media (hover:hover) and (pointer:fine){
+      .ines-app .cat-card:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(232,76,154,.16)!important}
+    }
+    /* Premium — mode tablette (audit H2) : colonne confortable élargie + titres plus grands,
+       au lieu d'une bande étroite perdue au centre de l'écran. */
+    @media (min-width:720px){
+      .ines-app .max-w-md{max-width:600px!important}
+      .ines-app #kids-title{font-size:2.4rem}
+      .ines-app #kids-desc,.ines-app #ines-prog-lbl{font-size:1.15rem}
+      .ines-app .cat-card{border-radius:26px!important}
+    }
     /* Espace parent lisible sur le thème clair (styles sombres hérités) */
     .ines-app #parent-content [style*="rgba(255,255,255,.05)"]{background:#fff!important;border-color:rgba(232,76,154,.18)!important}
     .ines-app #parent-content [style*="rgba(255,255,255,.1)"]{background:rgba(0,0,0,.07)!important}
