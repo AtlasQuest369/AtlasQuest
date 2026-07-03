@@ -57,5 +57,21 @@ runSpec('ineskids',async browser=>{
   });
   assert(!quiz.fail,quiz.fail||'');
   assert(quiz.stars===3,'le moteur enfant doit fonctionner (3 étoiles attendues), obtenu '+quiz.stars);
+
+  // Espace parent : lien YouTube présent, pub récompensée OFF par défaut (sans ID AdMob)
+  const parent=await page.evaluate(async()=>{
+    switchView('view-dashboard');openParent();
+    document.getElementById('pin-input').value='1234';
+    await submitParentPin();
+    const h=document.getElementById('parent-content').innerHTML;
+    return {open:document.getElementById('view-parent').classList.contains('active'),
+      yt:h.indexOf('inesOpenYouTube()')>-1,
+      rewardedReady:inesRewardedReady(),
+      rewardedBtn:h.indexOf('inesShowRewarded')>-1};
+  });
+  assert(parent.open,"l'espace parent doit s'ouvrir");
+  assert(parent.yt,'le lien YouTube Ines Kids doit être présent dans l’espace parent');
+  assert(parent.rewardedReady===false,'la pub récompensée doit être OFF tant qu’aucun ID AdMob n’est configuré');
+  assert(parent.rewardedBtn===false,'aucun bouton de pub tant que le fournisseur n’est pas branché');
   assert(errors.length===0,'erreurs de page : '+errors.join(' | '));
 });

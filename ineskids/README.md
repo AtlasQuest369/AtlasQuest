@@ -16,7 +16,7 @@ Application enfant/famille dérivée d'AtlasQuest — **produit distinct**, univ
 ## Reste à faire (itérations suivantes)
 
 1. Retirer physiquement le code adulte mort (allègement du binaire).
-2. Espace parent : y loger le lien YouTube + la future pub récompensée (opt-in, SDK familles certifié, non personnalisée).
+2. ✅ Espace parent : lien YouTube + couche pub récompensée opt-in (branchement AdMob familles à venir via INES_ADMOB.rewardedId).
 3. Écran de résultats enfant dédié + mascotte Ines en héroïne (Fennec en compagnon).
 4. Icônes/splash à partir de `icon-512.png` ; workflow de build Android dédié
    (appId `com.ineskids.app`, keystore propre — nécessite génération côté propriétaire).
