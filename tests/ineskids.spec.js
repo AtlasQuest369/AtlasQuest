@@ -73,5 +73,17 @@ runSpec('ineskids',async browser=>{
   assert(parent.yt,'le lien YouTube Ines Kids doit être présent dans l’espace parent');
   assert(parent.rewardedReady===false,'la pub récompensée doit être OFF tant qu’aucun ID AdMob n’est configuré');
   assert(parent.rewardedBtn===false,'aucun bouton de pub tant que le fournisseur n’est pas branché');
+
+  // La langue est un réglage PARENT : drapeaux masqués dans le flux enfant,
+  // sélecteur présent dans l'espace parent et fonctionnel.
+  const langCtl=await page.evaluate(()=>{
+    const barHidden=getComputedStyle(document.getElementById('lang-bar')).display==='none';
+    const inParent=document.getElementById('parent-content').innerHTML.indexOf('inesSetLang')>-1;
+    inesSetLang('en');
+    return {barHidden,inParent,lang:lang};
+  });
+  assert(langCtl.barHidden,'les drapeaux de langue doivent être masqués dans le flux enfant');
+  assert(langCtl.inParent,'le sélecteur de langue doit être dans l’espace parent');
+  assert(langCtl.lang==='en','le changement de langue parent doit fonctionner');
   assert(errors.length===0,'erreurs de page : '+errors.join(' | '));
 });
