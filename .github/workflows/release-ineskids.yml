@@ -45,6 +45,7 @@ jobs:
         run: |
           mkdir -p www
           cp ineskids/index.html www/
+          cp -r ineskids/fonts www/ || true
           cp ineskids/manifest.json www/ || true
           cp ineskids/sw.js www/ || true
           cp ineskids/privacy.html www/ || true
