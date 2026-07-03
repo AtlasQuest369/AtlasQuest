@@ -1,32 +1,26 @@
 {
-  "id": "atlasquest",
-  "name": "AtlasQuest - Quiz Géographie Monde",
-  "short_name": "AtlasQuest",
-  "description": "Quiz éducatif de géographie et d'histoire du monde en français, anglais et arabe.",
+  "id": "ineskids",
+  "name": "Ines Kids",
+  "short_name": "Ines Kids",
+  "description": "Application éducative pour enfants de 3 à 8 ans : langues, chiffres, sciences et découverte du monde, en français, anglais et arabe.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f0f1a",
-  "theme_color": "#FFD700",
+  "background_color": "#FFF6EC",
+  "theme_color": "#E84C9A",
   "lang": "fr",
   "dir": "ltr",
-  "categories": ["education", "games", "trivia"],
+  "categories": ["education", "kids"],
   "icons": [
     {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-maskable-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
