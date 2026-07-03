@@ -4190,7 +4190,11 @@ function kidsSetYear(y){
   var th=(KIDS_THEMES[kidsSubj]||KIDS_THEMES.ar)[y]||KIDS_THEMES.ar[1];
   for(var tn=1;tn<=3;tn++){
     var el=document.getElementById('kids-t'+tn+'d');
-    if(el){var cat=kidsSubj+'_s'+y+'_t'+tn;el.innerHTML=th[tn-1]+'<br>'+kidsStarRow(kidsBestStars(cat));}
+    if(el){var cat=kidsSubj+'_s'+y+'_t'+tn;
+      var lvTxt='';
+      if(typeof INES!=='undefined'&&INES){var lv=inesUnitLevelOf(cat);
+        lvTxt='<span style="color:#B02574;font-weight:800">'+(lang==='ar'?'المستوى ':lang==='en'?'Level ':'Niveau ')+lv+'/3</span><br>';}
+      el.innerHTML=lvTxt+th[tn-1]+'<br>'+kidsStarRow(kidsBestStars(cat));}
   }
   // overall progress for this subject (stars earned / max)
   var my=kidsMaxYear();
@@ -4314,20 +4318,26 @@ function kidsGoalBump(){
   if(justDone){if(typeof addGems==='function')addGems(15);if(typeof triggerConfetti==='function')triggerConfetti();
     if(typeof showToast==='function')showToast(lang==='ar'?'🎯 هدف اليوم مُنجز!':lang==='en'?'🎯 Daily goal done!':'🎯 Objectif du jour atteint !','gold',2600);}
 }
-// Passage de niveau (Ines) : toutes les 10 questions répondues, on monte d'un niveau, jusqu'à 5.
-function inesLevelUp(nq){
-  if(!(typeof INES!=='undefined'&&INES)||!userData)return;
-  userData.ines_answered=(userData.ines_answered||0)+(nq||0);
-  var cur=userData.ines_year||kidsYear||1;
-  var target=Math.min(5,1+Math.floor(userData.ines_answered/10));
-  if(target>cur){
-    userData.ines_year=target;
-    if(typeof kidsSetYear==='function'){try{kidsSetYear(target);}catch(e){kidsYear=target;}}else{kidsYear=target;}
-    saveData(userData);
+// Progression par UNITÉ (matière × année × trimestre) : 3 niveaux, 10 questions chacun.
+function inesUnitLevelOf(cat){
+  if(!userData||!cat)return 1;
+  try{var m=JSON.parse(userData.ines_catq||'{}');return Math.min(3,1+Math.floor((m[cat]||0)/10));}catch(e){return 1;}
+}
+function inesUnitLevel(cat,nq){
+  if(!(typeof INES!=='undefined'&&INES)||!userData||!cat)return;
+  var m={};try{m=JSON.parse(userData.ines_catq||'{}');}catch(e){}
+  var old=Math.min(3,1+Math.floor((m[cat]||0)/10));
+  m[cat]=(m[cat]||0)+(nq||0);
+  var nw=Math.min(3,1+Math.floor(m[cat]/10));
+  userData.ines_catq=JSON.stringify(m);saveData(userData);
+  if(nw>old){
     if(typeof triggerConfetti==='function')triggerConfetti();
-    var msg=lang==='ar'?('🎉 المستوى '+target+'! انتقلت إلى السنة '+target):lang==='en'?('🎉 Level '+target+' unlocked!'):('🎉 Niveau '+target+' ! Tu passes en Année '+target);
-    if(typeof showToast==='function')showToast(msg,'gold',2800);
-  }else{saveData(userData);}
+    var done=(m[cat]>=30);
+    var msg=done?(lang==='ar'?'🎉 أتممت الفصل! 3/3':lang==='en'?'🎉 Trimester complete! 3/3':'🎉 Trimestre terminé ! 3/3')
+                :(lang==='ar'?('🎉 المستوى '+nw+'/3'):lang==='en'?('🎉 Level '+nw+'/3'):('🎉 Niveau '+nw+'/3'));
+    if(typeof showToast==='function')showToast(msg,'gold',2600);
+    if(typeof kidsSetYear==='function'){try{kidsSetYear(kidsYear);}catch(e){}} // rafraîchit les badges de niveau
+  }
 }
 function renderKidsGoal(){
   var kg=document.getElementById('kids-goal');if(!kg||!userData)return;
@@ -5814,7 +5824,7 @@ function endQuiz(){
     // Répétition espacée : planifie la prochaine révision de cette compétence.
     try{var kr=JSON.parse(userData.kids_review||'{}');var now=Date.now();kr[category]={s:stars,done:now,due:now+reviewInterval(stars)};userData.kids_review=JSON.stringify(kr);saveData(userData);}catch(e){}
     if(typeof kidsGoalBump==='function')kidsGoalBump(); // objectif quotidien
-    if(typeof inesLevelUp==='function')inesLevelUp(totalQ); // passage de niveau : 10 Q → niveau suivant (max 5)
+    if(typeof inesUnitLevel==='function')inesUnitLevel(category,totalQ); // 3 niveaux × 10 Q par unité (matière×année×trimestre)
   }
 
   // Quests (mécanique adulte : gemmes/quêtes) — masquée dans Ines Kids.
