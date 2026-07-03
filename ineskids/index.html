@@ -85,6 +85,7 @@
     .ines-app nav{display:none!important}               /* pas de bottom-nav adulte */
     .ines-app #kids-back,.ines-app #ad-banner{display:none!important}
     .ines-app #header-badges{display:none!important}   /* pas de vies/gemmes adultes */
+    .ines-app #lang-bar{display:none!important}          /* langue = réglage parent, pas un choix d'enfant */
     .ines-app,.ines-app .text-white{color:#33264a!important}
     .ines-app .opacity-70,.ines-app .opacity-60,.ines-app .opacity-50,.ines-app .opacity-40{opacity:1!important;color:#6f6188!important}
     .ines-app #kids-desc{color:#6f6188!important}
@@ -4308,12 +4309,22 @@ function inesParentPanel(){
   var sup=inesRewardedReady()
     ? '<button onclick="inesShowRewarded(function(){showToast(\'❤️\',\'green\')})" class="w-full mt-2 px-4 py-2 rounded-xl font-bold text-white" style="background:linear-gradient(135deg,#E84C9A,#c026a0)">'+lbl.sup+'</button>'
     : '';
-  return '<h3 class="w-full font-bold text-sm opacity-70 mt-2">'+lbl.t+'</h3>'
+  // Sélecteur de langue : réglage PARENT (retiré du flux enfant).
+  var langLbl=lang==='ar'?'لغة التطبيق':lang==='en'?'App language':'Langue de l’application';
+  var langs=[['fr','🇫🇷 Français'],['en','🇬🇧 English'],['ar','🇩🇿 العربية']];
+  var langRow=langs.map(function(L){var on=(lang===L[0]);
+    return '<button onclick="inesSetLang(\''+L[0]+'\')" class="px-3 py-2 rounded-xl text-sm font-bold" style="border:2px solid '+(on?'#E84C9A':'rgba(0,0,0,.12)')+';background:'+(on?'rgba(232,76,154,.10)':'#fff')+'">'+L[1]+'</button>';
+  }).join('');
+  return '<h3 class="w-full font-bold text-sm opacity-70 mt-2">'+langLbl+'</h3>'
+    +'<div class="w-full flex flex-wrap gap-2">'+langRow+'</div>'
+    +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+lbl.t+'</h3>'
     +'<div class="w-full rounded-xl p-3" style="background:rgba(232,76,154,.06);border:1px solid rgba(232,76,154,.3)">'
     +'<button onclick="inesOpenYouTube()" class="w-full px-4 py-2 rounded-xl font-bold text-white" style="background:linear-gradient(135deg,#E23B3B,#c62828)">'+lbl.yt+'</button>'
     +sup
     +'</div>';
 }
+// Change la langue depuis l'espace parent puis rafraîchit le tableau de bord.
+function inesSetLang(l){setLang(l);if(typeof renderParentDashboard==='function')renderParentDashboard();}
 function renderParentDashboard(){
   if(!userData)return;
   document.getElementById('parent-title').textContent=pt('title');
