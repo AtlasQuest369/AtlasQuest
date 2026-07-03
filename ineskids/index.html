@@ -98,6 +98,8 @@
     /* En-tête langues lisible sur clair */
     .ines-app #lang-bar .lang-btn{filter:none}
     .ines-app .playfair{font-family:'DM Sans',sans-serif!important}
+    .ines-app #result-msg{color:#E84C9A!important}          /* message de résultat rose Ines */
+    .ines-app #result-stats .gold-card>div:first-child{color:#E84C9A!important}
     @keyframes mascotBob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-1.5deg)}}
     @keyframes mascotCheer{0%{transform:scale(.7) translateY(6px)}55%{transform:scale(1.08) translateY(-6px)}75%{transform:scale(.97)}100%{transform:scale(1)}}
 
@@ -3855,7 +3857,14 @@ function openKids(){
   if(!subs.some(function(s){return s.key===kidsSubj}))kidsSubj=subs[0].key;
   kidsUpdateLangUI();
   var km=document.getElementById('kids-mascot');
-  if(km){var g=lang==='ar'?'مرحبًا، أنا فنّك! 🦊':lang==='en'?'Hi, I’m Fennec! 🦊':'Salut, moi c’est Fennec ! 🦊';km.innerHTML=(typeof mascotSVG==='function'?mascotSVG('cheer',72):'🦊')+'<div class="rounded-full px-3 py-1 text-xs font-bold" style="background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4)">'+g+'</div>';}
+  if(km){
+    var ines=(typeof INES!=='undefined'&&INES);
+    var g=ines
+      ?(lang==='ar'?'مرحبًا، أنا إيناس! 🌈':lang==='en'?'Hi, I’m Ines! 🌈':'Coucou, c’est Ines ! 🌈')
+      :(lang==='ar'?'مرحبًا، أنا فنّك! 🦊':lang==='en'?'Hi, I’m Fennec! 🦊':'Salut, moi c’est Fennec ! 🦊');
+    var bubble=ines?'background:rgba(232,76,154,.12);border:1px solid rgba(232,76,154,.4);color:#c026a0':'background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4)';
+    km.innerHTML=(typeof mascotSVG==='function'?mascotSVG('cheer',72):'🦊')+'<div class="rounded-full px-3 py-1 text-xs font-bold" style="'+bubble+'">'+g+'</div>';
+  }
   if(typeof renderKidsGoal==='function')renderKidsGoal();
   var due=(typeof kidsDueList==='function')?kidsDueList():[];
   var rb=document.getElementById('kids-review-btn');
@@ -5544,7 +5553,8 @@ function endQuiz(){
   const stars=pct>=80?3:pct>=50?2:pct>=1?1:0;
   const starEl=document.getElementById('result-stars');
   if(starEl){
-    let h='';for(let i=0;i<3;i++)h+='<span style="animation-delay:'+(i*.18)+'s;color:'+(i<stars?'#FFD700':'rgba(255,255,255,.18)')+'">'+(i<stars?'★':'☆')+'</span>';
+    var emptyStar=(typeof INES!=='undefined'&&INES)?'rgba(0,0,0,.14)':'rgba(255,255,255,.18)';
+    let h='';for(let i=0;i<3;i++)h+='<span style="animation-delay:'+(i*.18)+'s;color:'+(i<stars?'#FFD700':emptyStar)+'">'+(i<stars?'★':'☆')+'</span>';
     starEl.innerHTML=h;
   }
   const msgEl=document.getElementById('result-msg');
@@ -5599,8 +5609,8 @@ function endQuiz(){
     if(typeof kidsGoalBump==='function')kidsGoalBump(); // objectif quotidien
   }
 
-  // Quests
-  updateQuestProgress(pct);
+  // Quests (mécanique adulte : gemmes/quêtes) — masquée dans Ines Kids.
+  if(!(typeof INES!=='undefined'&&INES))updateQuestProgress(pct);
 
   // Sauvegarde cloud automatique (uniquement si activée par le parent)
   if(typeof cloudAutoKick==='function')cloudAutoKick();
@@ -5622,7 +5632,7 @@ function endQuiz(){
   }else{bs.classList.add('hidden')}
 
   const newLevel=getLevel(userData.total_xp);
-  if(newLevel>oldLevel){
+  if(newLevel>oldLevel&&!(typeof INES!=='undefined'&&INES)){  // pas de modale niveau adulte dans Ines
     document.getElementById('level-up-text').textContent=`${t('level')} ${newLevel} 🎉`;
     document.getElementById('modal-level-up').classList.remove('hidden');
     playLevelUp();triggerConfetti();
