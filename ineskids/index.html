@@ -108,6 +108,18 @@
     /* Set d’icônes cohérent : glyphe blanc sur tuile arrondie colorée */
     .ines-ico{display:inline-flex;align-items:center;justify-content:center;flex:none;border-radius:15px;box-shadow:0 3px 8px rgba(0,0,0,.10)}
     .ines-ico svg{width:56%;height:56%}
+    /* Lisibilité : couleurs d’accent (thème sombre hérité) assombries pour le fond clair */
+    .ines-app [style*="color:var(--cyan)"]{color:#0E7C8E!important}
+    .ines-app [style*="color:var(--gold)"]{color:#B45309!important}
+    .ines-app [style*="color:var(--purple)"]{color:#6D28D9!important}
+    .ines-app [style*="color:#22c55e"]{color:#15803D!important}
+    .ines-app [style*="color:#a78bfa"]{color:#6D28D9!important}
+    .ines-app [style*="color:#f59e0b"]{color:#B45309!important}
+    .ines-app [style*="color:#00e5ff"]{color:#0E7C8E!important}
+    .ines-app [style*="color:#ffd700"],.ines-app [style*="color:#FFD700"]{color:#B45309!important}
+    .ines-app #listen-btn,.ines-app #listen-lbl,.ines-app #lesson-listen-lbl{color:#0E7C8E!important}
+    /* Résultats enfant : pas de partage de score (cadrage adulte) */
+    .ines-app #share-btn{display:none!important}
     /* Bouton « maison » : visible seulement dans Ines Kids, gros & tactile */
     .ines-only{display:none!important}
     .ines-app .ines-only{display:inline-flex!important}
@@ -5537,8 +5549,13 @@ function selectAnswer(answer,btn){
     score+=xpGain;streak++;correctCount++;
     playCorrect();
     if(btn){btn.style.background='rgba(16,185,129,.35)';btn.classList.add('correct-pulse')}
-    showToast(`✅ +${xpGain} XP · +5 💎`,'green');
-    addGems(5);
+    if(typeof INES!=='undefined'&&INES){
+      // Ines Kids : encouragement, jamais de XP/gemmes (mécaniques adultes).
+      showToast(lang==='ar'?'أحسنت! 🌟':lang==='en'?'Well done! 🌟':'Bravo ! 🌟','green',1400);
+    }else{
+      showToast(`✅ +${xpGain} XP · +5 💎`,'green');
+      addGems(5);
+    }
     if(streak>=5)triggerConfetti();
   }else{
     // Shield check
@@ -5618,7 +5635,7 @@ function endQuiz(){
   const starEl=document.getElementById('result-stars');
   if(starEl){
     var emptyStar=(typeof INES!=='undefined'&&INES)?'rgba(0,0,0,.14)':'rgba(255,255,255,.18)';
-    let h='';for(let i=0;i<3;i++)h+='<span style="animation-delay:'+(i*.18)+'s;color:'+(i<stars?'#FFD700':emptyStar)+'">'+(i<stars?'★':'☆')+'</span>';
+    let h='';for(let i=0;i<3;i++)h+='<span style="animation-delay:'+(i*.18)+'s;color:'+(i<stars?((typeof INES!=='undefined'&&INES)?'#C2610A':'#FFD700'):emptyStar)+'">'+(i<stars?'★':'☆')+'</span>';
     starEl.innerHTML=h;
   }
   const msgEl=document.getElementById('result-msg');
@@ -5627,6 +5644,15 @@ function endQuiz(){
   if(mEl){if(typeof mascotSVG==='function'){mEl.innerHTML='<div style="display:flex;justify-content:center">'+mascotSVG(stars>=2?'cheer':'happy',96)+'</div>';}else{mEl.textContent=stars>=3?'🏆':stars>=2?'🌟':stars>=1?'🙂':'💪';}}
   if(stars>=2)triggerConfetti();
 
+  if(typeof INES!=='undefined'&&INES){
+    // Ines Kids : bilan enfant simple et positif — étoiles + bonnes réponses (pas de XP, série, gemmes).
+    var lStars=lang==='ar'?'النجوم':lang==='en'?'Stars':'Étoiles';
+    var lGood=lang==='ar'?'إجابات صحيحة':lang==='en'?'Bonnes réponses':'Bonnes réponses';
+    if(lang==='en')lGood='Correct answers';
+    document.getElementById('result-stats').innerHTML=
+      '<div class="gold-card p-4 text-center"><div class="text-2xl font-bold" style="color:#C2610A">'+'★'.repeat(stars)+'☆'.repeat(3-stars)+'</div><div class="text-xs opacity-60">'+lStars+'</div></div>'+
+      '<div class="gold-card p-4 text-center"><div class="text-2xl font-bold">'+correctCount+'/'+totalQ+'</div><div class="text-xs opacity-60">'+lGood+'</div></div>';
+  }else{
   document.getElementById('result-stats').innerHTML=`
     <div class="gold-card p-4 text-center"><div class="text-2xl font-bold" style="color:var(--cyan)">${score}</div><div class="text-xs opacity-60">${t('xpEarned')}</div></div>
     <div class="gold-card p-4 text-center"><div class="text-2xl font-bold">${correctCount}/${totalQ}</div><div class="text-xs opacity-60">${t('correct')}</div></div>
@@ -5634,6 +5660,7 @@ function endQuiz(){
     <div class="gold-card p-4 text-center"><div class="text-2xl font-bold" style="color:var(--gold)">${pct}%</div><div class="text-xs opacity-60">${t('accuracy')}</div></div>
     ${!isValid?'<div class="col-span-2 text-center text-xs" style="color:#ef4444">⚠️ Score non validé (trop rapide)</div>':''}
   `;
+  }
 
   if(!userData)return;
   const oldLevel=getLevel(userData.total_xp);
@@ -5690,7 +5717,7 @@ function endQuiz(){
 
   const bs=document.getElementById('badges-unlocked');
   const bl=document.getElementById('badges-unlocked-list');
-  if(newB.length){
+  if(newB.length&&!(typeof INES!=='undefined'&&INES)){
     bs.classList.remove('hidden');
     bl.innerHTML=newB.map(b=>`<span class="text-3xl badge-item">${b.emoji}</span>`).join('');
   }else{bs.classList.add('hidden')}
