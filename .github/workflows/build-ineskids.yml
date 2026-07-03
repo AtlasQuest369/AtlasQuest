@@ -29,6 +29,7 @@ jobs:
         run: |
           mkdir -p www/icons
           cp ineskids/index.html www/
+          cp -r ineskids/fonts www/ || true
           cp ineskids/sw.js www/ || true
           cp ineskids/manifest.json www/ || true
           cp ineskids/logo.png www/ || true

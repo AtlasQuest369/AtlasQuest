@@ -1,13 +1,15 @@
 // Bump ce numéro à chaque release notable : l'ancien cache est purgé à
 // l'activation et la nouvelle version arrive dès la réouverture (QA-RELEASE §5).
-const CACHE_NAME = 'atlasquest-v6';
+const CACHE_NAME = 'ineskids-v7';
 const ASSETS = [
   './',
   './index.html',
   './worldmap.js',
   './manifest.json',
   './privacy.html',
-  './terms.html'
+  './terms.html',
+  './fonts/fredoka.woff2',
+  './fonts/cairo.woff2'
 ];
 
 self.addEventListener('install', (event) => {
