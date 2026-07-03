@@ -552,6 +552,17 @@
     <button id="kids-tables-btn" onclick="toggleTablesGrid()" class="cat-card rounded-xl w-full py-3 flex items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(244,114,182,.16),rgba(255,255,255,.04));border:1.5px solid rgba(244,114,182,.45)"><span class="ines-ico" style="width:40px;height:40px;background:#E84C9A"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 10h17"/><path d="M3.5 15h17"/><path d="M10 3.5v17"/><path d="M15 3.5v17"/></svg></span><span class="font-bold text-sm" id="kids-tables-lbl">Tables</span></button>
     <div id="kids-tables-grid" class="w-full grid grid-cols-4 gap-2" style="display:none"></div>
     <button class="opacity-50 text-sm underline mt-2" onclick="switchView('view-dashboard')" id="kids-back">← Retour</button>
+    <!-- Pied de page légal (div, pas <footer> masqué) : copyright + liens -->
+    <div id="ines-foot" class="w-full mt-6 mb-3 text-center" style="border-top:1px solid rgba(232,76,154,.16);padding-top:16px">
+      <div class="text-xs" style="color:#6f6188">© 2026 Ines Kids</div>
+      <div class="flex justify-center items-center gap-2 mt-2 text-xs font-bold" style="flex-wrap:wrap">
+        <button onclick="showLegal('about')" style="color:#B02574" id="ines-foot-about">À propos</button>
+        <span style="color:#c9bcd6">·</span>
+        <button onclick="showLegal('privacy')" style="color:#B02574" id="ines-foot-privacy">Confidentialité</button>
+        <span style="color:#c9bcd6">·</span>
+        <button onclick="showLegal('terms')" style="color:#B02574" id="ines-foot-terms">CGU</button>
+      </div>
+    </div>
   </section>
 
   <!-- RÉVISION (répétition espacée) -->
@@ -3554,6 +3565,7 @@ function applyTranslations(){
     'wm-rotate-txt':'wmRotate',
     'wmres-title':'wmResultTitle','wmres-l-score':'wmLScore','wmres-l-pct':'accuracy','wmres-l-time':'wmTime','wmres-share':'shareBtn','wmres-replay':'wmReplayBtn','wmres-back':'wmMenuBtn',
     'kids-title':'kidsTitle','kids-desc':'kidsDesc','kids-back':'back',
+    'ines-foot-about':'footAbout','ines-foot-privacy':'footPrivacy','ines-foot-terms':'footTerms',
     'kids-35':'k35','kids-35d':'k35d','kids-68':'k68','kids-68d':'k68d','kids-912':'k912','kids-912d':'k912d','kids-lang-title':'kidsLang','kids-t1':'kT1','kids-t2':'kT2','kids-t3':'kT3','lesson-start':'lessonStart','lesson-ex-label':'lessonExamples','lesson-back':'back','listen-lbl':'listen','lesson-listen-lbl':'listen','kids-match-btn':'matchBtn','kids-report-btn':'reportBtn','mt-title':'matchTitle','mt-back':'back',
     'cat-select-title-text':'catTitle',
     'cat-select-desc-text':'catDesc','play-btn-text':'play',
@@ -3952,10 +3964,10 @@ function openKids(){
   }
   kidsRenderSubjects();kidsSetSubj(kidsSubj);
 }
-// Hide the Arabic-language items in the FR/EN versions of the app.
+// Les trois langues (FR/EN/AR) sont toujours proposées dans « Règles de langue ».
 function kidsUpdateLangUI(){
   var arBtn=document.getElementById('kids-lang-ar-btn');
-  if(arBtn)arBtn.style.display=(lang==='ar')?'':'none';
+  if(arBtn)arBtn.style.display='';
 }
 function startKids(cat){
   kidsMode=true;category=cat;difficulty='easy';
@@ -4080,7 +4092,7 @@ function kidsRenderYears(){
   if(kidsYear>n)kidsYear=1;
   for(var y=1;y<=n;y++){
     var a=y===kidsYear;
-    var yl=(lang==='ar')?('السنة '+y):(lang==='fr'?('Niv. '+y):('Lvl '+y));
+    var yl=(lang==='ar')?('السنة '+y):(lang==='fr'?('Année '+y):('Year '+y));
     var ines=(typeof INES!=='undefined'&&INES);
     var bd=ines?(a?'#22c55e':'rgba(232,76,154,.28)'):(a?'#22c55e':'rgba(255,255,255,.15)');
     var bgc=ines?(a?'#E6F9EC':'#fff'):(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)');
@@ -4089,7 +4101,7 @@ function kidsRenderYears(){
   }
   box.innerHTML=html;
 }
-function kidsYearLabel(y){var p=kidsIsLangCourse()?(lang==='fr'?'Niveau ':'Level '):(lang==='fr'?'Année ':lang==='en'?'Year ':'السنة ');return p+y;}
+function kidsYearLabel(y){var p=(lang==='fr'?'Année ':lang==='en'?'Year ':'السنة ');return p+y;}
 function kidsSubjName(){var subs=kidsSubjects();var s=subs.filter(function(o){return o.key===kidsSubj})[0]||subs[0];return s.name[lang]||s.name.fr;}
 function kidsBestStars(cat){if(!userData)return 0;try{return (JSON.parse(userData.kids_stars||'{}'))[cat]||0;}catch(e){return 0;}}
 function kidsStarRow(n){var h='<span style="font-size:11px;letter-spacing:1px">';for(var i=0;i<3;i++)h+='<span style="color:'+(i<n?'#FFD700':'rgba(255,255,255,.22)')+'">'+(i<n?'★':'☆')+'</span>';return h+'</span>';}
