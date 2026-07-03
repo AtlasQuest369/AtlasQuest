@@ -146,6 +146,11 @@
       outline:3px solid #6D28D9!important;outline-offset:2px;border-radius:12px}
     /* Premium — micro-interactions tactiles : enfoncement au tap, léger relief au survol (pointeur). */
     .ines-app .cat-card:active{transform:scale(.975)}
+    /* Feedback bonne réponse plus joyeux : ressort + halo vert (Sago/Bimi Boo). */
+    .ines-app #options button.correct-pulse{animation:inesPop .55s cubic-bezier(.2,1.55,.35,1) both!important;
+      box-shadow:0 0 0 4px rgba(47,143,78,.28),0 8px 18px rgba(47,143,78,.28)!important;border-color:#2F8F4E!important}
+    .ines-app #options button.wrong-pulse{box-shadow:0 0 0 3px rgba(194,65,12,.22)!important}
+    @keyframes inesPop{0%{transform:scale(1)}35%{transform:scale(1.07)}65%{transform:scale(.97)}100%{transform:scale(1)}}
     .ines-app #options button:active{transform:scale(.985)}
     @media (hover:hover) and (pointer:fine){
       .ines-app .cat-card:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(232,76,154,.16)!important}
@@ -1021,7 +1026,7 @@ function playTone(f,type,dur){if(!soundOn)return;try{const a=getAudio(),o=a.crea
 var hapticOn=(function(){try{return localStorage.getItem('aq_haptic')!=='0'}catch(e){return true}})();
 function haptic(ms){if(hapticOn&&navigator.vibrate){try{navigator.vibrate(ms)}catch(e){}}}
 function setHaptic(on){hapticOn=on;try{localStorage.setItem('aq_haptic',on?'1':'0')}catch(e){}if(on)haptic(15)}
-function playCorrect(){haptic(12);playTone(880,'sine',.15);setTimeout(()=>playTone(1100,'sine',.15),100)}
+function playCorrect(){haptic([10,30,22]);playTone(880,'sine',.15);setTimeout(()=>playTone(1100,'sine',.15),100);setTimeout(()=>playTone(1320,'sine',.18),200)}
 function playWrong(){haptic(45);playTone(200,'square',.3)}
 function playLevelUp(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',.3),i*150))}
 
@@ -4711,16 +4716,27 @@ function inesParentPanel(){
   var cy=(userData&&userData.ines_year)||1;
   var yrRow='';for(var y=1;y<=5;y++){var on=(cy===y);
     yrRow+='<button onclick="inesSetYear('+y+')" class="px-3 py-2 rounded-xl text-sm font-bold" style="border:2px solid '+(on?'#7DBE3C':'rgba(0,0,0,.12)')+';background:'+(on?'rgba(125,190,60,.12)':'#fff')+'">'+(lang==='ar'?('س'+y):((lang==='en'?'Y':'Niv.')+y))+'</button>';}
+  // Réglages : vibrations & sons (options demandées).
+  var optLbl=lang==='ar'?'الإعدادات':lang==='en'?'Settings':'Réglages';
+  var vibLbl=lang==='ar'?'الاهتزاز':lang==='en'?'Vibration':'Vibrations';
+  var sndLbl=lang==='ar'?'الصوت':lang==='en'?'Sounds':'Sons';
+  function inesTog(label,on,fn){return '<button onclick="'+fn+'" class="px-3 py-2 rounded-xl text-sm font-bold flex items-center gap-2" style="border:2px solid '+(on?'#7DBE3C':'rgba(0,0,0,.14)')+';background:'+(on?'rgba(125,190,60,.12)':'#fff')+';color:#33264a">'+label+' <span style="font-weight:800;color:'+(on?'#2F8F4E':'#9a90a6')+'">'+(on?'✓':'✕')+'</span></button>';}
+  var optRow=inesTog(vibLbl,hapticOn,'inesToggleHaptic()')+inesTog(sndLbl,soundOn,'inesToggleSound()');
   return '<h3 class="w-full font-bold text-sm opacity-70 mt-2">'+yrLbl+'</h3>'
     +'<div class="w-full flex flex-wrap gap-2">'+yrRow+'</div>'
     +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+langLbl+'</h3>'
     +'<div class="w-full flex flex-wrap gap-2">'+langRow+'</div>'
+    +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+optLbl+'</h3>'
+    +'<div class="w-full flex flex-wrap gap-2">'+optRow+'</div>'
     +'<h3 class="w-full font-bold text-sm opacity-70 mt-3">'+lbl.t+'</h3>'
     +'<div class="w-full rounded-xl p-3" style="background:rgba(232,76,154,.06);border:1px solid rgba(232,76,154,.3)">'
     +'<button onclick="inesOpenYouTube()" class="w-full px-4 py-2 rounded-xl font-bold text-white" style="background:linear-gradient(135deg,#E23B3B,#c62828)">'+lbl.yt+'</button>'
     +sup
     +'</div>';
 }
+// Réglages parent : activer/désactiver vibrations & sons (persistés).
+function inesToggleHaptic(){setHaptic(!hapticOn);if(typeof renderParentDashboard==='function')renderParentDashboard();}
+function inesToggleSound(){setSound(!soundOn);if(typeof renderParentDashboard==='function')renderParentDashboard();}
 // Change la langue depuis l'espace parent puis rafraîchit le tableau de bord.
 function inesSetLang(l){setLang(l);if(typeof renderParentDashboard==='function')renderParentDashboard();}
 // Programme scolaire : replié par défaut (hub enfant épuré), déplié à la demande.
