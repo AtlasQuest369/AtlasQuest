@@ -1,0 +1,36 @@
+{
+  "id": "atlasquest",
+  "name": "AtlasQuest - Quiz Géographie Monde",
+  "short_name": "AtlasQuest",
+  "description": "Quiz éducatif de géographie et d'histoire du monde en français, anglais et arabe.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0f1a",
+  "theme_color": "#FFD700",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["education", "games", "trivia"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": []
+}
