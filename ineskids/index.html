@@ -87,7 +87,7 @@
     .ines-app #header-badges{display:none!important}   /* pas de vies/gemmes adultes */
     .ines-app #lang-bar{display:none!important}
     .ines-app footer{display:none!important}
-    .ines-app #kids-year-sel{display:none!important}          /* langue = réglage parent, pas un choix d'enfant */
+    /* Le sélecteur d'année (السنة/Niveau) est lisible et utilisable dans « Mon programme ». */
     .ines-app,.ines-app .text-white{color:#33264a!important}
     .ines-app .opacity-70,.ines-app .opacity-60,.ines-app .opacity-50,.ines-app .opacity-40{opacity:1!important;color:#6f6188!important}
     .ines-app #kids-desc{color:#6f6188!important}
@@ -4061,7 +4061,12 @@ function kidsRenderSubjects(){
   box.style.display=(subs.length<=1)?'none':'';
   subs.forEach(function(s){
     var a=s.key===kidsSubj;
-    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetSubj(\''+s.key+'\')" class="rounded-lg py-2.5 text-sm font-bold" style="border:1px solid '+(a?'var(--cyan)':'rgba(255,255,255,.15)')+';background:'+(a?'rgba(0,229,255,.18)':'rgba(255,255,255,.04)')+';color:'+(a?'#fff':'rgba(255,255,255,.7)')+'">'+(s.label[lang]||s.label.fr)+'</button>';
+    // Ines Kids : thème clair → texte sombre lisible (jamais de blanc sur crème).
+    var ines=(typeof INES!=='undefined'&&INES);
+    var bd=ines?(a?'#E84C9A':'rgba(232,76,154,.28)'):(a?'var(--cyan)':'rgba(255,255,255,.15)');
+    var bgc=ines?(a?'#FFE7F3':'#fff'):(a?'rgba(0,229,255,.18)':'rgba(255,255,255,.04)');
+    var col=ines?(a?'#B02574':'#33264a'):(a?'#fff':'rgba(255,255,255,.7)');
+    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetSubj(\''+s.key+'\')" class="rounded-lg py-2.5 text-sm font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+(s.label[lang]||s.label.fr)+'</button>';
   });
   box.innerHTML=html;
 }
@@ -4076,7 +4081,11 @@ function kidsRenderYears(){
   for(var y=1;y<=n;y++){
     var a=y===kidsYear;
     var yl=(lang==='ar')?('السنة '+y):(lang==='fr'?('Niv. '+y):('Lvl '+y));
-    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:1px solid '+(a?'#22c55e':'rgba(255,255,255,.15)')+';background:'+(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)')+';color:'+(a?'#fff':'rgba(255,255,255,.7)')+'">'+yl+'</button>';
+    var ines=(typeof INES!=='undefined'&&INES);
+    var bd=ines?(a?'#22c55e':'rgba(232,76,154,.28)'):(a?'#22c55e':'rgba(255,255,255,.15)');
+    var bgc=ines?(a?'#E6F9EC':'#fff'):(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)');
+    var col=ines?(a?'#15803D':'#33264a'):(a?'#fff':'rgba(255,255,255,.7)');
+    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+yl+'</button>';
   }
   box.innerHTML=html;
 }
