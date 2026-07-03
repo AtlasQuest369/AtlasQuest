@@ -1,0 +1,167 @@
+name: 4 - Release Ines Kids (AAB Play Store)
+
+# Produit un Android App Bundle (.aab) SIGNÉ pour la publication Play Store,
+# plus un .apk pour test hors-Play. Capacitor 7 / targetSdk 35.
+#
+# Signature : utilise en priorité une clé de dépôt Ines dédiée
+# (secrets INES_KEYSTORE_BASE64 / INES_KEYSTORE_PASSWORD / INES_KEY_ALIAS /
+# INES_KEY_PASSWORD). À défaut, retombe sur la clé de test partagée
+# (KEYSTORE_*) pour valider le pipeline. Voir docs/PLAY-RELEASE.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: "Nom de version affiché (ex. 1.0.0)"
+        required: true
+        default: "1.0.0"
+      versionCode:
+        description: "Code de version entier (incrémenter à chaque dépôt)"
+        required: true
+        default: "1"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21 (requis par Capacitor 7)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Capacitor 7
+        run: npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
+
+      - name: Prepare web folder (Ines Kids)
+        run: |
+          mkdir -p www
+          cp ineskids/index.html www/
+          cp ineskids/manifest.json www/ || true
+          cp ineskids/sw.js www/ || true
+          cp ineskids/privacy.html www/ || true
+          cp ineskids/terms.html www/ || true
+          cp ineskids/logo.png www/ || true
+          cp ineskids/icon-512.png www/ || true
+          cp worldmap.js www/ || true
+
+      - name: Write Capacitor config
+        run: |
+          cat > capacitor.config.json << 'EOF'
+          {
+            "appId": "com.ineskids.app",
+            "appName": "Ines Kids",
+            "webDir": "www",
+            "server": { "androidScheme": "https" }
+          }
+          EOF
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync
+        run: npx cap sync android
+
+      - name: Set version (name + code)
+        run: |
+          GRADLE=android/app/build.gradle
+          sed -i "s/versionCode [0-9][0-9]*/versionCode ${{ github.event.inputs.versionCode }}/" "$GRADLE"
+          sed -i "s/versionName \"[^\"]*\"/versionName \"${{ github.event.inputs.versionName }}\"/" "$GRADLE"
+          echo "Version set:" && grep -E "versionCode|versionName" "$GRADLE"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Set app icons (Ines logo on white)
+        run: |
+          pip install Pillow --quiet
+          python3 - << 'EOF'
+          from PIL import Image
+          base = 'android/app/src/main/res'
+          logo = Image.open('ineskids/icon-512.png').convert('RGBA')
+          legacy = {'mipmap-mdpi':48,'mipmap-hdpi':72,'mipmap-xhdpi':96,'mipmap-xxhdpi':144,'mipmap-xxxhdpi':192}
+          for d,s in legacy.items():
+              canvas = Image.new('RGBA',(s,s),(255,255,255,255))
+              inner = int(s*0.86); l = logo.resize((inner,inner), Image.LANCZOS)
+              off = (s-inner)//2; canvas.alpha_composite(l,(off,off))
+              canvas.convert('RGB').save(f'{base}/{d}/ic_launcher.png')
+              canvas.convert('RGB').save(f'{base}/{d}/ic_launcher_round.png')
+          fg = {'mipmap-mdpi':108,'mipmap-hdpi':162,'mipmap-xhdpi':216,'mipmap-xxhdpi':324,'mipmap-xxxhdpi':432}
+          for d,s in fg.items():
+              canvas = Image.new('RGBA',(s,s),(0,0,0,0))
+              inner = int(s*0.62); l = logo.resize((inner,inner), Image.LANCZOS)
+              off = (s-inner)//2; canvas.alpha_composite(l,(off,off))
+              canvas.save(f'{base}/{d}/ic_launcher_foreground.png')
+          print('Ines icons done')
+          EOF
+          mkdir -p android/app/src/main/res/values android/app/src/main/res/mipmap-anydpi-v26
+          printf '<?xml version="1.0" encoding="utf-8"?>\n<resources><color name="ic_launcher_background">#FFFFFF</color></resources>\n' > android/app/src/main/res/values/ic_launcher_background.xml
+          printf '<?xml version="1.0" encoding="utf-8"?>\n<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n  <background android:drawable="@color/ic_launcher_background"/>\n  <foreground android:drawable="@mipmap/ic_launcher_foreground"/>\n</adaptive-icon>\n' > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          cp android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+
+      - name: Resolve signing secrets (Ines dedicated key, fallback to test key)
+        env:
+          INES_B64: ${{ secrets.INES_KEYSTORE_BASE64 }}
+          INES_PW: ${{ secrets.INES_KEYSTORE_PASSWORD }}
+          INES_ALIAS: ${{ secrets.INES_KEY_ALIAS }}
+          INES_KEYPW: ${{ secrets.INES_KEY_PASSWORD }}
+          FB_B64: ${{ secrets.KEYSTORE_BASE64 }}
+          FB_PW: ${{ secrets.KEYSTORE_PASSWORD }}
+          FB_ALIAS: ${{ secrets.KEY_ALIAS }}
+          FB_KEYPW: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          B64="${INES_B64:-$FB_B64}"
+          if [ -z "$B64" ]; then echo "::error::Aucun keystore configuré (ni INES_KEYSTORE_BASE64 ni KEYSTORE_BASE64)"; exit 1; fi
+          if [ -n "$INES_B64" ]; then echo "Signature : clé de dépôt Ines dédiée"; else echo "::warning::Signature avec la clé de TEST partagée — crée la clé Ines avant le dépôt Play (voir docs/PLAY-RELEASE.md)"; fi
+          echo "$B64" | base64 -d > android/app/ineskids-upload.keystore
+          {
+            echo "SIGN_STORE_PASSWORD=${INES_PW:-$FB_PW}"
+            echo "SIGN_KEY_ALIAS=${INES_ALIAS:-$FB_ALIAS}"
+            echo "SIGN_KEY_PASSWORD=${INES_KEYPW:-$FB_KEYPW}"
+          } >> "$GITHUB_ENV"
+
+      - name: Configure Gradle signing
+        run: |
+          cat >> android/app/build.gradle << 'EOF'
+
+          android.signingConfigs {
+            release {
+              storeFile file('ineskids-upload.keystore')
+              storePassword System.getenv('SIGN_STORE_PASSWORD')
+              keyAlias System.getenv('SIGN_KEY_ALIAS')
+              keyPassword System.getenv('SIGN_KEY_PASSWORD')
+            }
+          }
+          android.buildTypes.release.signingConfig android.signingConfigs.release
+          EOF
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Build signed AAB + APK
+        run: cd android && ./gradlew bundleRelease assembleRelease --no-daemon
+
+      - name: Upload AAB (dépôt Play Store)
+        uses: actions/upload-artifact@v4
+        with:
+          name: InesKids-AAB-Play
+          retention-days: 30
+          path: android/app/build/outputs/bundle/release/app-release.aab
+
+      - name: Upload APK (test hors-Play)
+        uses: actions/upload-artifact@v4
+        with:
+          name: InesKids-APK-test
+          retention-days: 30
+          path: android/app/build/outputs/apk/release/app-release.apk
