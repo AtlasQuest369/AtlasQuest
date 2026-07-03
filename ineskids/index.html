@@ -86,6 +86,7 @@
     .ines-app #kids-back,.ines-app #ad-banner{display:none!important}
     .ines-app #header-badges{display:none!important}   /* pas de vies/gemmes adultes */
     .ines-app #lang-bar{display:none!important}
+    .ines-app footer{display:none!important}
     .ines-app #kids-year-sel{display:none!important}          /* langue = réglage parent, pas un choix d'enfant */
     .ines-app,.ines-app .text-white{color:#33264a!important}
     .ines-app .opacity-70,.ines-app .opacity-60,.ines-app .opacity-50,.ines-app .opacity-40{opacity:1!important;color:#6f6188!important}
@@ -102,6 +103,12 @@
     .ines-app .playfair{font-family:'DM Sans',sans-serif!important}
     .ines-app #result-msg{color:#E84C9A!important}          /* message de résultat rose Ines */
     .ines-app #result-stats .gold-card>div:first-child{color:#E84C9A!important}
+    /* Pas de XP / série affichés à l'enfant pendant le quiz */
+    .ines-app #q-xp,.ines-app #q-streak{display:none!important}
+    /* Espace parent lisible sur le thème clair (styles sombres hérités) */
+    .ines-app #parent-content [style*="rgba(255,255,255,.05)"]{background:#fff!important;border-color:rgba(232,76,154,.18)!important}
+    .ines-app #parent-content [style*="rgba(255,255,255,.1)"]{background:rgba(0,0,0,.07)!important}
+    .ines-app #parent-content [style*="var(--gold)"]{color:#E84C9A!important}
     @keyframes mascotBob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-1.5deg)}}
     @keyframes mascotCheer{0%{transform:scale(.7) translateY(6px)}55%{transform:scale(1.08) translateY(-6px)}75%{transform:scale(.97)}100%{transform:scale(1)}}
 
