@@ -151,6 +151,13 @@
       box-shadow:0 0 0 4px rgba(47,143,78,.28),0 8px 18px rgba(47,143,78,.28)!important;border-color:#2F8F4E!important}
     .ines-app #options button.wrong-pulse{box-shadow:0 0 0 3px rgba(194,65,12,.22)!important}
     @keyframes inesPop{0%{transform:scale(1)}35%{transform:scale(1.07)}65%{transform:scale(.97)}100%{transform:scale(1)}}
+    /* Transitions d'écran fluides (entrée douce de chaque vue). */
+    .ines-app .view.active{animation:inesViewIn .34s cubic-bezier(.2,.7,.3,1) both}
+    @keyframes inesViewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    /* Récompense signature : étoiles qui jaillissent. */
+    .ines-spark{animation:inesSpark .85s ease-out forwards;will-change:transform,opacity}
+    @keyframes inesSpark{0%{transform:translate(0,0) scale(.4);opacity:0}20%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.15);opacity:0}}
+    @media (prefers-reduced-motion:reduce){.ines-app .view.active{animation:none!important}.ines-spark{display:none!important}}
     .ines-app #options button:active{transform:scale(.985)}
     @media (hover:hover) and (pointer:fine){
       .ines-app .cat-card:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(232,76,154,.16)!important}
@@ -4734,6 +4741,23 @@ function inesParentPanel(){
     +sup
     +'</div>';
 }
+// Récompense signature : petites étoiles qui jaillissent du bouton correct (Duolingo/Sago).
+function inesReward(el){
+  if(!(typeof INES!=='undefined'&&INES)||!el)return;
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  try{
+    var r=el.getBoundingClientRect();var cx=r.left+r.width/2,cy=r.top+r.height/2;
+    var chars=['⭐','✨','🌟','⭐','✨','💫'];
+    for(var i=0;i<6;i++){
+      var s=document.createElement('span');s.textContent=chars[i%chars.length];s.className='ines-spark';
+      var ang=(-90+(i-2.5)*24)*Math.PI/180,dist=42+Math.random()*28;
+      s.style.cssText='position:fixed;left:'+cx+'px;top:'+cy+'px;font-size:'+(16+Math.random()*10)+'px;'
+        +'pointer-events:none;z-index:9999;--dx:'+(Math.cos(ang)*dist).toFixed(1)+'px;--dy:'+(Math.sin(ang)*dist-28).toFixed(1)+'px';
+      document.body.appendChild(s);
+      (function(n){setTimeout(function(){n.remove();},900);})(s);
+    }
+  }catch(e){}
+}
 // Réglages parent : activer/désactiver vibrations & sons (persistés).
 function inesToggleHaptic(){setHaptic(!hapticOn);if(typeof renderParentDashboard==='function')renderParentDashboard();}
 function inesToggleSound(){setSound(!soundOn);if(typeof renderParentDashboard==='function')renderParentDashboard();}
@@ -5908,8 +5932,9 @@ function selectAnswer(answer,btn){
     playCorrect();
     if(btn){btn.style.background='rgba(16,185,129,.35)';btn.classList.add('correct-pulse')}
     if(typeof INES!=='undefined'&&INES){
-      // Ines Kids : encouragement, jamais de XP/gemmes (mécaniques adultes).
+      // Ines Kids : encouragement + récompense signature (étoiles qui jaillissent).
       showToast(lang==='ar'?'أحسنت! 🌟':lang==='en'?'Well done! 🌟':'Bravo ! 🌟','green',1400);
+      if(btn&&typeof inesReward==='function')inesReward(btn);
     }else{
       showToast(`✅ +${xpGain} XP · +5 💎`,'green');
       addGems(5);
