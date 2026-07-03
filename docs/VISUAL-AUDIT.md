@@ -19,7 +19,7 @@ d'écran, zéro asset lourd, zéro réseau. Le levier n'est pas le format mais l
 | 2 | Enfant et adulte partagent le même habillage (fond noir + or) → pas de séparation ressentie | 🟠 | ✅ Fait — thème `kids-mode` (fond sarcelle + bulles pastel, boutons ronds à relief, sans pub) |
 | 3 | Illustrations de leçons enfant (`ILLUS`) hétérogènes (qualité variable) | 🟠 | ⏳ À faire — passer au même standard que les monuments |
 | 4 | Cartes de catégories adultes : tuiles sombres identiques | 🟡 | ✅ Fait — couleur d'identité par catégorie |
-| 5 | Mascotte Fennec : présence limitée au hub enfant | 🟡 | ⏳ À faire — états animés (réussite, encouragement) dans le parcours enfant |
+| 5 | Mascotte Fennec statique | 🟡 | ✅ Fait — flottement doux continu + rebond de joie (respecte reduced-motion) |
 | 6 | Écran de résultats identique enfant/adulte | 🟡 | Partiel — hérite du thème `kids-mode` ; peut être enrichi (récompense enfant dédiée) |
 | 7 | `prefers-reduced-motion` | 🟢 | ✅ Fait (PR #53) |
 

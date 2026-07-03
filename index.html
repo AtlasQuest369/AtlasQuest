@@ -75,8 +75,14 @@
     .glow-active{animation:glow-gold 2s ease-in-out infinite}
 
     /* ACCESSIBILITÉ : réduire le mouvement (DESIGN-SYSTEM.md §5) */
+    /* Mascotte Fennec vivante : flottement doux en continu, rebond de joie */
+    .mascot-svg{animation:mascotBob 3.2s ease-in-out infinite;transform-origin:60px 100px}
+    .mascot-cheer{animation:mascotCheer .7s ease-out,mascotBob 3.2s ease-in-out .7s infinite;transform-origin:60px 100px}
+    @keyframes mascotBob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-1.5deg)}}
+    @keyframes mascotCheer{0%{transform:scale(.7) translateY(6px)}55%{transform:scale(1.08) translateY(-6px)}75%{transform:scale(.97)}100%{transform:scale(1)}}
+
     @media (prefers-reduced-motion:reduce){
-      .confetti,.glow-active,.correct-pulse,.wrong-pulse,#result-mascot,.fade-up,#result-stars span{animation:none!important}
+      .confetti,.glow-active,.correct-pulse,.wrong-pulse,#result-mascot,.fade-up,#result-stars span,.mascot-svg,.mascot-cheer{animation:none!important}
       .timer-bar{transition:none}
       *{scroll-behavior:auto!important}
     }
@@ -4478,7 +4484,7 @@ function mascotSVG(mood,size){
     ?'<path d="M51 79 q9 13 18 0 z" fill="#b3402f"/><path d="M55 84 q5 4 10 0" fill="#ef6b6b"/>'
     :'<path d="M54 80 q6 6 12 0" fill="none" stroke="#3a2a15" stroke-width="2.6" stroke-linecap="round"/>';
   var spark=mood==='cheer'?'<g fill="#FFD700"><path d="M16 30 l2.2 6 6 2.2 -6 2.2 -2.2 6 -2.2 -6 -6 -2.2 6 -2.2z"/><path d="M102 40 l1.6 4.4 4.4 1.6 -4.4 1.6 -1.6 4.4 -1.6 -4.4 -4.4 -1.6 4.4 -1.6z"/></g>':'';
-  return '<svg viewBox="0 0 120 120" width="'+size+'" height="'+size+'" style="display:block;overflow:visible">'
+  return '<svg viewBox="0 0 120 120" width="'+size+'" height="'+size+'" class="mascot-svg mascot-'+mood+'" style="display:block;overflow:visible">'
     +'<ellipse cx="33" cy="33" rx="15" ry="27" fill="#efd9ac" transform="rotate(-24 33 33)"/>'
     +'<ellipse cx="87" cy="33" rx="15" ry="27" fill="#efd9ac" transform="rotate(24 87 33)"/>'
     +'<ellipse cx="34" cy="36" rx="7" ry="16" fill="#f6b0bf" transform="rotate(-24 34 36)"/>'
