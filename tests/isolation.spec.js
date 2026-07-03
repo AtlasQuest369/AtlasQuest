@@ -25,5 +25,20 @@ runSpec('isolation',async browser=>{
   res.adChild.forEach(r=>assert(r.visible===false,'pub visible dans la vue enfant '+r.v));
   assert(res.adKidsQuiz===false,'pub visible pendant un quiz enfant');
   assert(res.extLinks.length===0,'liens externes en vue enfant : '+res.extLinks.join(', '));
+
+  // Séparation VISUELLE enfant/adulte : le thème kids-mode s'applique en
+  // contexte enfant (hub + quiz enfant) et JAMAIS en contexte adulte.
+  const theme=await page.evaluate(()=>{
+    const has=()=>document.body.classList.contains('kids-mode');
+    switchView('view-kids');const kHub=has();
+    startKids('sci_s1_t1');const kQuiz=has();
+    switchView('view-dashboard');const aDash=has();
+    kidsMode=false;category='flags';switchView('view-quiz');const aQuiz=has();
+    switchView('view-parent');const parent=has();
+    return {kHub,kQuiz,aDash,aQuiz,parent};
+  });
+  assert(theme.kHub&&theme.kQuiz,'le thème enfant doit s’appliquer au hub et au quiz enfant');
+  assert(!theme.aDash&&!theme.aQuiz,'le thème enfant ne doit JAMAIS s’appliquer au mode adulte');
+  assert(!theme.parent,'l’espace parent reste neutre (pas de thème enfant)');
   assert(errors.length===0,'erreurs de page : '+errors.join(' | '));
 });

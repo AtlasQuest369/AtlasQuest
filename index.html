@@ -81,6 +81,28 @@
       *{scroll-behavior:auto!important}
     }
 
+    /* ===== SÉPARATION VISUELLE : thème Mode Enfant (doux, rond, coloré) =====
+       Adulte = fond sombre + particules dorées (sobre, premium).
+       Enfant = fond bleu-sarcelle chaleureux + bulles pastel + boutons ronds. */
+    body.kids-mode{background:radial-gradient(130% 100% at 50% -10%,#1f5e5a 0%,#164a55 38%,#123a4a 100%)}
+    body.kids-mode::before{background-image:
+      radial-gradient(16px 16px at 12% 16%,rgba(129,236,197,.32) 0%,transparent 70%),
+      radial-gradient(22px 22px at 85% 12%,rgba(255,183,140,.28) 0%,transparent 70%),
+      radial-gradient(13px 13px at 70% 38%,rgba(120,200,255,.28) 0%,transparent 70%),
+      radial-gradient(18px 18px at 22% 60%,rgba(255,214,120,.24) 0%,transparent 70%),
+      radial-gradient(14px 14px at 90% 70%,rgba(180,160,255,.26) 0%,transparent 70%),
+      radial-gradient(11px 11px at 45% 84%,rgba(129,236,197,.22) 0%,transparent 70%);
+      opacity:1}
+    /* Réponses de quiz : plus grosses, plus rondes, plus douces */
+    body.kids-mode #options button{border-radius:20px!important;border-width:2.5px!important;
+      padding-top:1rem!important;padding-bottom:1rem!important;font-weight:700!important;
+      box-shadow:0 4px 0 rgba(0,0,0,.18)!important}
+    body.kids-mode #options button:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.18)!important}
+    /* Barre de progression du quiz enfant en dégradé mint→cyan */
+    body.kids-mode #timer-bar,body.kids-mode #q-progress-bar{background:linear-gradient(90deg,#34d399,#22d3ee)!important}
+    /* Cartes plus arrondies et chaleureuses */
+    body.kids-mode .gold-card,body.kids-mode .cat-card{border-radius:22px!important}
+
     /* TIMER */
     .timer-bar{transition:width linear}
 
@@ -3528,6 +3550,9 @@ function switchView(id){
   if(id==='view-profile'){updateProfileView();renderBadges()}
   if(id==='view-parent')renderParentDashboard();
   updateAdVisibility(id);
+  // Séparation visuelle enfant/adulte : bascule le thème Mode Enfant.
+  var kidTheme=(ROUTES[id]==='child')||((id==='view-quiz'||id==='view-results')&&kidsMode);
+  document.body.classList.toggle('kids-mode',kidTheme);
 }
 // ===== Table de routes : mode propriétaire de chaque vue (ARCHITECTURE.md §4) =====
 var ROUTES={
