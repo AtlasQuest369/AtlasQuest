@@ -86,6 +86,7 @@
     .ines-app #kids-back,.ines-app #ad-banner{display:none!important}
     .ines-app #header-badges{display:none!important}   /* pas de vies/gemmes adultes */
     .ines-app #lang-bar{display:none!important}
+    .ines-app footer{display:none!important}
     .ines-app #kids-year-sel{display:none!important}          /* langue = réglage parent, pas un choix d'enfant */
     .ines-app,.ines-app .text-white{color:#33264a!important}
     .ines-app .opacity-70,.ines-app .opacity-60,.ines-app .opacity-50,.ines-app .opacity-40{opacity:1!important;color:#6f6188!important}
@@ -102,6 +103,24 @@
     .ines-app .playfair{font-family:'DM Sans',sans-serif!important}
     .ines-app #result-msg{color:#E84C9A!important}          /* message de résultat rose Ines */
     .ines-app #result-stats .gold-card>div:first-child{color:#E84C9A!important}
+    /* Pas de XP / série affichés à l'enfant pendant le quiz */
+    .ines-app #q-xp,.ines-app #q-streak{display:none!important}
+    /* Bouton « maison » : visible seulement dans Ines Kids, gros & tactile */
+    .ines-only{display:none!important}
+    .ines-app .ines-only{display:inline-flex!important}
+    .ines-app #ines-quiz-home{align-items:center;justify-content:center;width:44px;height:44px;font-size:22px;line-height:1;
+      background:#fff;border:2.5px solid #E84C9A;border-radius:16px;box-shadow:0 4px 0 rgba(232,76,154,.22);cursor:pointer}
+    .ines-app #ines-quiz-home:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(232,76,154,.22)}
+    /* Sélecteurs de programme lisibles sur le thème clair (texte sombre, non blanc) */
+    .ines-app #kids-subj-sel button,.ines-app #kids-year-sel button{
+      color:#33264a!important;background:#fff!important;border:2px solid rgba(232,76,154,.25)!important;
+      border-radius:16px!important;font-weight:800!important;box-shadow:0 3px 0 rgba(232,76,154,.12)!important}
+    .ines-app #kids-subj-sel button[data-active="1"],.ines-app #kids-year-sel button[data-active="1"]{
+      background:#FFE7F3!important;border-color:#E84C9A!important;color:#B02574!important}
+    /* Espace parent lisible sur le thème clair (styles sombres hérités) */
+    .ines-app #parent-content [style*="rgba(255,255,255,.05)"]{background:#fff!important;border-color:rgba(232,76,154,.18)!important}
+    .ines-app #parent-content [style*="rgba(255,255,255,.1)"]{background:rgba(0,0,0,.07)!important}
+    .ines-app #parent-content [style*="var(--gold)"]{color:#E84C9A!important}
     @keyframes mascotBob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-1.5deg)}}
     @keyframes mascotCheer{0%{transform:scale(.7) translateY(6px)}55%{transform:scale(1.08) translateY(-6px)}75%{transform:scale(.97)}100%{transform:scale(1)}}
 
@@ -623,6 +642,7 @@
   <!-- QUIZ -->
   <section id="view-quiz" class="view flex-col items-center gap-4 max-w-md mx-auto w-full fade-up">
     <div class="flex justify-between w-full items-center mt-6">
+      <button id="ines-quiz-home" onclick="inesQuizHome()" class="ines-only" aria-label="Accueil" title="Accueil">🏠</button>
       <span id="q-counter" class="text-sm font-medium opacity-70">1/10</span>
       <span id="q-xp" class="text-sm font-bold" style="color:var(--cyan)">0 XP</span>
       <span id="q-streak" class="text-sm">🔥 0</span>
@@ -3572,6 +3592,8 @@ function applyTranslations(){
 
 // ===== VIEWS =====
 function switchView(id){
+  // Ines Kids : le tableau de bord adulte est masqué → toute « maison » revient au hub enfant.
+  if((typeof INES!=='undefined'&&INES)&&id==='view-dashboard'){if(typeof openKids==='function'){openKids();return;}}
   if(id!=='view-worldmap'&&typeof wmReleaseLandscape==='function'){wmReleaseLandscape();if(typeof wmStopTimer==='function')wmStopTimer();}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const el=document.getElementById(id);
@@ -3856,6 +3878,11 @@ function updateAdVisibility(id){
 }
 
 function selectCategory(cat){kidsMode=false;category=cat;switchView('view-categories')}
+// Retour à l'accueil depuis le quiz (bouton 🏠). Confirme pour éviter la sortie accidentelle.
+function inesQuizHome(){
+  var msg=(lang==='ar'?'العودة إلى الصفحة الرئيسية؟':lang==='en'?'Back to home?':'Revenir à l’accueil ?');
+  if(window.confirm(msg)){try{clearInterval(timer);}catch(e){}openKids();}
+}
 function openKids(){
   kidsMode=false;switchView('view-kids');
   // Niveau scolaire piloté par le parent (userData.ines_year).
@@ -4019,7 +4046,7 @@ function kidsRenderSubjects(){
   box.style.display=(subs.length<=1)?'none':'';
   subs.forEach(function(s){
     var a=s.key===kidsSubj;
-    html+='<button onclick="kidsSetSubj(\''+s.key+'\')" class="rounded-lg py-2.5 text-sm font-bold" style="border:1px solid '+(a?'var(--cyan)':'rgba(255,255,255,.15)')+';background:'+(a?'rgba(0,229,255,.18)':'rgba(255,255,255,.04)')+';color:'+(a?'#fff':'rgba(255,255,255,.7)')+'">'+(s.label[lang]||s.label.fr)+'</button>';
+    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetSubj(\''+s.key+'\')" class="rounded-lg py-2.5 text-sm font-bold" style="border:1px solid '+(a?'var(--cyan)':'rgba(255,255,255,.15)')+';background:'+(a?'rgba(0,229,255,.18)':'rgba(255,255,255,.04)')+';color:'+(a?'#fff':'rgba(255,255,255,.7)')+'">'+(s.label[lang]||s.label.fr)+'</button>';
   });
   box.innerHTML=html;
 }
@@ -4034,7 +4061,7 @@ function kidsRenderYears(){
   for(var y=1;y<=n;y++){
     var a=y===kidsYear;
     var yl=(lang==='ar')?('السنة '+y):(lang==='fr'?('Niv. '+y):('Lvl '+y));
-    html+='<button onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:1px solid '+(a?'#22c55e':'rgba(255,255,255,.15)')+';background:'+(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)')+';color:'+(a?'#fff':'rgba(255,255,255,.7)')+'">'+yl+'</button>';
+    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:1px solid '+(a?'#22c55e':'rgba(255,255,255,.15)')+';background:'+(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)')+';color:'+(a?'#fff':'rgba(255,255,255,.7)')+'">'+yl+'</button>';
   }
   box.innerHTML=html;
 }
