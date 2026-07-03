@@ -1,0 +1,128 @@
+name: 3 - Build Ines Kids APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Capacitor
+        run: |
+          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+
+      - name: Prepare web folder (Ines Kids)
+        run: |
+          mkdir -p www/icons
+          cp ineskids/index.html www/
+          cp ineskids/sw.js www/ || true
+          cp ineskids/manifest.json www/ || true
+          cp ineskids/logo.png www/ || true
+          cp ineskids/icon-512.png www/ || true
+          # Assets référencés par l'app copiée (évite les 404)
+          cp worldmap.js www/ || true
+          cp icons/icon-192.png www/icons/ || true
+          cp icons/icon-512.png www/icons/ || true
+          cp icons/icon-maskable-512.png www/icons/ || true
+
+      - name: Write Capacitor config
+        run: |
+          cat > capacitor.config.json << 'EOF'
+          {
+            "appId": "com.ineskids.app",
+            "appName": "Ines Kids",
+            "webDir": "www",
+            "server": { "androidScheme": "https" }
+          }
+          EOF
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync
+        run: npx cap sync android
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Set app icons (Ines logo on white)
+        run: |
+          pip install Pillow --quiet
+          python3 - << 'EOF'
+          from PIL import Image
+          base = 'android/app/src/main/res'
+          logo = Image.open('ineskids/icon-512.png').convert('RGBA')
+          # Legacy square icons (Android < 8): logo full-bleed on white
+          legacy = {'mipmap-mdpi':48,'mipmap-hdpi':72,'mipmap-xhdpi':96,'mipmap-xxhdpi':144,'mipmap-xxxhdpi':192}
+          for d,s in legacy.items():
+              canvas = Image.new('RGBA',(s,s),(255,255,255,255))
+              inner = int(s*0.86); l = logo.resize((inner,inner), Image.LANCZOS)
+              off = (s-inner)//2; canvas.alpha_composite(l,(off,off))
+              canvas.convert('RGB').save(f'{base}/{d}/ic_launcher.png')
+              canvas.convert('RGB').save(f'{base}/{d}/ic_launcher_round.png')
+          # Adaptive foreground (Android 8+): logo centered with safe padding
+          fg = {'mipmap-mdpi':108,'mipmap-hdpi':162,'mipmap-xhdpi':216,'mipmap-xxhdpi':324,'mipmap-xxxhdpi':432}
+          for d,s in fg.items():
+              canvas = Image.new('RGBA',(s,s),(0,0,0,0))
+              inner = int(s*0.62); l = logo.resize((inner,inner), Image.LANCZOS)
+              off = (s-inner)//2; canvas.alpha_composite(l,(off,off))
+              canvas.save(f'{base}/{d}/ic_launcher_foreground.png')
+          print('Ines icons done')
+          EOF
+          mkdir -p android/app/src/main/res/values android/app/src/main/res/mipmap-anydpi-v26
+          printf '<?xml version="1.0" encoding="utf-8"?>\n<resources><color name="ic_launcher_background">#FFFFFF</color></resources>\n' > android/app/src/main/res/values/ic_launcher_background.xml
+          printf '<?xml version="1.0" encoding="utf-8"?>\n<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n  <background android:drawable="@color/ic_launcher_background"/>\n  <foreground android:drawable="@mipmap/ic_launcher_foreground"/>\n</adaptive-icon>\n' > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          cp android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/atlasquest.keystore
+
+      - name: Configure Gradle signing
+        run: |
+          cat >> android/app/build.gradle << 'EOF'
+
+          android.signingConfigs {
+            release {
+              storeFile file('atlasquest.keystore')
+              storePassword System.getenv('KEYSTORE_PASSWORD')
+              keyAlias System.getenv('KEY_ALIAS')
+              keyPassword System.getenv('KEY_PASSWORD')
+            }
+          }
+          android.buildTypes.release.signingConfig android.signingConfigs.release
+          EOF
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Build APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: cd android && ./gradlew assembleRelease --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: InesKids-APK
+          retention-days: 30
+          path: android/app/build/outputs/apk/release/app-release.apk
