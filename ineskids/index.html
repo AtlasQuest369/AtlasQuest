@@ -3925,7 +3925,7 @@ function openKids(){
   if(km){
     var ines=(typeof INES!=='undefined'&&INES);
     var g=ines
-      ?(lang==='ar'?'مرحبًا، أنا إيناس! 🌈':lang==='en'?'Hi, I’m Ines! 🌈':'Coucou, c’est Ines ! 🌈')
+      ?(lang==='ar'?'مرحبًا، أنا إيناس!':lang==='en'?'Hi, I’m Ines!':'Coucou, c’est Ines !')
       :(lang==='ar'?'مرحبًا، أنا فنّك! 🦊':lang==='en'?'Hi, I’m Fennec! 🦊':'Salut, moi c’est Fennec ! 🦊');
     var bubble=ines?'background:rgba(232,76,154,.12);border:1px solid rgba(232,76,154,.4);color:#c026a0':'background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.4)';
     km.innerHTML=(typeof mascotSVG==='function'?mascotSVG('cheer',72):'🦊')+'<div class="rounded-full px-3 py-1 text-xs font-bold" style="'+bubble+'">'+g+'</div>';
