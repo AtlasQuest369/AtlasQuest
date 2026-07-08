@@ -83,25 +83,25 @@
     .mascot-cheer{animation:mascotCheer .7s ease-out,mascotBob 3.2s ease-in-out .7s infinite;transform-origin:60px 100px}
 
     /* ================= INES KIDS — thème clair et joyeux ================= */
-    .ines-app{background:#FFF6EC!important;color:#33264a}
+    .ines-app{--paper:#FFF6EC;--ink:#33264a;--muted:#6f6188;--surface:#fff;--brand:#E84C9A;--brand-rgb:232,76,154;--brand-ink:#B02574;--pink-tint:#FFE7F3;--sun:#FDB913;--grass:#7DBE3C;--teal-ink:#0B5E6C;--gold-ink:#B45309;--purple-ink:#6D28D9;--green-ink:#15803D;--ok:#2F8F4E;--ok-rgb:47,143,78;--warn-rgb:194,65,12;background:var(--paper)!important;color:var(--ink)}
     .ines-app::before{display:none!important}          /* pas de particules dorées */
     .ines-app nav{display:none!important}               /* pas de bottom-nav adulte */
     .ines-app #kids-back,.ines-app #ad-banner{display:none!important}
     .ines-app #header-badges{display:none!important}   /* pas de vies/gemmes adultes */
     /* Sélecteur de langue Ines (Ar/Fr/En) visible en haut, style clair. */
-    .ines-app #lang-bar{display:flex!important;background:#fff;border:2px solid rgba(232,76,154,.25);border-radius:999px;padding:5px 7px;box-shadow:0 4px 12px rgba(232,76,154,.16)}
+    .ines-app #lang-bar{display:flex!important;background:var(--surface);border:2px solid rgba(var(--brand-rgb),.25);border-radius:999px;padding:5px 7px;box-shadow:0 4px 12px rgba(var(--brand-rgb),.16)}
     .ines-app #lang-bar .lang-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:50%;min-height:38px}
-    .ines-app #lang-bar .lang-btn.active{background:#FFE7F3;filter:none}
+    .ines-app #lang-bar .lang-btn.active{background:var(--pink-tint);filter:none}
     .ines-app footer{display:none!important}
     /* Le sélecteur d'année (السنة/Niveau) est lisible et utilisable dans « Mon programme ». */
-    .ines-app,.ines-app .text-white{color:#33264a!important}
-    .ines-app .opacity-70,.ines-app .opacity-60,.ines-app .opacity-50,.ines-app .opacity-40{opacity:1!important;color:#6f6188!important}
-    .ines-app #kids-desc{color:#6f6188!important}
+    .ines-app,.ines-app .text-white{color:var(--ink)!important}
+    .ines-app .opacity-70,.ines-app .opacity-60,.ines-app .opacity-50,.ines-app .opacity-40{opacity:1!important;color:var(--muted)!important}
+    .ines-app #kids-desc{color:var(--muted)!important}
     /* Cartes claires à coins ronds + ombre colorée */
-    .ines-app .cat-card,.ines-app .gold-card{background:#fff!important;border:2px solid rgba(232,76,154,.22)!important;box-shadow:0 6px 16px rgba(232,76,154,.10)!important;color:#33264a!important;border-radius:24px!important}
+    .ines-app .cat-card,.ines-app .gold-card{background:var(--surface)!important;border:2px solid rgba(var(--brand-rgb),.22)!important;box-shadow:0 6px 16px rgba(var(--brand-rgb),.10)!important;color:var(--ink)!important;border-radius:24px!important}
     /* Réponses de quiz : blanches, contour jaune soleil, relief rose */
-    .ines-app #options button{color:#33264a!important;background:#fff!important;border:2.5px solid #FDB913!important;border-radius:22px!important;box-shadow:0 4px 0 rgba(232,76,154,.20)!important;font-weight:800!important}
-    .ines-app #options button:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(232,76,154,.20)!important}
+    .ines-app #options button{color:var(--ink)!important;background:var(--surface)!important;border:2.5px solid var(--sun)!important;border-radius:22px!important;box-shadow:0 4px 0 rgba(var(--brand-rgb),.20)!important;font-weight:800!important}
+    .ines-app #options button:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(var(--brand-rgb),.20)!important}
     /* Écran quiz premium : question & réponses centrées dans la zone du pouce, cibles agrandies */
     .ines-app #view-quiz{min-height:calc(100vh - 56px)}
     .ines-app #view-quiz #question-display{margin-top:auto}
@@ -109,53 +109,53 @@
     .ines-app #view-quiz #text-question{font-size:1.3rem!important;line-height:1.45}
     .ines-app #options button{min-height:62px!important;font-size:1rem!important;padding:14px 12px!important;line-height:1.25}
     /* Barre de progression aux couleurs Ines */
-    .ines-app #timer-bar,.ines-app #q-progress-bar{background:linear-gradient(90deg,#E84C9A,#FDB913,#7DBE3C)!important}
+    .ines-app #timer-bar,.ines-app #q-progress-bar{background:linear-gradient(90deg,var(--brand),var(--sun),var(--grass))!important}
     /* En-tête langues lisible sur clair */
     .ines-app #lang-bar .lang-btn{filter:none}
     .ines-app .playfair{font-family:'Fredoka','Segoe UI',system-ui,sans-serif!important;font-weight:700!important}
-    .ines-app #result-msg{color:#E84C9A!important}          /* message de résultat rose Ines */
-    .ines-app #result-stats .gold-card>div:first-child{color:#E84C9A!important}
+    .ines-app #result-msg{color:var(--brand)!important}          /* message de résultat rose Ines */
+    .ines-app #result-stats .gold-card>div:first-child{color:var(--brand)!important}
     /* Pas de XP / série affichés à l'enfant pendant le quiz */
     .ines-app #q-xp,.ines-app #q-streak{display:none!important}
     /* Set d’icônes cohérent : glyphe blanc sur tuile arrondie colorée */
     .ines-ico{display:inline-flex;align-items:center;justify-content:center;flex:none;border-radius:15px;box-shadow:0 3px 8px rgba(0,0,0,.10)}
     .ines-ico svg{width:56%;height:56%}
     /* Lisibilité : couleurs d’accent (thème sombre hérité) assombries pour le fond clair */
-    .ines-app [style*="color:var(--cyan)"]{color:#0B5E6C!important}
-    .ines-app [style*="color:var(--gold)"]{color:#B45309!important}
-    .ines-app [style*="color:var(--purple)"]{color:#6D28D9!important}
-    .ines-app [style*="color:#22c55e"]{color:#15803D!important}
-    .ines-app [style*="color:#a78bfa"]{color:#6D28D9!important}
-    .ines-app [style*="color:#f59e0b"]{color:#B45309!important}
-    .ines-app [style*="color:#00e5ff"]{color:#0B5E6C!important}
-    .ines-app [style*="color:#ffd700"],.ines-app [style*="color:#FFD700"]{color:#B45309!important}
-    .ines-app #listen-btn,.ines-app #listen-lbl,.ines-app #lesson-listen-lbl{color:#0B5E6C!important}
+    .ines-app [style*="color:var(--cyan)"]{color:var(--teal-ink)!important}
+    .ines-app [style*="color:var(--gold)"]{color:var(--gold-ink)!important}
+    .ines-app [style*="color:var(--purple)"]{color:var(--purple-ink)!important}
+    .ines-app [style*="color:#22c55e"]{color:var(--green-ink)!important}
+    .ines-app [style*="color:#a78bfa"]{color:var(--purple-ink)!important}
+    .ines-app [style*="color:#f59e0b"]{color:var(--gold-ink)!important}
+    .ines-app [style*="color:#00e5ff"]{color:var(--teal-ink)!important}
+    .ines-app [style*="color:#ffd700"],.ines-app [style*="color:#FFD700"]{color:var(--gold-ink)!important}
+    .ines-app #listen-btn,.ines-app #listen-lbl,.ines-app #lesson-listen-lbl{color:var(--teal-ink)!important}
     /* Résultats enfant : pas de partage de score (cadrage adulte) */
     .ines-app #share-btn{display:none!important}
     /* Bouton « maison » : visible seulement dans Ines Kids, gros & tactile */
     .ines-only{display:none!important}
     .ines-app .ines-only{display:inline-flex!important}
     .ines-app #ines-quiz-home{align-items:center;justify-content:center;width:44px;height:44px;font-size:22px;line-height:1;
-      background:#fff;border:2.5px solid #E84C9A;border-radius:16px;box-shadow:0 4px 0 rgba(232,76,154,.22);cursor:pointer}
-    .ines-app #ines-quiz-home:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(232,76,154,.22)}
+      background:var(--surface);border:2.5px solid var(--brand);border-radius:16px;box-shadow:0 4px 0 rgba(var(--brand-rgb),.22);cursor:pointer}
+    .ines-app #ines-quiz-home:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(var(--brand-rgb),.22)}
     /* Sélecteurs de programme lisibles sur le thème clair (texte sombre, non blanc) */
     .ines-app #kids-subj-sel button,.ines-app #kids-year-sel button{
-      color:#33264a!important;background:#fff!important;border:2px solid rgba(232,76,154,.25)!important;
-      border-radius:16px!important;font-weight:800!important;box-shadow:0 3px 0 rgba(232,76,154,.12)!important}
+      color:var(--ink)!important;background:var(--surface)!important;border:2px solid rgba(var(--brand-rgb),.25)!important;
+      border-radius:16px!important;font-weight:800!important;box-shadow:0 3px 0 rgba(var(--brand-rgb),.12)!important}
     .ines-app #kids-subj-sel button[data-active="1"],.ines-app #kids-year-sel button[data-active="1"]{
-      background:#FFE7F3!important;border-color:#E84C9A!important;color:#B02574!important}
+      background:var(--pink-tint)!important;border-color:var(--brand)!important;color:var(--brand-ink)!important}
     /* Accessibilité (audit C4) : cibles tactiles ≥ 52 dp + focus clavier/switch visible */
     .ines-app .cat-card,.ines-app #options button,.ines-app #kids-subj-sel button,
     .ines-app #kids-year-sel button,.ines-app #ines-quiz-home,.ines-app #ines-foot button{min-height:52px}
     .ines-app #ines-foot button{min-height:44px;padding:6px 4px}
     .ines-app button:focus-visible,.ines-app a:focus-visible,.ines-app [role="button"]:focus-visible{
-      outline:3px solid #6D28D9!important;outline-offset:2px;border-radius:12px}
+      outline:3px solid var(--purple-ink)!important;outline-offset:2px;border-radius:12px}
     /* Premium — micro-interactions tactiles : enfoncement au tap, léger relief au survol (pointeur). */
     .ines-app .cat-card:active{transform:scale(.975)}
     /* Feedback bonne réponse plus joyeux : ressort + halo vert (Sago/Bimi Boo). */
     .ines-app #options button.correct-pulse{animation:inesPop .55s cubic-bezier(.2,1.55,.35,1) both!important;
-      box-shadow:0 0 0 4px rgba(47,143,78,.28),0 8px 18px rgba(47,143,78,.28)!important;border-color:#2F8F4E!important}
-    .ines-app #options button.wrong-pulse{box-shadow:0 0 0 3px rgba(194,65,12,.22)!important}
+      box-shadow:0 0 0 4px rgba(var(--ok-rgb),.28),0 8px 18px rgba(var(--ok-rgb),.28)!important;border-color:var(--ok)!important}
+    .ines-app #options button.wrong-pulse{box-shadow:0 0 0 3px rgba(var(--warn-rgb),.22)!important}
     @keyframes inesPop{0%{transform:scale(1)}35%{transform:scale(1.07)}65%{transform:scale(.97)}100%{transform:scale(1)}}
     /* Transitions d'écran fluides (entrée douce de chaque vue). */
     .ines-app .view.active{animation:inesViewIn .34s cubic-bezier(.2,.7,.3,1) both}
@@ -166,7 +166,7 @@
     @media (prefers-reduced-motion:reduce){.ines-app .view.active{animation:none!important}.ines-spark{display:none!important}}
     .ines-app #options button:active{transform:scale(.985)}
     @media (hover:hover) and (pointer:fine){
-      .ines-app .cat-card:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(232,76,154,.16)!important}
+      .ines-app .cat-card:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(var(--brand-rgb),.16)!important}
     }
     /* Premium — mode tablette (audit H2) : colonne confortable élargie + titres plus grands,
        au lieu d'une bande étroite perdue au centre de l'écran. */
@@ -177,9 +177,9 @@
       .ines-app .cat-card{border-radius:26px!important}
     }
     /* Espace parent lisible sur le thème clair (styles sombres hérités) */
-    .ines-app #parent-content [style*="rgba(255,255,255,.05)"]{background:#fff!important;border-color:rgba(232,76,154,.18)!important}
+    .ines-app #parent-content [style*="rgba(255,255,255,.05)"]{background:var(--surface)!important;border-color:rgba(var(--brand-rgb),.18)!important}
     .ines-app #parent-content [style*="rgba(255,255,255,.1)"]{background:rgba(0,0,0,.07)!important}
-    .ines-app #parent-content [style*="var(--gold)"]{color:#E84C9A!important}
+    .ines-app #parent-content [style*="var(--gold)"]{color:var(--brand)!important}
     @keyframes mascotBob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-1.5deg)}}
     @keyframes mascotCheer{0%{transform:scale(.7) translateY(6px)}55%{transform:scale(1.08) translateY(-6px)}75%{transform:scale(.97)}100%{transform:scale(1)}}
 
