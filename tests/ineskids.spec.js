@@ -74,16 +74,21 @@ runSpec('ineskids',async browser=>{
   assert(parent.rewardedReady===false,'la pub récompensée doit être OFF tant qu’aucun ID AdMob n’est configuré');
   assert(parent.rewardedBtn===false,'aucun bouton de pub tant que le fournisseur n’est pas branché');
 
-  // La langue est un réglage PARENT : drapeaux masqués dans le flux enfant,
-  // sélecteur présent dans l'espace parent et fonctionnel.
+  // Le sélecteur de langue (Ar/Fr/En, drapeau algérien) est visible en haut
+  // de l'app ET disponible dans l'espace parent ; le changement fonctionne.
   const langCtl=await page.evaluate(()=>{
-    const barHidden=getComputedStyle(document.getElementById('lang-bar')).display==='none';
+    const bar=document.getElementById('lang-bar');
+    const barVisible=getComputedStyle(bar).display!=='none';
+    const arDz=bar.querySelector('[data-lang="ar"]').textContent.indexOf('🇩🇿')>-1;
     const inParent=document.getElementById('parent-content').innerHTML.indexOf('inesSetLang')>-1;
+    setLang('ar'); const arActive=lang==='ar';
     inesSetLang('en');
-    return {barHidden,inParent,lang:lang};
+    return {barVisible,arDz,inParent,arActive,lang:lang};
   });
-  assert(langCtl.barHidden,'les drapeaux de langue doivent être masqués dans le flux enfant');
-  assert(langCtl.inParent,'le sélecteur de langue doit être dans l’espace parent');
-  assert(langCtl.lang==='en','le changement de langue parent doit fonctionner');
+  assert(langCtl.barVisible,'le sélecteur de langue doit être visible en haut de l’app');
+  assert(langCtl.arDz,'la langue arabe doit utiliser le drapeau algérien 🇩🇿');
+  assert(langCtl.arActive,'setLang(ar) doit activer l’arabe');
+  assert(langCtl.inParent,'le sélecteur de langue doit rester présent dans l’espace parent');
+  assert(langCtl.lang==='en','le changement de langue doit fonctionner');
   assert(errors.length===0,'erreurs de page : '+errors.join(' | '));
 });
