@@ -3629,7 +3629,8 @@ function applyTranslations(){
 // ===== VIEWS =====
 function switchView(id){
   // Ines Kids : le tableau de bord adulte est masqué → toute « maison » revient au hub enfant.
-  if((typeof INES!=='undefined'&&INES)&&id==='view-dashboard'){if(typeof openKids==='function'){openKids();return;}}
+  // Ines Kids : bundle enfant incapable d'afficher les écrans monétisation/compétition (boutique, gems, premium, duel, classement, quêtes).
+  if((typeof INES!=='undefined'&&INES)&&(id==='view-dashboard'||id==='view-shop'||id==='view-leaderboard'||id==='view-quests'||id==='view-duel-setup'||id==='view-duel-quiz')){if(typeof openKids==='function'){openKids();return;}}
   if(id!=='view-worldmap'&&typeof wmReleaseLandscape==='function'){wmReleaseLandscape();if(typeof wmStopTimer==='function')wmStopTimer();}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const el=document.getElementById(id);
@@ -5198,7 +5199,7 @@ function startRewardedAd(){
 }
 
 // ===== PREMIUM =====
-function activatePremium(){
+function activatePremium(){if(typeof INES!=='undefined'&&INES)return;
   if(!userData)return;
   userData.isPremium=true;
   saveData(userData);
@@ -5888,7 +5889,7 @@ function renderShop(){
   `).join('');
 }
 
-function buyItem(id,price){
+function buyItem(id,price){if(typeof INES!=='undefined'&&INES)return;
   if(!userData){showToast(t('toastError'),'red');return}
   if(userData.gems<price){
     showToast(t('toastNoGems'),'red');
@@ -5904,7 +5905,7 @@ function buyItem(id,price){
   const item=SHOP_ITEMS.find(i=>i.id===id);
   showToast(`✅ ${item?item[lang]||item.fr:'Item'} ${t('toastBought')}`,'gold');
 }
-function buyGems(n,price){
+function buyGems(n,price){if(typeof INES!=='undefined'&&INES)return;
   showToast(t('toastDemo'),'gold');
 }
 
