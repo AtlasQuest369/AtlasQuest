@@ -299,9 +299,9 @@
 
 <!-- LANG BAR -->
 <div id="lang-bar" class="fixed top-3 right-3 flex gap-2 z-50">
-  <button class="lang-btn text-xl" data-lang="ar" onclick="setLang('ar')" aria-label="العربية" title="العربية">🇩🇿</button>
-  <button class="lang-btn active text-xl" data-lang="fr" onclick="setLang('fr')" aria-label="Français" title="Français">🇫🇷</button>
-  <button class="lang-btn text-xl" data-lang="en" onclick="setLang('en')" aria-label="English" title="English">🇬🇧</button>
+  <button class="lang-btn text-xl" data-lang="ar" onclick="setLang('ar')" aria-label="العربية" aria-pressed="false" title="العربية">🇩🇿</button>
+  <button class="lang-btn active text-xl" data-lang="fr" onclick="setLang('fr')" aria-label="Français" aria-pressed="true" title="Français">🇫🇷</button>
+  <button class="lang-btn text-xl" data-lang="en" onclick="setLang('en')" aria-label="English" aria-pressed="false" title="English">🇬🇧</button>
 </div>
 
 <!-- HEADER BADGES (lives + gems + premium) -->
@@ -554,7 +554,7 @@
     <h2 class="playfair font-bold text-2xl" id="kids-title" style="color:#22c55e">Espace Enfants</h2>
     <p class="text-sm opacity-70 text-center" id="kids-desc">Choisis ton âge</p>
     <div id="kids-goal" class="w-full rounded-xl p-3" style="display:none;background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.3)"></div>
-    <button onclick="inesToggleProgram()" class="cat-card rounded-2xl w-full py-4 px-4 flex items-center gap-4" style="background:#fff;border:2px solid rgba(232,76,154,.30);box-shadow:0 6px 16px rgba(232,76,154,.10)"><span class="text-3xl">📚</span><div class="text-left"><div class="font-bold text-lg" id="ines-prog-lbl">Mon programme</div><div class="text-xs opacity-60" id="ines-prog-desc">Arabe, maths, sciences…</div></div></button>
+    <button onclick="inesToggleProgram()" aria-expanded="false" aria-controls="ines-program" class="cat-card rounded-2xl w-full py-4 px-4 flex items-center gap-4" style="background:#fff;border:2px solid rgba(232,76,154,.30);box-shadow:0 6px 16px rgba(232,76,154,.10)"><span class="text-3xl">📚</span><div class="text-left"><div class="font-bold text-lg" id="ines-prog-lbl">Mon programme</div><div class="text-xs opacity-60" id="ines-prog-desc">Arabe, maths, sciences…</div></div></button>
     <div id="ines-program" class="w-full flex flex-col gap-3" style="display:none">
     <div class="w-full flex flex-col gap-3 mt-2">
       <button onclick="startKids('kids_3_5')" class="cat-card rounded-2xl py-5 px-4 flex items-center gap-4" style="background:linear-gradient(135deg,rgba(244,114,182,.18),rgba(255,255,255,.04));border:1.5px solid rgba(244,114,182,.4)">
@@ -606,9 +606,9 @@
       <div class="text-xs" style="color:#6f6188">© 2026 Ines Kids</div>
       <div class="flex justify-center items-center gap-2 mt-2 text-xs font-bold" style="flex-wrap:wrap">
         <button onclick="showLegal('about')" style="color:#B02574" id="ines-foot-about">À propos</button>
-        <span style="color:#8B8098">·</span>
+        <span style="color:#6f6188">·</span>
         <button onclick="showLegal('privacy')" style="color:#B02574" id="ines-foot-privacy">Confidentialité</button>
-        <span style="color:#8B8098">·</span>
+        <span style="color:#6f6188">·</span>
         <button onclick="showLegal('terms')" style="color:#B02574" id="ines-foot-terms">CGU</button>
       </div>
     </div>
@@ -4110,6 +4110,9 @@ function spendGems(n){
 function showToast(msg,type='green',duration=2500){
   const el=document.createElement('div');
   el.className=`toast toast-${type}`;
+  // Annonce au lecteur d'écran (TalkBack) : erreurs = alerte (assertif), reste = statut (poli).
+  el.setAttribute('role',type==='red'?'alert':'status');
+  el.setAttribute('aria-live',type==='red'?'assertive':'polite');
   el.textContent=msg;
   document.body.appendChild(el);
   setTimeout(()=>el.remove(),duration);
@@ -4122,7 +4125,9 @@ function setLang(l){
   document.body.setAttribute('lang',l);
   document.body.dir=l==='ar'?'rtl':'ltr';
   document.querySelectorAll('#lang-bar .lang-btn').forEach((b)=>{
-    b.classList.toggle('active',b.dataset.lang===l);
+    var on=b.dataset.lang===l;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-pressed',on?'true':'false'); // état lu par TalkBack
   });
   if(userData){userData.preferred_language=l;saveData(userData)}
   applyTranslations();
@@ -4662,7 +4667,7 @@ function kidsRenderSubjects(){
     var bd=ines?(a?'#E84C9A':'rgba(232,76,154,.28)'):(a?'var(--cyan)':'rgba(255,255,255,.15)');
     var bgc=ines?(a?'#FFE7F3':'#fff'):(a?'rgba(0,229,255,.18)':'rgba(255,255,255,.04)');
     var col=ines?(a?'#B02574':'#33264a'):(a?'#fff':'rgba(255,255,255,.7)');
-    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetSubj(\''+s.key+'\')" class="rounded-lg py-2.5 text-sm font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+(s.label[lang]||s.label.fr)+'</button>';
+    html+='<button data-active="'+(a?1:0)+'" aria-pressed="'+(a?'true':'false')+'" onclick="kidsSetSubj(\''+s.key+'\')" class="rounded-lg py-2.5 text-sm font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+(s.label[lang]||s.label.fr)+'</button>';
   });
   box.innerHTML=html;
 }
@@ -4697,7 +4702,7 @@ function kidsRenderYears(){
     var bd=ines?(a?'#22c55e':'rgba(232,76,154,.28)'):(a?'#22c55e':'rgba(255,255,255,.15)');
     var bgc=ines?(a?'#E6F9EC':'#fff'):(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)');
     var col=ines?(a?'#15803D':'#33264a'):(a?'#fff':'rgba(255,255,255,.7)');
-    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+yl+'</button>';
+    html+='<button data-active="'+(a?1:0)+'" aria-pressed="'+(a?'true':'false')+'" aria-label="'+yl+'" onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+yl+'</button>';
   }
   box.innerHTML=html;
 }
@@ -5056,7 +5061,7 @@ function inesToggleSound(){setSound(!soundOn);if(typeof renderParentDashboard===
 // Change la langue depuis l'espace parent puis rafraîchit le tableau de bord.
 function inesSetLang(l){setLang(l);if(typeof renderParentDashboard==='function')renderParentDashboard();}
 // Programme scolaire : replié par défaut (hub enfant épuré), déplié à la demande.
-function inesToggleProgram(){var g=document.getElementById('ines-program');if(!g)return;var show=(g.style.display==='none');g.style.display=show?'':'none';if(show)inesProgReset();}
+function inesToggleProgram(){var g=document.getElementById('ines-program');if(!g)return;var show=(g.style.display==='none');g.style.display=show?'':'none';var b=document.querySelector('[onclick="inesToggleProgram()"]');if(b)b.setAttribute('aria-expanded',show?'true':'false');if(show)inesProgReset();}
 // Niveau (année scolaire) : réglé par le PARENT, appliqué au programme enfant.
 function inesSetYear(n){if(!userData)return;userData.ines_year=n;kidsYear=n;saveData(userData);if(typeof renderParentDashboard==='function')renderParentDashboard();}
 function renderParentDashboard(){
