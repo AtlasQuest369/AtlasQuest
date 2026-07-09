@@ -57,6 +57,25 @@ jobs:
       - name: Sync
         run: npx cap sync android
 
+      - name: Harden manifest & gradle (conformité Familles)
+        run: |
+          MF=android/app/src/main/AndroidManifest.xml
+          GRADLE=android/app/build.gradle
+          # Espace de noms tools (pour les directives de fusion de manifeste)
+          grep -q 'xmlns:tools' "$MF" || sed -i 's#<manifest #<manifest xmlns:tools="http://schemas.android.com/tools" #' "$MF"
+          # Retirer la permission DUMP héritée d'une dépendance (inutile et sensible pour une app enfant)
+          grep -q 'permission.DUMP' "$MF" || sed -i 's#<application #<uses-permission android:name="android.permission.DUMP" tools:node="remove" />\n    <application #' "$MF"
+          # allowBackup=false : ne pas exfiltrer les données locales de l'enfant
+          if grep -q 'android:allowBackup' "$MF"; then
+            sed -i 's/android:allowBackup="[^"]*"/android:allowBackup="false"/' "$MF"
+          else
+            sed -i 's#<application #<application android:allowBackup="false" #' "$MF"
+          fi
+          # Exclure l'agent de debug kotlinx-coroutines du build release
+          grep -q 'DebugProbesKt' "$GRADLE" || sed -i '/^android {/a\    packagingOptions { exclude "DebugProbesKt.bin" }' "$GRADLE"
+          echo "===== AndroidManifest (extrait) ====="; sed -n '1,20p' "$MF"
+          echo "===== permissions présentes ====="; grep -n 'uses-permission' "$MF" || true
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
