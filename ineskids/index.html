@@ -4767,20 +4767,27 @@ function openKidsReport(){
   document.getElementById('report-title').textContent=t('reportTitle');
   document.getElementById('report-total-lbl').textContent=t('reportTotal');
   document.getElementById('report-back').textContent=t('back');
+  // Thème clair Ines : couleurs sombres lisibles (jamais de blanc/or vif sur
+  // crème — cf. Audit v2 · garde de contraste tests/contrast.spec.js).
+  var _in=(typeof INES!=='undefined'&&INES);
   var subs=kidsSubjects(),totGot=0,totMax=0,html='';
   subs.forEach(function(s){
     var my=kidsSubjMaxYear(s.key),max=my*9,got=0,pills='';
     for(var y=1;y<=my;y++){
       var yg=0;for(var tn=1;tn<=3;tn++)yg+=kidsBestStars(s.key+'_s'+y+'_t'+tn);
       got+=yg;
-      var col=yg>=9?'#22c55e':yg>0?'#FFD700':'rgba(255,255,255,.25)';
+      var col=yg>=9?(_in?'#15803D':'#22c55e'):yg>0?(_in?'#B45309':'#FFD700'):(_in?'#7E7049':'rgba(255,255,255,.25)');
       var yl=(s.key==='fr')?('N'+y):(s.key==='en')?('L'+y):('س'+y);
-      pills+='<div style="flex:1;text-align:center"><div style="font-size:9px;opacity:.55">'+yl+'</div><div style="font-size:11px;font-weight:800;color:'+col+'">'+yg+'/9</div></div>';
+      var lblSt=_in?'font-size:9px;color:#6f6188':'font-size:9px;opacity:.55';
+      pills+='<div style="flex:1;text-align:center"><div style="'+lblSt+'">'+yl+'</div><div style="font-size:11px;font-weight:800;color:'+col+'">'+yg+'/9</div></div>';
     }
     totGot+=got;totMax+=max;
     var pct=max?Math.round(got/max*100):0,nm=(s.label[lang]||s.label.fr);
     var tier=kidsSubjTier(s.key),bd=KIDS_BADGES[s.key];
-    var chip=tier>0?'<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style="margin-'+(lang==='ar'?'right':'left')+':6px;border:1px solid '+KIDS_BADGE_COLOR[tier]+';color:'+KIDS_BADGE_COLOR[tier]+'">'+KIDS_BADGE_TIER[tier]+' '+(bd?bd.icon:'')+'</span>':'';
+    // Puce de badge : couleurs sombres sur crème en thème clair (les médailles
+    // restent des émojis auto-colorés ; on garantit surtout un texte lisible).
+    var tierCol=_in?['','#B45309','#6f6188','#B45309'][tier]:KIDS_BADGE_COLOR[tier];
+    var chip=tier>0?'<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style="margin-'+(lang==='ar'?'right':'left')+':6px;border:1px solid '+tierCol+';color:'+tierCol+'">'+KIDS_BADGE_TIER[tier]+' '+(bd?bd.icon:'')+'</span>':'';
     html+='<div class="rounded-xl p-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">'
       +'<div class="flex justify-between items-center mb-1"><span class="font-bold text-sm">'+nm+chip+'</span><span class="text-xs font-bold" style="color:var(--gold)">⭐ '+got+'/'+max+'</span></div>'
       +'<div class="w-full h-1.5 rounded-full" style="background:rgba(255,255,255,.1)"><div class="h-1.5 rounded-full" style="width:'+pct+'%;background:linear-gradient(90deg,#22c55e,#FFD700)"></div></div>'
