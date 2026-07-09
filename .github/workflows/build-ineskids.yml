@@ -63,8 +63,8 @@ jobs:
           GRADLE=android/app/build.gradle
           # Espace de noms tools (pour les directives de fusion de manifeste)
           grep -q 'xmlns:tools' "$MF" || sed -i 's#<manifest #<manifest xmlns:tools="http://schemas.android.com/tools" #' "$MF"
-          # Retirer la permission DUMP héritée d'une dépendance (inutile et sensible pour une app enfant)
-          grep -q 'permission.DUMP' "$MF" || sed -i 's#<application #<uses-permission android:name="android.permission.DUMP" tools:node="remove" />\n    <application #' "$MF"
+          # Retirer la permission DUMP héritée d'une dépendance (directive de fusion insérée après <manifest>)
+          grep -q 'permission.DUMP' "$MF" || sed -i '/<manifest /a\    <uses-permission android:name="android.permission.DUMP" tools:node="remove" />' "$MF"
           # allowBackup=false : ne pas exfiltrer les données locales de l'enfant
           if grep -q 'android:allowBackup' "$MF"; then
             sed -i 's/android:allowBackup="[^"]*"/android:allowBackup="false"/' "$MF"
