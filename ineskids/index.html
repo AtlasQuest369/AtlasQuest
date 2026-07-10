@@ -4091,6 +4091,7 @@ let lang='fr',difficulty='easy',category='flags';
 let userData=null;
 let questions=[],current=0,score=0,streak=0,maxStreak=0,correctCount=0,timer=null,totalQ=10,recoveryAdded=0;
 let isDaily=false,isTraining=false,onboardStep=0,kidsMode=false;
+var inesLevel=0; // niveau choisi dans un trimestre (1 facile · 2 moyen · 3 défi ; 0 = aucun)
 let duelPlayers={p1:'',p2:''},duelScores={p1:0,p2:0},duelCurrent=0;
 let quizStartTime=0;
 let adTimer=null,adCloseTimer=null;
@@ -4609,6 +4610,7 @@ function kidsUpdateLangUI(){
 }
 function startKids(cat){
   kidsMode=true;category=cat;difficulty='easy';
+  if(!/_s\d+_t\d+$/.test(cat))inesLevel=0; // difficulté par niveau : trimestres seulement
   if(typeof kidsCompState==='function'&&isKidsCat(cat)){
     var st=kidsCompState(cat);
     if(st==='mastered')showToast(lang==='ar'?'🏆 تحدّي التثبيت':lang==='en'?'🏆 Consolidation challenge':'🏆 Défi de consolidation','gold',1800);
@@ -4783,15 +4785,19 @@ function inesRenderTerms(){
   var lvWord=lang==='ar'?'المستوى ':lang==='en'?'Level ':'Niveau ';
   var lockMsg=lang==='ar'?'🔒 أكمل المستوى السابق أولاً':lang==='en'?'🔒 Finish the previous level first':'🔒 Termine le niveau précédent d’abord';
   var html='';
+  var diffWord=function(L){return L===1?(lang==='ar'?'سهل':lang==='en'?'Easy':'Facile'):L===2?(lang==='ar'?'متوسط':lang==='en'?'Medium':'Moyen'):(lang==='ar'?'تحدٍّ':lang==='en'?'Challenge':'Défi');};
   for(var tn=1;tn<=3;tn++){
     var cat=subj+'_s'+y+'_t'+tn;
-    var count=inesUnitCount(cat), cur=Math.min(3,1+Math.floor(count/10)), complete=count>=30;
-    var stars=kidsBestStars(cat);
+    var sArr=inesLvlStars(cat);        // étoiles par niveau [N1,N2,N3]
+    var termStars=kidsBestStars(cat);
     var chips='';
     for(var L=1;L<=3;L++){
-      var done=(L<cur)||complete, locked=(L>cur), st=done?'done':locked?'locked':'current';
+      var ls=sArr[L-1]||0;
+      var unlocked=(L===1)||((sArr[L-2]||0)>=1);
+      var done=ls>=1, locked=!unlocked, st=done?'done':locked?'locked':'current';
       var ic=done?'✓':locked?'🔒':'▶';
-      var aria=(termWord+tn+' '+lvWord+L+' — '+(done?(lang==='ar'?'مكتمل':lang==='en'?'completed':'terminé'):locked?(lang==='ar'?'مقفل':lang==='en'?'locked':'verrouillé'):(lang==='ar'?'متاح':lang==='en'?'available':'disponible'))).replace(/"/g,'');
+      var stateW=done?(lang==='ar'?'مكتمل':lang==='en'?'completed':'terminé'):locked?(lang==='ar'?'مقفل':lang==='en'?'locked':'verrouillé'):(lang==='ar'?'متاح':lang==='en'?'available':'disponible');
+      var aria=(termWord+tn+' '+lvWord+L+' ('+diffWord(L)+') — '+stateW+(ls?(' '+ls+'★'):'')).replace(/"/g,'');
       chips+='<button type="button" class="ines-lvl is-'+st+'" aria-label="'+aria+'"'+(locked?' aria-disabled="true"':'')
         +' onclick="inesPlayLevel(\''+subj+'\','+y+','+tn+','+L+','+locked+')">'
         +'<span class="ln" aria-hidden="true">'+ic+'</span>'+lvWord+L+'</button>';
@@ -4799,16 +4805,19 @@ function inesRenderTerms(){
     html+='<div class="cat-card" style="padding:12px 14px">'
       +'<div class="flex justify-between items-center" style="margin-bottom:6px">'
         +'<span class="font-bold text-sm">'+termWord+tn+' · '+(th[tn-1]||'')+'</span>'
-        +'<span class="text-xs" style="color:var(--muted)">'+kidsStarRow(stars)+'</span></div>'
+        +'<span class="text-xs" style="color:var(--muted)">'+kidsStarRow(termStars)+'</span></div>'
       +'<div class="ines-lvls">'+chips+'</div></div>';
   }
   box.innerHTML=html;
 }
-// Joue un niveau : si verrouillé → message ; sinon on lance le quiz du trimestre
-// (les bonnes réponses font monter le compteur → niveau suivant).
+// Étoiles par niveau d'un trimestre : [N1,N2,N3].
+function inesLvlStars(cat){if(!userData)return [0,0,0];try{var m=JSON.parse(userData.ines_lvl||'{}');return m[cat]||[0,0,0];}catch(e){return [0,0,0];}}
+// Joue un niveau : verrouillé → message ; sinon on fixe la difficulté et on lance
+// le trimestre. Réussir un niveau (≥1★) déverrouille le suivant.
 function inesPlayLevel(subj,y,tn,L,locked){
   if(locked){var m=lang==='ar'?'🔒 أكمل المستوى السابق أولاً':lang==='en'?'🔒 Finish the previous level first':'🔒 Termine le niveau précédent d’abord';
     if(typeof showToast==='function')showToast(m,'gold',1800);return;}
+  inesLevel=L; // difficulté croissante appliquée à la génération du quiz
   openLesson(subj,y,tn);
 }
 
@@ -6196,6 +6205,8 @@ function generateForCat(cat){
   let count=DIFF[difficulty].count;
   if(kidsMode&&isKidsCat(cat)){
     count=kidsAdaptiveCount(cat);
+    // 3 niveaux à difficulté croissante quand un niveau est choisi dans le trimestre.
+    if(inesLevel>=1&&inesLevel<=3)count=[6,8,10][inesLevel-1];
   }
   if(cat==='flags'){
     return shuffle([...FLAGS]).slice(0,count).map(q=>{
@@ -6276,10 +6287,15 @@ function generateForCat(cat){
   }
   const BANKS={history:HISTORY,algeria:ALGERIA_Q,arab:ARAB_Q,math:MATH_Q,kids_3_5:KIDS_3_5,kids_6_8:KIDS_6_8,kids_9_12:KIDS_9_12,kids_lang_fr:KIDS_LANG_FR,kids_lang_ar:KIDS_LANG_AR,kids_lang_en:KIDS_LANG_EN,ar_s1_t1:AR_S1_T1,ar_s1_t2:AR_S1_T2,ar_s1_t3:AR_S1_T3,ar_s2_t1:AR_S2_T1,ar_s2_t2:AR_S2_T2,ar_s2_t3:AR_S2_T3,ar_s3_t1:AR_S3_T1,ar_s3_t2:AR_S3_T2,ar_s3_t3:AR_S3_T3,ar_s4_t1:AR_S4_T1,ar_s4_t2:AR_S4_T2,ar_s4_t3:AR_S4_T3,math_s1_t1:MATH_S1_T1,math_s1_t2:MATH_S1_T2,math_s1_t3:MATH_S1_T3,math_s2_t1:MATH_S2_T1,math_s2_t2:MATH_S2_T2,math_s2_t3:MATH_S2_T3,math_s3_t1:MATH_S3_T1,math_s3_t2:MATH_S3_T2,math_s3_t3:MATH_S3_T3,math_s4_t1:MATH_S4_T1,math_s4_t2:MATH_S4_T2,math_s4_t3:MATH_S4_T3,sci_s1_t1:SCI_S1_T1,sci_s1_t2:SCI_S1_T2,sci_s1_t3:SCI_S1_T3,sci_s2_t1:SCI_S2_T1,sci_s2_t2:SCI_S2_T2,sci_s2_t3:SCI_S2_T3,sci_s3_t1:SCI_S3_T1,sci_s3_t2:SCI_S3_T2,sci_s3_t3:SCI_S3_T3,sci_s4_t1:SCI_S4_T1,sci_s4_t2:SCI_S4_T2,sci_s4_t3:SCI_S4_T3,fr_s1_t1:FR_S1_T1,fr_s1_t2:FR_S1_T2,fr_s1_t3:FR_S1_T3,fr_s2_t1:FR_S2_T1,fr_s2_t2:FR_S2_T2,fr_s2_t3:FR_S2_T3,fr_s3_t1:FR_S3_T1,fr_s3_t2:FR_S3_T2,fr_s3_t3:FR_S3_T3,fr_s4_t1:FR_S4_T1,fr_s4_t2:FR_S4_T2,fr_s4_t3:FR_S4_T3,en_s1_t1:EN_S1_T1,en_s1_t2:EN_S1_T2,en_s1_t3:EN_S1_T3,en_s2_t1:EN_S2_T1,en_s2_t2:EN_S2_T2,en_s2_t3:EN_S2_T3,en_s3_t1:EN_S3_T1,en_s3_t2:EN_S3_T2,en_s3_t3:EN_S3_T3,en_s4_t1:EN_S4_T1,en_s4_t2:EN_S4_T2,en_s4_t3:EN_S4_T3,islam_s1_t1:ISLAM_S1_T1,islam_s1_t2:ISLAM_S1_T2,islam_s1_t3:ISLAM_S1_T3,islam_s2_t1:ISLAM_S2_T1,islam_s2_t2:ISLAM_S2_T2,islam_s2_t3:ISLAM_S2_T3,islam_s3_t1:ISLAM_S3_T1,islam_s3_t2:ISLAM_S3_T2,islam_s3_t3:ISLAM_S3_T3,islam_s4_t1:ISLAM_S4_T1,islam_s4_t2:ISLAM_S4_T2,islam_s4_t3:ISLAM_S4_T3,civic_s1_t1:CIVIC_S1_T1,civic_s1_t2:CIVIC_S1_T2,civic_s1_t3:CIVIC_S1_T3,civic_s2_t1:CIVIC_S2_T1,civic_s2_t2:CIVIC_S2_T2,civic_s2_t3:CIVIC_S2_T3,civic_s3_t1:CIVIC_S3_T1,civic_s3_t2:CIVIC_S3_T2,civic_s3_t3:CIVIC_S3_T3,civic_s4_t1:CIVIC_S4_T1,civic_s4_t2:CIVIC_S4_T2,civic_s4_t3:CIVIC_S4_T3,hist_s1_t1:HIST_S1_T1,hist_s1_t2:HIST_S1_T2,hist_s1_t3:HIST_S1_T3,hist_s2_t1:HIST_S2_T1,hist_s2_t2:HIST_S2_T2,hist_s2_t3:HIST_S2_T3,hist_s3_t1:HIST_S3_T1,hist_s3_t2:HIST_S3_T2,hist_s3_t3:HIST_S3_T3,hist_s4_t1:HIST_S4_T1,hist_s4_t2:HIST_S4_T2,hist_s4_t3:HIST_S4_T3,geo_s1_t1:GEO_S1_T1,geo_s1_t2:GEO_S1_T2,geo_s1_t3:GEO_S1_T3,geo_s2_t1:GEO_S2_T1,geo_s2_t2:GEO_S2_T2,geo_s2_t3:GEO_S2_T3,geo_s3_t1:GEO_S3_T1,geo_s3_t2:GEO_S3_T2,geo_s3_t3:GEO_S3_T3,geo_s4_t1:GEO_S4_T1,geo_s4_t2:GEO_S4_T2,geo_s4_t3:GEO_S4_T3,ar_s5_t1:AR_S5_T1,ar_s5_t2:AR_S5_T2,ar_s5_t3:AR_S5_T3,math_s5_t1:MATH_S5_T1,math_s5_t2:MATH_S5_T2,math_s5_t3:MATH_S5_T3,sci_s5_t1:SCI_S5_T1,sci_s5_t2:SCI_S5_T2,sci_s5_t3:SCI_S5_T3,islam_s5_t1:ISLAM_S5_T1,islam_s5_t2:ISLAM_S5_T2,islam_s5_t3:ISLAM_S5_T3,civic_s5_t1:CIVIC_S5_T1,civic_s5_t2:CIVIC_S5_T2,civic_s5_t3:CIVIC_S5_T3,hist_s5_t1:HIST_S5_T1,hist_s5_t2:HIST_S5_T2,hist_s5_t3:HIST_S5_T3,geo_s5_t1:GEO_S5_T1,geo_s5_t2:GEO_S5_T2,geo_s5_t3:GEO_S5_T3,fr_s5_t1:FR_S5_T1,fr_s5_t2:FR_S5_T2,fr_s5_t3:FR_S5_T3,en_s5_t1:EN_S5_T1,en_s5_t2:EN_S5_T2,en_s5_t3:EN_S5_T3};
   const baseBank=BANKS[cat]||HISTORY;
-  const bank=(typeof TF!=='undefined'&&TF[cat])?baseBank.concat(TF[cat]):baseBank;
+  // Niveau 1 = 3 choix, sans Vrai/Faux (découverte) ; Niveau 2/3 = 4 choix + Vrai/Faux.
+  var _lvl=(kidsMode&&isKidsCat(cat)&&inesLevel>=1&&inesLevel<=3)?inesLevel:0;
+  var wrongN=(_lvl===1)?2:3;
+  var withTF=(_lvl===0||_lvl>=2);
+  const bank=(withTF&&typeof TF!=='undefined'&&TF[cat])?baseBank.concat(TF[cat]):baseBank;
   return shuffle([...bank]).slice(0,Math.min(count,bank.length)).map(q=>{
     const ans=q.answer[lang]||q.answer.fr;
-    return{display:q[lang]||q.fr,type:'text',answer:ans,options:shuffle([ans,...q.wrong.map(w=>w[lang]||w.fr)]),meta:q}
+    var wrongs=shuffle(q.wrong.map(w=>w[lang]||w.fr)).slice(0,wrongN);
+    return{display:q[lang]||q.fr,type:'text',answer:ans,options:shuffle([ans,...wrongs]),meta:q}
   });
 }
 
@@ -6318,7 +6334,7 @@ function speakText(text,code){
 function speakQuestion(){var q=questions[current];if(!q)return;speakText(q.type==='audio'?q.word:q.type==='image'?(q.name||''):q.display,ttsLangCode());}
 function updateListenBtn(q){
   var lb=document.getElementById('listen-btn');if(!lb)return;
-  lb.style.display=(ttsSupported()&&q&&q.type!=='flag'&&q.type!=='sort')?'':'none';
+  lb.style.display=(ttsSupported()&&q&&q.type!=='flag'&&q.type!=='sort'&&inesLevel!==3)?'':'none';
 }
 
 function showQuestion(){
@@ -6695,7 +6711,22 @@ function endQuiz(){
     // Répétition espacée : planifie la prochaine révision de cette compétence.
     try{var kr=JSON.parse(userData.kids_review||'{}');var now=Date.now();kr[category]={s:stars,done:now,due:now+reviewInterval(stars)};userData.kids_review=JSON.stringify(kr);saveData(userData);}catch(e){}
     if(typeof kidsGoalBump==='function')kidsGoalBump(); // objectif quotidien
-    if(typeof inesUnitLevel==='function')inesUnitLevel(category,totalQ); // 3 niveaux × 10 Q par unité (matière×année×trimestre)
+    // 3 niveaux à difficulté croissante : on mémorise l'étoile par niveau et,
+    // si le niveau est réussi (≥1★), on annonce le déverrouillage du suivant.
+    if(inesLevel>=1&&inesLevel<=3){
+      try{var lm=JSON.parse(userData.ines_lvl||'{}');var arr=lm[category]||[0,0,0];
+        var was=arr[inesLevel-1]||0;
+        if(was<stars)arr[inesLevel-1]=stars;
+        lm[category]=arr;userData.ines_lvl=JSON.stringify(lm);saveData(userData);
+        if(was<1&&stars>=1&&typeof showToast==='function'){
+          var nm=inesLevel<3
+            ?(lang==='ar'?('🔓 المستوى '+(inesLevel+1)+' مفتوح!'):lang==='en'?('🔓 Level '+(inesLevel+1)+' unlocked!'):('🔓 Niveau '+(inesLevel+1)+' débloqué !'))
+            :(lang==='ar'?'🏆 أتممت الفصل!':lang==='en'?'🏆 Term complete!':'🏆 Trimestre terminé !');
+          showToast(nm,'gold',2400);
+        }
+      }catch(e){}
+    }
+    inesLevel=0; // réinitialise pour ne pas fausser un quiz hors trimestre
   }
 
   // Quests (mécanique adulte : gemmes/quêtes) — masquée dans Ines Kids.
