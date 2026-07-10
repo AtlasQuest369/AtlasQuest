@@ -26,6 +26,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <!-- Polices auto-hébergées (offline + vie privée) : aucune requête CDN. Voir docs/PLAY-RELEASE.md / audit C2. -->
+  <!-- Préchargées pour réduire le FOUT / accélérer le 1er rendu du texte (Audit v3 perf). -->
+  <link rel="preload" href="fonts/fredoka.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/cairo.woff2" as="font" type="font/woff2" crossorigin>
   <style>
     :root{
       --gold:#FFD700;--cyan:#00E5FF;--purple:#a78bfa;
@@ -83,7 +86,7 @@
     .mascot-cheer{animation:mascotCheer .7s ease-out,mascotBob 3.2s ease-in-out .7s infinite;transform-origin:60px 100px}
 
     /* ================= INES KIDS — thème clair et joyeux ================= */
-    .ines-app{--paper:#FFF6EC;--ink:#33264a;--muted:#6f6188;--surface:#fff;--brand:#E84C9A;--brand-rgb:232,76,154;--brand-ink:#B02574;--pink-tint:#FFE7F3;--sun:#FDB913;--grass:#7DBE3C;--teal-ink:#0B5E6C;--gold-ink:#B45309;--purple-ink:#6D28D9;--green-ink:#15803D;--ok:#2F8F4E;--ok-rgb:47,143,78;--warn-rgb:194,65,12;background:var(--paper)!important;color:var(--ink)}
+    .ines-app{--paper:#FFF6EC;--ink:#33264a;--muted:#6f6188;--surface:#fff;--brand:#E84C9A;--brand-rgb:232,76,154;--brand-ink:#B02574;--pink-tint:#FFE7F3;--sun:#FDB913;--grass:#7DBE3C;--teal-ink:#0B5E6C;--gold-ink:#B45309;--purple-ink:#6D28D9;--green-ink:#15803D;--ok:#2F8F4E;--ok-rgb:47,143,78;--warn-rgb:194,65,12;--r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:24px;--r-full:999px;--sh-1:0 3px 10px rgba(var(--brand-rgb),.09);--sh-2:0 8px 20px -6px rgba(var(--brand-rgb),.18);--sh-btn:0 4px 0 rgba(var(--brand-rgb),.20);--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-6:24px;background:var(--paper)!important;color:var(--ink)}
     .ines-app::before{display:none!important}          /* pas de particules dorées */
     .ines-app nav{display:none!important}               /* pas de bottom-nav adulte */
     .ines-app #kids-back,.ines-app #ad-banner{display:none!important}
@@ -192,7 +195,7 @@
       align-items:center;justify-content:center;font-size:20px;font-weight:800;border:3px solid;
       position:relative;z-index:1;background:var(--surface)}
     .ines-app .ipath-body{flex:1;min-width:0;background:var(--surface);border:2px solid rgba(232,76,154,.18);
-      border-radius:16px;padding:8px 12px;box-shadow:0 3px 10px rgba(232,76,154,.07)}
+      border-radius:var(--r-lg);padding:8px 12px;box-shadow:var(--sh-1)}
     .ines-app .ipath-t{display:block;font-weight:800;font-size:.92rem;color:var(--ink);line-height:1.25}
     .ines-app .ipath-s{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
     .ines-app .ipath-item.is-locked .ipath-med{border-color:#D6D0E0;color:#6f6188;background:#EDEBF2}
@@ -210,7 +213,7 @@
     .ines-app #parent-content [style*="rgba(255,255,255,.1)"]{background:rgba(0,0,0,.07)!important}
     .ines-app #parent-content [style*="var(--gold)"]{color:var(--brand)!important}
     /* DS-04 : bulletin — surfaces blanches translucides invisibles sur crème → cartes/pistes visibles */
-    .ines-app #view-kidsreport [style*="rgba(255,255,255,.05)"]{background:var(--surface)!important;border-color:rgba(var(--brand-rgb),.16)!important;box-shadow:0 3px 10px rgba(var(--brand-rgb),.07)}
+    .ines-app #view-kidsreport [style*="rgba(255,255,255,.05)"]{background:var(--surface)!important;border-color:rgba(var(--brand-rgb),.16)!important;box-shadow:var(--sh-1)}
     .ines-app #view-kidsreport [style*="rgba(255,255,255,.1)"]{background:#EDE7F0!important}
     @keyframes mascotBob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-1.5deg)}}
     @keyframes mascotCheer{0%{transform:scale(.7) translateY(6px)}55%{transform:scale(1.08) translateY(-6px)}75%{transform:scale(.97)}100%{transform:scale(1)}}
@@ -692,7 +695,7 @@
     <h2 class="playfair font-bold text-2xl text-center" style="color:var(--gold)" id="lesson-title">الدرس</h2>
     <button onclick="speakLesson()" class="rounded-full px-4 py-1.5 text-xs font-bold" style="background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.4);color:var(--cyan)" id="lesson-listen">🔊 <span id="lesson-listen-lbl">Écouter</span></button>
     <p class="text-sm opacity-80 text-center" id="lesson-intro"></p>
-    <div id="lesson-illus" class="w-full rounded-2xl" style="display:none;background:var(--surface);border:2px solid rgba(var(--brand-rgb),.18);box-shadow:0 4px 14px rgba(var(--brand-rgb),.10);padding:10px"></div>
+    <div id="lesson-illus" class="w-full rounded-2xl" style="display:none;background:var(--surface);border:2px solid rgba(var(--brand-rgb),.18);box-shadow:var(--sh-1);padding:10px"></div>
     <div class="w-full rounded-2xl p-4" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.25)">
       <ul class="list-disc list-inside space-y-2 text-sm" id="lesson-points" style="line-height:1.8"></ul>
     </div>
@@ -4886,7 +4889,7 @@ function openKidsReport(){
     var tierCol=_in?['','#B45309','#6f6188','#B45309'][tier]:KIDS_BADGE_COLOR[tier];
     var chip=tier>0?'<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style="margin-'+(lang==='ar'?'right':'left')+':6px;border:1px solid '+tierCol+';color:'+tierCol+'">'+KIDS_BADGE_TIER[tier]+' '+(bd?bd.icon:'')+'</span>':'';
     // DS-04 : vraie carte visible sur crème (fond blanc + bord marque + ombre)
-    var cardSt=_in?'background:var(--surface);border:1.5px solid rgba(var(--brand-rgb),.16);box-shadow:0 3px 10px rgba(var(--brand-rgb),.07)'
+    var cardSt=_in?'background:var(--surface);border:1.5px solid rgba(var(--brand-rgb),.16);box-shadow:var(--sh-1)'
                   :'background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)';
     var trackSt=_in?'background:#EDE7F0':'background:rgba(255,255,255,.1)';
     var fillG=_in?'linear-gradient(90deg,#15803D,#B45309)':'linear-gradient(90deg,#22c55e,#FFD700)';
