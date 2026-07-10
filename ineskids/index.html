@@ -182,6 +182,15 @@
       .ines-app #kids-desc,.ines-app #ines-prog-lbl{font-size:1.15rem}
       .ines-app .cat-card{border-radius:var(--r-xl)!important}
     }
+    /* Trimestre → 3 niveaux (10 questions/niveau). États lisibles AA sur crème. */
+    .ines-app .ines-lvls{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .ines-app .ines-lvl{display:flex;align-items:center;justify-content:center;gap:4px;padding:9px 4px;
+      border-radius:var(--r-md);border:2px solid;font-weight:800;font-size:.72rem;cursor:pointer;font-family:inherit;line-height:1.1}
+    .ines-app .ines-lvl .ln{font-size:.9rem}
+    .ines-app .ines-lvl:active{transform:translateY(1px)}
+    .ines-app .ines-lvl.is-done{background:#E6F9EC;border-color:#15803D;color:#15803D}
+    .ines-app .ines-lvl.is-current{background:#FFE7F3;border-color:#E84C9A;color:#B02574;box-shadow:0 0 0 3px rgba(232,76,154,.14)}
+    .ines-app .ines-lvl.is-locked{background:#EDEBF2;border-color:#D6D0E0;color:#6f6188}
     /* Carte de leçons (parcours) — Audit v2 §H-03. États lisibles AA sur crème,
        jamais signalés par la couleur seule (icône + libellé + bordure). */
     .ines-app .ipath{position:relative;width:100%;max-width:360px;margin:6px auto 0}
@@ -616,15 +625,15 @@
     <div class="w-full grid grid-cols-3 gap-2" id="kids-subj-sel"></div>
     <div id="ines-prog-detail" style="display:none">
     <button id="ines-prog-change" onclick="inesProgReset()" class="w-full text-xs underline mt-1 mb-1" style="color:var(--muted)">↑ <span id="ines-prog-change-lbl">Changer de matière</span></button>
-    <!-- Carte de leçons (parcours) — Audit v2 §H-03. Nœuds année×trimestre avec
-         verrouillage séquentiel ; rendu par inesRenderPath(). -->
-    <div id="ines-path" class="ipath" role="group"></div>
-    <!-- Sélecteurs historiques conservés (masqués) pour compat. moteur/i18n. -->
-    <div class="hidden" id="kids-year-sel" aria-hidden="true"></div>
+    <!-- Année → Trimestre → 3 niveaux par trimestre (10 questions/niveau). -->
+    <div class="w-full text-xs font-bold text-center" style="color:var(--muted)" id="ines-year-lbl">Année scolaire</div>
+    <div class="w-full grid gap-2" id="kids-year-sel"></div>
+    <div class="w-full flex flex-col gap-3 mt-1" id="ines-terms"></div>
+    <!-- Libellés de trimestre conservés (masqués) pour l'i18n. -->
     <div class="hidden" aria-hidden="true">
-      <span id="kids-t1n"></span><span id="kids-t1"></span><span id="kids-t1d"></span>
-      <span id="kids-t2n"></span><span id="kids-t2"></span><span id="kids-t2d"></span>
-      <span id="kids-t3n"></span><span id="kids-t3"></span><span id="kids-t3d"></span>
+      <span id="kids-t1n"></span><span id="kids-t1"></span>
+      <span id="kids-t2n"></span><span id="kids-t2"></span>
+      <span id="kids-t3n"></span><span id="kids-t3"></span>
     </div>
     </div><!-- /ines-prog-detail -->
     </div><!-- /ines-program -->
@@ -4713,8 +4722,7 @@ function kidsRenderSubjects(){
 }
 function inesProgMulti(){return (typeof kidsSubjects==='function')&&kidsSubjects().length>1;}
 function kidsSetSubj(s){kidsSubj=s;kidsRenderSubjects();kidsRenderYears();kidsSetYear(kidsYear);
-  inesRenderPath(); // carte de leçons (H-03) — après kidsSetYear (qui pose le titre)
-  // Divulgation progressive : révéler le parcours une fois la matière choisie
+  // Divulgation progressive : révéler année/trimestres/niveaux une fois la matière choisie
   var multi=inesProgMulti();
   var d=document.getElementById('ines-prog-detail');
   if(d){d.style.display='';var h=document.getElementById('ines-prog-hint');if(h)h.style.display='none';
@@ -4743,7 +4751,8 @@ function kidsRenderYears(){
     var bd=ines?(a?'#22c55e':'rgba(232,76,154,.28)'):(a?'#22c55e':'rgba(255,255,255,.15)');
     var bgc=ines?(a?'#E6F9EC':'#fff'):(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)');
     var col=ines?(a?'#15803D':'#33264a'):(a?'#fff':'rgba(255,255,255,.7)');
-    html+='<button data-active="'+(a?1:0)+'" aria-pressed="'+(a?'true':'false')+'" aria-label="'+yl+'" onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+yl+'</button>';
+    var short=(lang==='ar')?('س'+y):(''+y);
+    html+='<button data-active="'+(a?1:0)+'" aria-pressed="'+(a?'true':'false')+'" aria-label="'+yl+'" title="'+yl+'" onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-sm font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+short+'</button>';
   }
   box.innerHTML=html;
 }
@@ -4753,15 +4762,7 @@ function kidsBestStars(cat){if(!userData)return 0;try{return (JSON.parse(userDat
 function kidsStarRow(n){var _in=(typeof INES!=='undefined'&&INES);var _f=_in?'#B45309':'#FFD700',_e=_in?'#7E7049':'rgba(255,255,255,.22)';var h='<span style="font-size:11px;letter-spacing:1px">';for(var i=0;i<3;i++)h+='<span style="color:'+(i<n?_f:_e)+'">'+(i<n?'★':'☆')+'</span>';return h+'</span>';}
 function kidsSetYear(y){
   kidsYear=y;kidsRenderYears();
-  var th=(KIDS_THEMES[kidsSubj]||KIDS_THEMES.ar)[y]||KIDS_THEMES.ar[1];
-  for(var tn=1;tn<=3;tn++){
-    var el=document.getElementById('kids-t'+tn+'d');
-    if(el){var cat=kidsSubj+'_s'+y+'_t'+tn;
-      var lvTxt='';
-      if(typeof INES!=='undefined'&&INES){var lv=inesUnitLevelOf(cat);
-        lvTxt='<span style="color:#B02574;font-weight:800">'+(lang==='ar'?'المستوى ':lang==='en'?'Level ':'Niveau ')+lv+'/3</span><br>';}
-      el.innerHTML=lvTxt+th[tn-1]+'<br>'+kidsStarRow(kidsBestStars(cat));}
-  }
+  inesRenderTerms(); // 3 trimestres × 3 niveaux pour l'année choisie
   // overall progress for this subject (stars earned / max)
   var my=kidsMaxYear();
   var got=0;for(var yy=1;yy<=my;yy++)for(var tt=1;tt<=3;tt++)got+=kidsBestStars(kidsSubj+'_s'+yy+'_t'+tt);
@@ -4770,6 +4771,46 @@ function kidsSetYear(y){
   var ti=document.getElementById('kids-prog-title');if(ti)ti.textContent=head+' · '+kidsYearLabel(y)+'  ⭐'+got+'/'+max;
 }
 function kidsStartTerm(tn){openLesson(kidsSubj,kidsYear,tn);}
+// Nombre de questions cumulées dans une unité (matière×année×trimestre).
+function inesUnitCount(cat){if(!userData)return 0;try{return (JSON.parse(userData.ines_catq||'{}'))[cat]||0;}catch(e){return 0;}}
+// Rend les 3 TRIMESTRES de l'année, chacun avec ses 3 NIVEAUX (10 questions/niveau,
+// déverrouillage progressif). C'est la structure Année → Trimestre → Niveau demandée.
+function inesRenderTerms(){
+  var box=document.getElementById('ines-terms');if(!box)return;
+  var subj=kidsSubj,y=kidsYear;
+  var th=(KIDS_THEMES[subj]||KIDS_THEMES.ar)[y]||KIDS_THEMES.ar[1];
+  var termWord=lang==='ar'?'الفصل ':lang==='en'?'Term ':'Trimestre ';
+  var lvWord=lang==='ar'?'المستوى ':lang==='en'?'Level ':'Niveau ';
+  var lockMsg=lang==='ar'?'🔒 أكمل المستوى السابق أولاً':lang==='en'?'🔒 Finish the previous level first':'🔒 Termine le niveau précédent d’abord';
+  var html='';
+  for(var tn=1;tn<=3;tn++){
+    var cat=subj+'_s'+y+'_t'+tn;
+    var count=inesUnitCount(cat), cur=Math.min(3,1+Math.floor(count/10)), complete=count>=30;
+    var stars=kidsBestStars(cat);
+    var chips='';
+    for(var L=1;L<=3;L++){
+      var done=(L<cur)||complete, locked=(L>cur), st=done?'done':locked?'locked':'current';
+      var ic=done?'✓':locked?'🔒':'▶';
+      var aria=(termWord+tn+' '+lvWord+L+' — '+(done?(lang==='ar'?'مكتمل':lang==='en'?'completed':'terminé'):locked?(lang==='ar'?'مقفل':lang==='en'?'locked':'verrouillé'):(lang==='ar'?'متاح':lang==='en'?'available':'disponible'))).replace(/"/g,'');
+      chips+='<button type="button" class="ines-lvl is-'+st+'" aria-label="'+aria+'"'+(locked?' aria-disabled="true"':'')
+        +' onclick="inesPlayLevel(\''+subj+'\','+y+','+tn+','+L+','+locked+')">'
+        +'<span class="ln" aria-hidden="true">'+ic+'</span>'+lvWord+L+'</button>';
+    }
+    html+='<div class="cat-card" style="padding:12px 14px">'
+      +'<div class="flex justify-between items-center" style="margin-bottom:6px">'
+        +'<span class="font-bold text-sm">'+termWord+tn+' · '+(th[tn-1]||'')+'</span>'
+        +'<span class="text-xs" style="color:var(--muted)">'+kidsStarRow(stars)+'</span></div>'
+      +'<div class="ines-lvls">'+chips+'</div></div>';
+  }
+  box.innerHTML=html;
+}
+// Joue un niveau : si verrouillé → message ; sinon on lance le quiz du trimestre
+// (les bonnes réponses font monter le compteur → niveau suivant).
+function inesPlayLevel(subj,y,tn,L,locked){
+  if(locked){var m=lang==='ar'?'🔒 أكمل المستوى السابق أولاً':lang==='en'?'🔒 Finish the previous level first':'🔒 Termine le niveau précédent d’abord';
+    if(typeof showToast==='function')showToast(m,'gold',1800);return;}
+  openLesson(subj,y,tn);
+}
 
 // ===== Carte de leçons (parcours) — Audit v2 §H-03 =====
 // Nœuds ordonnés (année × trimestre) ; verrouillage séquentiel : un nœud se
