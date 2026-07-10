@@ -106,11 +106,16 @@ runSpec('contrast',async browser=>{
   await settle();
   screens.push(['hub',await page.evaluate(PROBE,null)]);
 
-  // 2) « Mon programme » déplié : matières + années + trimestres
+  // 2) « Mon programme » déplié : matières + carte de leçons (parcours H-03).
+  // On sème des étoiles pour que les 4 états de nœud soient rendus et mesurés :
+  // terminé (vert), en cours (or), disponible (rose), verrouillé (gris).
   await page.evaluate(()=>{
+    setLang('ar');
+    var ks={};ks['ar_s1_t1']=3;ks['ar_s1_t2']=1; // done, progress, puis available, locked…
+    userData.kids_stars=JSON.stringify(ks);saveData(userData);
     inesToggleProgram();
     var subs=document.querySelectorAll('#kids-subj-sel button');
-    if(subs.length>1)subs[1].click(); else if(subs.length)subs[0].click();
+    if(subs.length)subs[0].click(); // 1re matière = arabe (a nos étoiles)
   });
   await settle();
   screens.push(['programme',await page.evaluate(PROBE,'#ines-program')]);
