@@ -28,8 +28,11 @@ voir Dette §7) :
 ```bash
 NODE_PATH=/opt/node22/lib/node_modules PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers npm test
 ```
-→ **11 specs** doivent passer. Chromium : `/opt/pw-browsers/chromium`.
+→ **12 specs** doivent passer. Chromium : `/opt/pw-browsers/chromium`.
 Ne pas lancer `playwright install`.
+`contrast.spec.js` = garde WCAG AA anti-régression (Audit v2 §H-06) : échoue si
+un texte visible passe sous 4,5:1 (3:1 grand texte) sur hub / programme / quiz /
+bulletin. Toute couleur de texte doit rester lisible sur le thème clair crème.
 
 ## 3. Modèle de contenu (catégories `subj_sANNÉE_tTRIM`)
 

@@ -176,6 +176,32 @@
       .ines-app #kids-desc,.ines-app #ines-prog-lbl{font-size:1.15rem}
       .ines-app .cat-card{border-radius:26px!important}
     }
+    /* Carte de leçons (parcours) — Audit v2 §H-03. États lisibles AA sur crème,
+       jamais signalés par la couleur seule (icône + libellé + bordure). */
+    .ines-app .ipath{position:relative;width:100%;max-width:360px;margin:6px auto 0}
+    .ines-app .ipath-item{position:relative;display:flex;align-items:center;gap:12px;width:100%;
+      padding:7px 0;background:none;border:0;cursor:pointer;text-align:start;font:inherit}
+    .ines-app .ipath-item::before{content:"";position:absolute;inset-inline-start:23px;top:0;bottom:0;
+      width:3px;background:rgba(232,76,154,.15);z-index:0}
+    .ines-app .ipath-item:first-child::before{top:50%}
+    .ines-app .ipath-item:last-child::before{bottom:50%}
+    .ines-app .ipath-med{flex:0 0 auto;width:48px;height:48px;border-radius:50%;display:flex;
+      align-items:center;justify-content:center;font-size:20px;font-weight:800;border:3px solid;
+      position:relative;z-index:1;background:var(--surface)}
+    .ines-app .ipath-body{flex:1;min-width:0;background:var(--surface);border:2px solid rgba(232,76,154,.18);
+      border-radius:16px;padding:8px 12px;box-shadow:0 3px 10px rgba(232,76,154,.07)}
+    .ines-app .ipath-t{display:block;font-weight:800;font-size:.92rem;color:var(--ink);line-height:1.25}
+    .ines-app .ipath-s{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
+    .ines-app .ipath-item.is-locked .ipath-med{border-color:#D6D0E0;color:#6f6188;background:#EDEBF2}
+    .ines-app .ipath-item.is-locked .ipath-t{color:var(--muted)}
+    .ines-app .ipath-item.is-available .ipath-med{border-color:#E84C9A;color:#B02574;background:#FFE7F3;
+      box-shadow:0 0 0 4px rgba(232,76,154,.16)}
+    .ines-app .ipath-item.is-available .ipath-body{border-color:#E84C9A}
+    .ines-app .ipath-item.is-progress .ipath-med{border-color:#B45309;color:#B45309;background:#FFF3E0}
+    .ines-app .ipath-item.is-done .ipath-med{border-color:#15803D;color:#15803D;background:#E6F9EC}
+    @keyframes ipathPulse{0%,100%{box-shadow:0 0 0 4px rgba(232,76,154,.16)}50%{box-shadow:0 0 0 7px rgba(232,76,154,.10)}}
+    .ines-app .ipath-item.is-available .ipath-med{animation:ipathPulse 1.8s ease-in-out infinite}
+    @media (prefers-reduced-motion:reduce){.ines-app .ipath-item.is-available .ipath-med{animation:none}}
     /* Espace parent lisible sur le thème clair (styles sombres hérités) */
     .ines-app #parent-content [style*="rgba(255,255,255,.05)"]{background:var(--surface)!important;border-color:rgba(var(--brand-rgb),.18)!important}
     .ines-app #parent-content [style*="rgba(255,255,255,.1)"]{background:rgba(0,0,0,.07)!important}
@@ -299,9 +325,9 @@
 
 <!-- LANG BAR -->
 <div id="lang-bar" class="fixed top-3 right-3 flex gap-2 z-50">
-  <button class="lang-btn text-xl" data-lang="ar" onclick="setLang('ar')" aria-label="العربية" title="العربية">🇩🇿</button>
-  <button class="lang-btn active text-xl" data-lang="fr" onclick="setLang('fr')" aria-label="Français" title="Français">🇫🇷</button>
-  <button class="lang-btn text-xl" data-lang="en" onclick="setLang('en')" aria-label="English" title="English">🇬🇧</button>
+  <button class="lang-btn text-xl" data-lang="ar" onclick="setLang('ar')" aria-label="العربية" aria-pressed="false" title="العربية">🇩🇿</button>
+  <button class="lang-btn active text-xl" data-lang="fr" onclick="setLang('fr')" aria-label="Français" aria-pressed="true" title="Français">🇫🇷</button>
+  <button class="lang-btn text-xl" data-lang="en" onclick="setLang('en')" aria-label="English" aria-pressed="false" title="English">🇬🇧</button>
 </div>
 
 <!-- HEADER BADGES (lives + gems + premium) -->
@@ -554,7 +580,7 @@
     <h2 class="playfair font-bold text-2xl" id="kids-title" style="color:#22c55e">Espace Enfants</h2>
     <p class="text-sm opacity-70 text-center" id="kids-desc">Choisis ton âge</p>
     <div id="kids-goal" class="w-full rounded-xl p-3" style="display:none;background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.3)"></div>
-    <button onclick="inesToggleProgram()" class="cat-card rounded-2xl w-full py-4 px-4 flex items-center gap-4" style="background:#fff;border:2px solid rgba(232,76,154,.30);box-shadow:0 6px 16px rgba(232,76,154,.10)"><span class="text-3xl">📚</span><div class="text-left"><div class="font-bold text-lg" id="ines-prog-lbl">Mon programme</div><div class="text-xs opacity-60" id="ines-prog-desc">Arabe, maths, sciences…</div></div></button>
+    <button onclick="inesToggleProgram()" aria-expanded="false" aria-controls="ines-program" class="cat-card rounded-2xl w-full py-4 px-4 flex items-center gap-4" style="background:#fff;border:2px solid rgba(232,76,154,.30);box-shadow:0 6px 16px rgba(232,76,154,.10)"><span class="text-3xl">📚</span><div class="text-left"><div class="font-bold text-lg" id="ines-prog-lbl">Mon programme</div><div class="text-xs opacity-60" id="ines-prog-desc">Arabe, maths, sciences…</div></div></button>
     <div id="ines-program" class="w-full flex flex-col gap-3" style="display:none">
     <div class="w-full flex flex-col gap-3 mt-2">
       <button onclick="startKids('kids_3_5')" class="cat-card rounded-2xl py-5 px-4 flex items-center gap-4" style="background:linear-gradient(135deg,rgba(244,114,182,.18),rgba(255,255,255,.04));border:1.5px solid rgba(244,114,182,.4)">
@@ -581,11 +607,15 @@
     <div class="w-full grid grid-cols-3 gap-2" id="kids-subj-sel"></div>
     <div id="ines-prog-detail" style="display:none">
     <button id="ines-prog-change" onclick="inesProgReset()" class="w-full text-xs underline mt-1 mb-1" style="color:var(--muted)">↑ <span id="ines-prog-change-lbl">Changer de matière</span></button>
-    <div class="w-full grid grid-cols-4 gap-2" id="kids-year-sel"></div>
-    <div class="w-full grid grid-cols-3 gap-2 mt-1">
-      <button onclick="kidsStartTerm(1)" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(255,255,255,.04));border:1.5px solid rgba(34,197,94,.4)"><div class="text-2xl" id="kids-t1n">١</div><div class="text-xs font-bold mt-1" id="kids-t1">الفصل 1</div><div class="text-[9px] opacity-60" id="kids-t1d"></div></button>
-      <button onclick="kidsStartTerm(2)" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(250,204,21,.2),rgba(255,255,255,.04));border:1.5px solid rgba(250,204,21,.4)"><div class="text-2xl" id="kids-t2n">٢</div><div class="text-xs font-bold mt-1" id="kids-t2">الفصل 2</div><div class="text-[9px] opacity-60" id="kids-t2d"></div></button>
-      <button onclick="kidsStartTerm(3)" class="cat-card rounded-xl py-4" style="background:linear-gradient(135deg,rgba(0,229,255,.18),rgba(255,255,255,.04));border:1.5px solid rgba(0,229,255,.4)"><div class="text-2xl" id="kids-t3n">٣</div><div class="text-xs font-bold mt-1" id="kids-t3">الفصل 3</div><div class="text-[9px] opacity-60" id="kids-t3d"></div></button>
+    <!-- Carte de leçons (parcours) — Audit v2 §H-03. Nœuds année×trimestre avec
+         verrouillage séquentiel ; rendu par inesRenderPath(). -->
+    <div id="ines-path" class="ipath" role="group"></div>
+    <!-- Sélecteurs historiques conservés (masqués) pour compat. moteur/i18n. -->
+    <div class="hidden" id="kids-year-sel" aria-hidden="true"></div>
+    <div class="hidden" aria-hidden="true">
+      <span id="kids-t1n"></span><span id="kids-t1"></span><span id="kids-t1d"></span>
+      <span id="kids-t2n"></span><span id="kids-t2"></span><span id="kids-t2d"></span>
+      <span id="kids-t3n"></span><span id="kids-t3"></span><span id="kids-t3d"></span>
     </div>
     </div><!-- /ines-prog-detail -->
     </div><!-- /ines-program -->
@@ -606,9 +636,9 @@
       <div class="text-xs" style="color:#6f6188">© 2026 Ines Kids</div>
       <div class="flex justify-center items-center gap-2 mt-2 text-xs font-bold" style="flex-wrap:wrap">
         <button onclick="showLegal('about')" style="color:#B02574" id="ines-foot-about">À propos</button>
-        <span style="color:#8B8098">·</span>
+        <span style="color:#6f6188">·</span>
         <button onclick="showLegal('privacy')" style="color:#B02574" id="ines-foot-privacy">Confidentialité</button>
-        <span style="color:#8B8098">·</span>
+        <span style="color:#6f6188">·</span>
         <button onclick="showLegal('terms')" style="color:#B02574" id="ines-foot-terms">CGU</button>
       </div>
     </div>
@@ -4110,6 +4140,9 @@ function spendGems(n){
 function showToast(msg,type='green',duration=2500){
   const el=document.createElement('div');
   el.className=`toast toast-${type}`;
+  // Annonce au lecteur d'écran (TalkBack) : erreurs = alerte (assertif), reste = statut (poli).
+  el.setAttribute('role',type==='red'?'alert':'status');
+  el.setAttribute('aria-live',type==='red'?'assertive':'polite');
   el.textContent=msg;
   document.body.appendChild(el);
   setTimeout(()=>el.remove(),duration);
@@ -4122,7 +4155,9 @@ function setLang(l){
   document.body.setAttribute('lang',l);
   document.body.dir=l==='ar'?'rtl':'ltr';
   document.querySelectorAll('#lang-bar .lang-btn').forEach((b)=>{
-    b.classList.toggle('active',b.dataset.lang===l);
+    var on=b.dataset.lang===l;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-pressed',on?'true':'false'); // état lu par TalkBack
   });
   if(userData){userData.preferred_language=l;saveData(userData)}
   applyTranslations();
@@ -4662,13 +4697,14 @@ function kidsRenderSubjects(){
     var bd=ines?(a?'#E84C9A':'rgba(232,76,154,.28)'):(a?'var(--cyan)':'rgba(255,255,255,.15)');
     var bgc=ines?(a?'#FFE7F3':'#fff'):(a?'rgba(0,229,255,.18)':'rgba(255,255,255,.04)');
     var col=ines?(a?'#B02574':'#33264a'):(a?'#fff':'rgba(255,255,255,.7)');
-    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetSubj(\''+s.key+'\')" class="rounded-lg py-2.5 text-sm font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+(s.label[lang]||s.label.fr)+'</button>';
+    html+='<button data-active="'+(a?1:0)+'" aria-pressed="'+(a?'true':'false')+'" onclick="kidsSetSubj(\''+s.key+'\')" class="rounded-lg py-2.5 text-sm font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+(s.label[lang]||s.label.fr)+'</button>';
   });
   box.innerHTML=html;
 }
 function inesProgMulti(){return (typeof kidsSubjects==='function')&&kidsSubjects().length>1;}
 function kidsSetSubj(s){kidsSubj=s;kidsRenderSubjects();kidsRenderYears();kidsSetYear(kidsYear);
-  // Divulgation progressive : révéler année/trimestre une fois la matière choisie
+  inesRenderPath(); // carte de leçons (H-03) — après kidsSetYear (qui pose le titre)
+  // Divulgation progressive : révéler le parcours une fois la matière choisie
   var multi=inesProgMulti();
   var d=document.getElementById('ines-prog-detail');
   if(d){d.style.display='';var h=document.getElementById('ines-prog-hint');if(h)h.style.display='none';
@@ -4697,14 +4733,14 @@ function kidsRenderYears(){
     var bd=ines?(a?'#22c55e':'rgba(232,76,154,.28)'):(a?'#22c55e':'rgba(255,255,255,.15)');
     var bgc=ines?(a?'#E6F9EC':'#fff'):(a?'rgba(34,197,94,.22)':'rgba(255,255,255,.04)');
     var col=ines?(a?'#15803D':'#33264a'):(a?'#fff':'rgba(255,255,255,.7)');
-    html+='<button data-active="'+(a?1:0)+'" onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+yl+'</button>';
+    html+='<button data-active="'+(a?1:0)+'" aria-pressed="'+(a?'true':'false')+'" aria-label="'+yl+'" onclick="kidsSetYear('+y+')" class="rounded-lg py-2 text-xs font-bold" style="border:2px solid '+bd+';background:'+bgc+';color:'+col+'">'+yl+'</button>';
   }
   box.innerHTML=html;
 }
 function kidsYearLabel(y){var p=(lang==='fr'?'Année ':lang==='en'?'Year ':'السنة ');return p+y;}
 function kidsSubjName(){var subs=kidsSubjects();var s=subs.filter(function(o){return o.key===kidsSubj})[0]||subs[0];return s.name[lang]||s.name.fr;}
 function kidsBestStars(cat){if(!userData)return 0;try{return (JSON.parse(userData.kids_stars||'{}'))[cat]||0;}catch(e){return 0;}}
-function kidsStarRow(n){var _in=(typeof INES!=='undefined'&&INES);var _f=_in?'#E08600':'#FFD700',_e=_in?'#7E7049':'rgba(255,255,255,.22)';var h='<span style="font-size:11px;letter-spacing:1px">';for(var i=0;i<3;i++)h+='<span style="color:'+(i<n?_f:_e)+'">'+(i<n?'★':'☆')+'</span>';return h+'</span>';}
+function kidsStarRow(n){var _in=(typeof INES!=='undefined'&&INES);var _f=_in?'#B45309':'#FFD700',_e=_in?'#7E7049':'rgba(255,255,255,.22)';var h='<span style="font-size:11px;letter-spacing:1px">';for(var i=0;i<3;i++)h+='<span style="color:'+(i<n?_f:_e)+'">'+(i<n?'★':'☆')+'</span>';return h+'</span>';}
 function kidsSetYear(y){
   kidsYear=y;kidsRenderYears();
   var th=(KIDS_THEMES[kidsSubj]||KIDS_THEMES.ar)[y]||KIDS_THEMES.ar[1];
@@ -4724,6 +4760,65 @@ function kidsSetYear(y){
   var ti=document.getElementById('kids-prog-title');if(ti)ti.textContent=head+' · '+kidsYearLabel(y)+'  ⭐'+got+'/'+max;
 }
 function kidsStartTerm(tn){openLesson(kidsSubj,kidsYear,tn);}
+
+// ===== Carte de leçons (parcours) — Audit v2 §H-03 =====
+// Nœuds ordonnés (année × trimestre) ; verrouillage séquentiel : un nœud se
+// débloque quand le précédent a ≥1 étoile → progression désirable.
+function inesPathNodes(subj){
+  var my=kidsSubjMaxYear(subj),nodes=[];
+  for(var y=1;y<=my;y++)for(var tn=1;tn<=3;tn++){
+    var cat=subj+'_s'+y+'_t'+tn;
+    nodes.push({cat:cat,year:y,term:tn,stars:kidsBestStars(cat)});
+  }
+  for(var i=0;i<nodes.length;i++){
+    var unlocked=(i===0)||(nodes[i-1].stars>=1);
+    nodes[i].state=!unlocked?'locked':nodes[i].stars>=3?'done':nodes[i].stars>=1?'progress':'available';
+  }
+  return nodes;
+}
+function inesNodeTitle(cat,y,tn,subj){
+  var L=(typeof LESSONS!=='undefined')?LESSONS[cat]:null;
+  if(L&&L.t)return L.t;
+  var th=(typeof KIDS_THEMES!=='undefined')?(KIDS_THEMES[subj]||KIDS_THEMES.ar):null;
+  if(th&&th[y]&&th[y][tn-1])return th[y][tn-1];
+  return kidsYearLabel(y)+' · '+(t('kT'+tn)||('T'+tn));
+}
+function inesStateWord(st){
+  if(lang==='ar')return st==='locked'?'مقفل':st==='done'?'مكتمل':st==='progress'?'قيد التقدّم':'متاح';
+  if(lang==='en')return st==='locked'?'locked':st==='done'?'completed':st==='progress'?'in progress':'available';
+  return st==='locked'?'verrouillé':st==='done'?'terminé':st==='progress'?'en cours':'disponible';
+}
+function inesRenderPath(){
+  var box=document.getElementById('ines-path');if(!box)return;
+  var subj=kidsSubj,nodes=inesPathNodes(subj),html='',got=0;
+  nodes.forEach(function(n){
+    got+=n.stars;
+    var med=n.state==='locked'?'🔒':n.state==='done'?'✓':n.state==='progress'?'★':'▶';
+    var title=inesNodeTitle(n.cat,n.year,n.term,subj);
+    var sub=kidsYearLabel(n.year)+' · '+(t('kT'+n.term)||('T'+n.term));
+    var aria=(title+' — '+sub+' — '+inesStateWord(n.state)+(n.stars?(' ('+n.stars+'★)'):'')).replace(/"/g,'');
+    var lock=n.state==='locked';
+    html+='<button type="button" class="ipath-item is-'+n.state+'" aria-label="'+aria+'"'
+      +(lock?' aria-disabled="true"':'')
+      +' onclick="inesOpenNode(\''+n.cat+'\','+lock+')">'
+      +'<span class="ipath-med" aria-hidden="true">'+med+'</span>'
+      +'<span class="ipath-body"><span class="ipath-t">'+title+'</span>'
+      +'<span class="ipath-s">'+sub+' &nbsp;'+kidsStarRow(n.stars)+'</span></span>'
+      +'</button>';
+  });
+  box.innerHTML=html;
+  box.setAttribute('aria-label',lang==='ar'?'مسار الدروس':lang==='en'?'Lesson path':'Parcours des leçons');
+  var max=nodes.length*3;
+  var ti=document.getElementById('kids-prog-title');
+  if(ti)ti.textContent=(kidsIsLangCourse()
+    ?('📚 '+(lang==='fr'?'Cours de ':lang==='en'?'Course: ':'')+kidsSubjName())
+    :(t('kidsProg')+' — '+kidsSubjName()))+'  ⭐'+got+'/'+max;
+}
+function inesOpenNode(cat,locked){
+  if(locked){showToast(lang==='ar'?'🔒 أكمل الدرس السابق أولاً':lang==='en'?'🔒 Finish the previous lesson first':'🔒 Termine la leçon précédente d’abord','gold',1800);return;}
+  var m=cat.match(/^(.+)_s(\d+)_t(\d+)$/);
+  if(m)openLesson(m[1],parseInt(m[2],10),parseInt(m[3],10));
+}
 // ===== Badges par matière (récompenses de maîtrise) =====
 var KIDS_BADGES={
   ar:{icon:'📖',fr:'Petit Érudit',en:'Word Star',ar:'بارع في العربية'},
@@ -4762,20 +4857,27 @@ function openKidsReport(){
   document.getElementById('report-title').textContent=t('reportTitle');
   document.getElementById('report-total-lbl').textContent=t('reportTotal');
   document.getElementById('report-back').textContent=t('back');
+  // Thème clair Ines : couleurs sombres lisibles (jamais de blanc/or vif sur
+  // crème — cf. Audit v2 · garde de contraste tests/contrast.spec.js).
+  var _in=(typeof INES!=='undefined'&&INES);
   var subs=kidsSubjects(),totGot=0,totMax=0,html='';
   subs.forEach(function(s){
     var my=kidsSubjMaxYear(s.key),max=my*9,got=0,pills='';
     for(var y=1;y<=my;y++){
       var yg=0;for(var tn=1;tn<=3;tn++)yg+=kidsBestStars(s.key+'_s'+y+'_t'+tn);
       got+=yg;
-      var col=yg>=9?'#22c55e':yg>0?'#FFD700':'rgba(255,255,255,.25)';
+      var col=yg>=9?(_in?'#15803D':'#22c55e'):yg>0?(_in?'#B45309':'#FFD700'):(_in?'#7E7049':'rgba(255,255,255,.25)');
       var yl=(s.key==='fr')?('N'+y):(s.key==='en')?('L'+y):('س'+y);
-      pills+='<div style="flex:1;text-align:center"><div style="font-size:9px;opacity:.55">'+yl+'</div><div style="font-size:11px;font-weight:800;color:'+col+'">'+yg+'/9</div></div>';
+      var lblSt=_in?'font-size:9px;color:#6f6188':'font-size:9px;opacity:.55';
+      pills+='<div style="flex:1;text-align:center"><div style="'+lblSt+'">'+yl+'</div><div style="font-size:11px;font-weight:800;color:'+col+'">'+yg+'/9</div></div>';
     }
     totGot+=got;totMax+=max;
     var pct=max?Math.round(got/max*100):0,nm=(s.label[lang]||s.label.fr);
     var tier=kidsSubjTier(s.key),bd=KIDS_BADGES[s.key];
-    var chip=tier>0?'<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style="margin-'+(lang==='ar'?'right':'left')+':6px;border:1px solid '+KIDS_BADGE_COLOR[tier]+';color:'+KIDS_BADGE_COLOR[tier]+'">'+KIDS_BADGE_TIER[tier]+' '+(bd?bd.icon:'')+'</span>':'';
+    // Puce de badge : couleurs sombres sur crème en thème clair (les médailles
+    // restent des émojis auto-colorés ; on garantit surtout un texte lisible).
+    var tierCol=_in?['','#B45309','#6f6188','#B45309'][tier]:KIDS_BADGE_COLOR[tier];
+    var chip=tier>0?'<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style="margin-'+(lang==='ar'?'right':'left')+':6px;border:1px solid '+tierCol+';color:'+tierCol+'">'+KIDS_BADGE_TIER[tier]+' '+(bd?bd.icon:'')+'</span>':'';
     html+='<div class="rounded-xl p-3" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">'
       +'<div class="flex justify-between items-center mb-1"><span class="font-bold text-sm">'+nm+chip+'</span><span class="text-xs font-bold" style="color:var(--gold)">⭐ '+got+'/'+max+'</span></div>'
       +'<div class="w-full h-1.5 rounded-full" style="background:rgba(255,255,255,.1)"><div class="h-1.5 rounded-full" style="width:'+pct+'%;background:linear-gradient(90deg,#22c55e,#FFD700)"></div></div>'
@@ -5056,7 +5158,7 @@ function inesToggleSound(){setSound(!soundOn);if(typeof renderParentDashboard===
 // Change la langue depuis l'espace parent puis rafraîchit le tableau de bord.
 function inesSetLang(l){setLang(l);if(typeof renderParentDashboard==='function')renderParentDashboard();}
 // Programme scolaire : replié par défaut (hub enfant épuré), déplié à la demande.
-function inesToggleProgram(){var g=document.getElementById('ines-program');if(!g)return;var show=(g.style.display==='none');g.style.display=show?'':'none';if(show)inesProgReset();}
+function inesToggleProgram(){var g=document.getElementById('ines-program');if(!g)return;var show=(g.style.display==='none');g.style.display=show?'':'none';var b=document.querySelector('[onclick="inesToggleProgram()"]');if(b)b.setAttribute('aria-expanded',show?'true':'false');if(show)inesProgReset();}
 // Niveau (année scolaire) : réglé par le PARENT, appliqué au programme enfant.
 function inesSetYear(n){if(!userData)return;userData.ines_year=n;kidsYear=n;saveData(userData);if(typeof renderParentDashboard==='function')renderParentDashboard();}
 function renderParentDashboard(){

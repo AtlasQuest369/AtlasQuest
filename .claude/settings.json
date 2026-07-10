@@ -30,7 +30,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '📚 Ines Kids / AtlasQuest — lire CLAUDE.md avant d’agir. Tests : npm test (11 specs, Playwright auto-résolu). Développer sur une branche claude/…, jamais sur main.'"
+            "command": "echo '📚 Ines Kids / AtlasQuest — lire CLAUDE.md avant d’agir. Tests : npm test (12 specs, Playwright auto-résolu). Développer sur une branche claude/…, jamais sur main.'"
           }
         ]
       }
