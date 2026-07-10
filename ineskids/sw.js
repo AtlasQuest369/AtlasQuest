@@ -1,6 +1,6 @@
 // Bump ce numéro à chaque release notable : l'ancien cache est purgé à
 // l'activation et la nouvelle version arrive dès la réouverture (QA-RELEASE §5).
-const CACHE_NAME = 'ineskids-v22';
+const CACHE_NAME = 'ineskids-v23';
 const ASSETS = [
   './',
   './index.html',

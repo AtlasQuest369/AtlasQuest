@@ -86,13 +86,13 @@
     .mascot-cheer{animation:mascotCheer .7s ease-out,mascotBob 3.2s ease-in-out .7s infinite;transform-origin:60px 100px}
 
     /* ================= INES KIDS — thème clair et joyeux ================= */
-    .ines-app{--paper:#FFF6EC;--ink:#33264a;--muted:#6f6188;--surface:#fff;--brand:#E84C9A;--brand-rgb:232,76,154;--brand-ink:#B02574;--pink-tint:#FFE7F3;--sun:#FDB913;--grass:#7DBE3C;--teal-ink:#0B5E6C;--gold-ink:#B45309;--purple-ink:#6D28D9;--green-ink:#15803D;--ok:#2F8F4E;--ok-rgb:47,143,78;--warn-rgb:194,65,12;--r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:24px;--r-full:999px;--sh-1:0 3px 10px rgba(var(--brand-rgb),.09);--sh-2:0 8px 20px -6px rgba(var(--brand-rgb),.18);--sh-btn:0 4px 0 rgba(var(--brand-rgb),.20);--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-6:24px;background:var(--paper)!important;color:var(--ink)}
+    .ines-app{--paper:#FFF6EC;--ink:#33264a;--muted:#6f6188;--surface:#fff;--brand:#E84C9A;--brand-rgb:232,76,154;--brand-ink:#B02574;--pink-tint:#FFE7F3;--sun:#FDB913;--grass:#7DBE3C;--teal-ink:#0B5E6C;--gold-ink:#B45309;--purple-ink:#6D28D9;--green-ink:#15803D;--ok:#2F8F4E;--ok-rgb:47,143,78;--warn-rgb:194,65,12;--r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:24px;--r-full:999px;--sh-1:0 6px 16px rgba(var(--brand-rgb),.10);--sh-2:0 12px 24px rgba(var(--brand-rgb),.16);--sh-btn:0 4px 0 rgba(var(--brand-rgb),.20);--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-6:24px;background:var(--paper)!important;color:var(--ink)}
     .ines-app::before{display:none!important}          /* pas de particules dorées */
     .ines-app nav{display:none!important}               /* pas de bottom-nav adulte */
     .ines-app #kids-back,.ines-app #ad-banner{display:none!important}
     .ines-app #header-badges{display:none!important}   /* pas de vies/gemmes adultes */
     /* Sélecteur de langue Ines (Ar/Fr/En) visible en haut, style clair. */
-    .ines-app #lang-bar{display:flex!important;background:var(--surface);border:2px solid rgba(var(--brand-rgb),.25);border-radius:999px;padding:5px 7px;box-shadow:0 4px 12px rgba(var(--brand-rgb),.16)}
+    .ines-app #lang-bar{display:flex!important;background:var(--surface);border:2px solid rgba(var(--brand-rgb),.25);border-radius:var(--r-full);padding:5px 7px;box-shadow:0 4px 12px rgba(var(--brand-rgb),.16)}
     .ines-app #lang-bar .lang-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:50%;min-height:38px}
     .ines-app #lang-bar .lang-btn.active{background:var(--pink-tint);filter:none}
     .ines-app footer{display:none!important}
@@ -101,9 +101,9 @@
     .ines-app .opacity-70,.ines-app .opacity-60,.ines-app .opacity-50,.ines-app .opacity-40{opacity:1!important;color:var(--muted)!important}
     .ines-app #kids-desc{color:var(--muted)!important}
     /* Cartes claires à coins ronds + ombre colorée */
-    .ines-app .cat-card,.ines-app .gold-card{background:var(--surface)!important;border:2px solid rgba(var(--brand-rgb),.22)!important;box-shadow:0 6px 16px rgba(var(--brand-rgb),.10)!important;color:var(--ink)!important;border-radius:24px!important}
+    .ines-app .cat-card,.ines-app .gold-card{background:var(--surface)!important;border:2px solid rgba(var(--brand-rgb),.22)!important;box-shadow:var(--sh-1)!important;color:var(--ink)!important;border-radius:var(--r-xl)!important}
     /* Réponses de quiz : blanches, contour jaune soleil, relief rose */
-    .ines-app #options button{color:var(--ink)!important;background:var(--surface)!important;border:2.5px solid var(--sun)!important;border-radius:22px!important;box-shadow:0 4px 0 rgba(var(--brand-rgb),.20)!important;font-weight:800!important}
+    .ines-app #options button{color:var(--ink)!important;background:var(--surface)!important;border:2.5px solid var(--sun)!important;border-radius:var(--r-xl)!important;box-shadow:var(--sh-btn)!important;font-weight:800!important}
     .ines-app #options button:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(var(--brand-rgb),.20)!important}
     /* Écran quiz premium : question & réponses centrées dans la zone du pouce, cibles agrandies */
     .ines-app #view-quiz{min-height:calc(100vh - 56px)}
@@ -172,7 +172,7 @@
     @media (prefers-reduced-motion:reduce){.ines-app .view.active{animation:none!important}.ines-spark{display:none!important}}
     .ines-app #options button:active{transform:scale(.985)}
     @media (hover:hover) and (pointer:fine){
-      .ines-app .cat-card:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(var(--brand-rgb),.16)!important}
+      .ines-app .cat-card:hover{transform:translateY(-2px);box-shadow:var(--sh-2)!important}
     }
     /* Premium — mode tablette (audit H2) : colonne confortable élargie + titres plus grands,
        au lieu d'une bande étroite perdue au centre de l'écran. */
@@ -180,7 +180,7 @@
       .ines-app .max-w-md{max-width:600px!important}
       .ines-app #kids-title{font-size:2.4rem}
       .ines-app #kids-desc,.ines-app #ines-prog-lbl{font-size:1.15rem}
-      .ines-app .cat-card{border-radius:26px!important}
+      .ines-app .cat-card{border-radius:var(--r-xl)!important}
     }
     /* Carte de leçons (parcours) — Audit v2 §H-03. États lisibles AA sur crème,
        jamais signalés par la couleur seule (icône + libellé + bordure). */
